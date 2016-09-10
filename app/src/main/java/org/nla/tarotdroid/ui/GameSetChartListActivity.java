@@ -17,21 +17,21 @@
 package org.nla.tarotdroid.ui;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-
+import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.ui.charts.BetsStatsChart;
@@ -48,52 +48,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Main statistics view that allows a user to display a specific stats view.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class GameSetChartListActivity extends SherlockListActivity {
+public class GameSetChartListActivity extends AppCompatActivity {
 
-	/**
-	 * Item texts to be displayed in the list.
-	 */
 	private String[] menuTexts;
-
-	/**
-	 * Item summaries to be displayed in the list.
-	 */
 	private String[] menuSummaries;
-	
-	/**
-	 * Item summaries to be displayed in the list.
-	 */
 	private IStatsChart[] statCharts;
-	
-//	/**
-//	 * The current game set.
-//	 */
-//	private GameSet gameSet;
+    private ListView listView;
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-//			// check params
-//			Bundle args = this.getIntent().getExtras();
-//			if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-//				this.gameSet = AppContext.getApplication().getDalService().getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
-//			}
-//			else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-//				//this.gameSet = UIHelper.deserializeGameSet(args.getString(ActivityParams.PARAM_GAMESET_SERIALIZED));
-//				this.gameSet = (GameSet)args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
-//			}
-//			else {
-//				throw new IllegalArgumentException("Game set id or serialized game set must be provided");
-//			}
-			
 			this.auditEvent();
 			
 			// set action bar properties
@@ -119,8 +84,12 @@ public class GameSetChartListActivity extends SherlockListActivity {
 			};			
 			
 			// create data structures backing the list adapter
-			this.statCharts = this.getGameSet().getGameStyleType() == GameStyleType.Tarot5 ? statChartsTarot5 : statChartsTarot4;
-			this.menuTexts = new String[this.statCharts.length];
+            this.setContentView(R.layout.activity_gameset_chart_list);
+            this.listView = (ListView) findViewById(R.id.listView);
+            this.statCharts = this.getGameSet().getGameStyleType() == GameStyleType.Tarot5
+                    ? statChartsTarot5
+                    : statChartsTarot4;
+            this.menuTexts = new String[this.statCharts.length];
 			this.menuSummaries = new String[this.statCharts.length];
 			for (int i = 0; i < this.statCharts.length; ++i) {
 			    this.menuTexts[i] = this.statCharts[i].getName();
@@ -135,41 +104,32 @@ public class GameSetChartListActivity extends SherlockListActivity {
 					new String[] {IStatsChart.NAME, IStatsChart.DESC },
 					new int[] {android.R.id.text1, android.R.id.text2 }
 			);
-			this.setListAdapter(adapter);
-		} 
-		catch (Exception e) {
+            this.listView.setAdapter(adapter);
+            this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    onListItemClick(view, position, id);
+                }
+            });
+        } catch (Exception e) {
 			AuditHelper.auditError(ErrorTypes.gameSetStatisticsActivityError, e, this);
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 		AuditHelper.auditSession(this);
 	}
 	
-	/**
-	 * Returns the game set on which activity has to work.
-	 * @return
-	 */
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().gameSet;
 	}
 	
-	/**
-	 *	Traces creation event. 
-	 */
 	private void auditEvent() {
 		AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetStatisticsPage);
 	}
 
-	/**
-	 * Builds and returns a List<Map<String, String>> for the list adapter.
-	 * @return a List<Map<String, String>> for the list adapter.
-	 */
 	private List<Map<String, String>> getListValues() {
 		List<Map<String, String>> values = new ArrayList<Map<String, String>>();
 		int length = this.menuTexts.length;
@@ -182,14 +142,9 @@ public class GameSetChartListActivity extends SherlockListActivity {
 		return values;
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.ListActivity#onListItemClick(android.widget.ListView, android.view.View, int, long)
-	 */
-	@Override
-	protected void onListItemClick(final ListView l, final View v, final int position, final long id) {
-		super.onListItemClick(l, v, position, id);
-		try {
-			IStatsChart chart = this.statCharts[position];
+    protected void onListItemClick(final View v, final int position, final long id) {
+        try {
+            IStatsChart chart = this.statCharts[position];
 			AuditHelper.auditSession(this);
 			AuditHelper.auditEvent(chart.getAuditEventType());
 		    this.startActivity(chart.execute(this));
@@ -204,10 +159,6 @@ public class GameSetChartListActivity extends SherlockListActivity {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onKeyDown(int, android.view.KeyEvent)
-	 * Should ovveride onBackPressed() if we were only to support versions > eclair.
-	 */
 	@Override
 	public boolean onKeyDown(final int keyCode, final KeyEvent event)  {
 	    // back button

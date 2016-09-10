@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import android.support.v4.app.Fragment;
 
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
@@ -43,7 +43,7 @@ import java.util.List;
  * Framgment that shows the table of games in a game set.
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
  */
-public class GameSetGamesFragment extends SherlockFragment {
+public class GameSetGamesFragment extends Fragment {
 
     /**
      * Tab View.

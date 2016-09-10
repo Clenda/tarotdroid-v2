@@ -32,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import android.support.v4.app.Fragment;
 import com.facebook.widget.ProfilePictureView;
 
 import org.nla.tarotdroid.biz.GameSet;
@@ -59,7 +59,7 @@ import java.util.Map;
  * Fragment that shows a synthesis of a fragment.
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
  */
-public class GameSetSynthesisFragment extends SherlockFragment {
+public class GameSetSynthesisFragment extends Fragment {
 
     /**
      * Map between the player rank and their corresponding LinearLayout on the synthesis view.
@@ -391,9 +391,9 @@ public class GameSetSynthesisFragment extends SherlockFragment {
                 return 0;
             }
             else {
-                return lastScores.get((PersistableBusinessObject)arg1) - lastScores.get((PersistableBusinessObject)arg0);
-            }
-        }
+				return lastScores.get(arg1) - lastScores.get(arg0);
+			}
+		}
     }
     
 	/**

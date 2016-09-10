@@ -22,9 +22,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
 
@@ -49,67 +49,32 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-/**
- * A view pager activity aimed to show game charts.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class GameSetChartViewPagerActivity extends SherlockFragmentActivity {
+public class GameSetChartViewPagerActivity extends AppCompatActivity {
 
-	/**
-	 * The pager.
-	 */
-	private ViewPager mPager;
-	
-	/**
-	 * The pager adapter.
-	 */
-	private PagerAdapter mPagerAdapter;
-	
-	/**
-	 * The chart fragments.
-	 */
-	private List<ChartFragment> chartFragments;
-	
-	/**
-	 * The game set statistics computer.
-	 */
 	private static IGameSetStatisticsComputer gameSetStatisticsComputer;
+	private ViewPager mPager;
+	private PagerAdapter mPagerAdapter;
+	private List<ChartFragment> chartFragments;
+
+	public static IGameSetStatisticsComputer getGameSetStatisticsComputer() {
+		return gameSetStatisticsComputer;
+	}
 	
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
 			this.setContentView(R.layout.simple_titles);
 
-//			// check params
-//			checkArgument(this.getIntent().getExtras().containsKey(ActivityParams.PARAM_GAMESET_ID), "Game set id must be provided");
-//			this.gameSet = AppContext.getApplication().getDalService().getGameSetById(this.getIntent().getExtras().getLong(ActivityParams.PARAM_GAMESET_ID));
-
-//			// check params
-//			Bundle args = this.getIntent().getExtras();
-//			if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-//				this.gameSet = AppContext.getApplication().getDalService().getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
-//			}
-//			else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-//				//this.gameSet = UIHelper.deserializeGameSet(args.getString(ActivityParams.PARAM_GAMESET_SERIALIZED));
-//				this.gameSet = (GameSet)args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
-//			}
-//			else {
-//				throw new IllegalArgumentException("Game set id or serialized game set must be provided");
-//			}
-			
 			this.auditEvent();
 			this.setTitle(this.getString(R.string.lblMainStatActivityTitle));
-			
-			// set keep screen on 
+
+			// set keep screen on
 			UIHelper.setKeepScreenOn(this, AppContext.getApplication().getAppParams().isKeepScreenOn());
 
 			// initialize the pager
 			this.initialisePaging();
-			
+
 			ActionBar mActionBar = getSupportActionBar();
 			mActionBar.setHomeButtonEnabled(true);
 			mActionBar.setDisplayShowHomeEnabled(true);
@@ -128,32 +93,14 @@ public class GameSetChartViewPagerActivity extends SherlockFragmentActivity {
 		AuditHelper.auditSession(this);
 	}
 	
-	/**
-	 *	Traces creation event. 
-	 */
 	private void auditEvent() {
 		AuditHelper.auditEvent(AuditHelper.EventTypes.displayCharts);
 	}
 	
-	/**
-	 * Returns the game set on which activity has to work.
-	 * @return
-	 */
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().gameSet;
 	}
-	
-	/**
-	 * Returns the instance of the game set statistics computer. 
-	 * @return
-	 */
-	public static IGameSetStatisticsComputer getGameSetStatisticsComputer() {
-		return gameSetStatisticsComputer;
-	}
 
-	/**
-	 * Initialize the fragments to be paged
-	 */
 	private void initialisePaging() {
 		// instantiate statistics computer
 		gameSetStatisticsComputer = GameSetStatisticsComputerFactory.GetGameSetStatisticsComputer(this.getGameSet(), "guava");
@@ -181,49 +128,25 @@ public class GameSetChartViewPagerActivity extends SherlockFragmentActivity {
         indicator.setFooterIndicatorStyle(IndicatorStyle.Triangle);
 	}
 	
-	/**
-	 * An adapter backing up the chart pager internal fragments.
-	 * @author Nicolas LAURENT daffycricket<a>yahoo.fr
-	 */
 	protected class ChartViewPagerAdapter extends FragmentPagerAdapter {
 
-		/**
-		 * The list of fragments to display in the pager.
-		 */
 		private final List<ChartFragment> fragments;
 
-		/**
-		 * @param fm
-		 * @param fragments
-		 */
 		public ChartViewPagerAdapter(FragmentManager fm, List<ChartFragment> fragments) {
 			super(fm);
 			this.fragments = fragments;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see android.support.v4.app.FragmentPagerAdapter#getItem(int)
-		 */
 		@Override
 		public Fragment getItem(int position) {
 			return this.fragments.get(position);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see android.support.v4.view.PagerAdapter#getCount()
-		 */
 		@Override
 		public int getCount() {
 			return this.fragments.size();
 		}
 		
-	    /* (non-Javadoc)
-	     * @see android.support.v4.view.PagerAdapter#getPageTitle(int)
-	     */
 	    @Override
 	    public CharSequence getPageTitle(int position) {
 	    	return this.fragments.get(position).getChartTitle();

@@ -8,25 +8,15 @@ import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PlayerList;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
-import org.nla.tarotdroid.cloud.clientmodel.RestGame;
-import org.nla.tarotdroid.cloud.clientmodel.RestGameSet;
-import org.nla.tarotdroid.cloud.clientmodel.RestGameStyleTypes;
+import org.nla.tarotdroid.clientmodel.RestGame;
+import org.nla.tarotdroid.clientmodel.RestGameSet;
+import org.nla.tarotdroid.clientmodel.RestGameStyleTypes;
 
 import java.util.Date;
 import java.util.List;
 
-
 public class GameSetConverter {
 		
-	/**
-	 * Default constructor.
-	 */
-	private GameSetConverter() {
-	}
-	
-	/**
-	 * Rest GameStyleTypes to Model GameStyleTypest function.
-	 */
 	private static final Function<RestGameStyleTypes, GameStyleType> restGameStyleTypesToModelGameStyleTypesFunction = new Function<RestGameStyleTypes, GameStyleType>() {
 
 		/* (non-Javadoc)
@@ -37,7 +27,7 @@ public class GameSetConverter {
 			if (restGameStyleTypes == null){
 				return null;
 			}
-			
+
 			GameStyleType gameStyleType = null;
 			switch (restGameStyleTypes) {
 				case tarot3:
@@ -56,10 +46,6 @@ public class GameSetConverter {
 			return gameStyleType;
 		}
 	};
-	
-	/**
-	 * Model GameStyleTypes to Rest GameStyleTypest function.
-	 */
 	private static final Function<GameStyleType, RestGameStyleTypes> modelGameStyleTypesToRestGameStyleTypesFunction = new Function<GameStyleType, RestGameStyleTypes>() {
 
 		/* (non-Javadoc)
@@ -70,8 +56,8 @@ public class GameSetConverter {
 			if (gameStyleType == null){
 				return null;
 			}
-			
-			RestGameStyleTypes restGameStyleTypes = null; 
+
+			RestGameStyleTypes restGameStyleTypes = null;
 			switch (gameStyleType) {
 				case Tarot3:
 					restGameStyleTypes = RestGameStyleTypes.tarot3;
@@ -89,12 +75,8 @@ public class GameSetConverter {
 			return restGameStyleTypes;
 		}
 	};
-	
-	/**
-	 * Rest game set to Model game set function.
-	 */
 	private static final Function<RestGameSet, GameSet> restGameSetToModelGameSetFunction = new Function<RestGameSet, GameSet>() {
-		
+
 		/* (non-Javadoc)
 		 * @see com.google.common.base.Function#apply(java.lang.Object)
 		 */
@@ -104,14 +86,14 @@ public class GameSetConverter {
 			try {
 				toReturn.setCreationTs(new Date(restGameSet.getCreationTs()));
 				toReturn.setUuid(restGameSet.getUuid());
-				
+
 				toReturn.setGameStyleType(restGameStyleTypesToModelGameStyleTypesFunction.apply(restGameSet.getGameStyleType()));
 				toReturn.setPlayers(new PlayerList(PlayerConverter.convertFromRest(restGameSet.getPlayers(), true)));
 				toReturn.setGameSetParameters(GameSetParametersConverter.convertFromRest(restGameSet.getGameSetParameters()));
-				
+
 				List<RestGame> restGames = restGameSet.getGames();
 				List<BaseGame> games = GameConverter.convertFromRest(restGames);
-				
+
 				for(BaseGame game : games) {
 					toReturn.addGame(game);
 				}
@@ -122,12 +104,8 @@ public class GameSetConverter {
 			return toReturn;
 		}
 	};
-
-	/**
-	 * Model game set to Rest game set function.
-	 */
 	private static final Function<GameSet, RestGameSet> modelGameSetToRestGameSetFunction = new Function<GameSet, RestGameSet>() {
-		
+
 		/* (non-Javadoc)
 		 * @see com.google.common.base.Function#apply(java.lang.Object)
 		 */
@@ -137,7 +115,7 @@ public class GameSetConverter {
 			try {
 				toReturn.setCreationTs(gameSet.getCreationTs().getTime());
 				toReturn.setUuid(gameSet.getUuid());
-				
+
 				toReturn.setGameStyleType(modelGameStyleTypesToRestGameStyleTypesFunction.apply(gameSet.getGameStyleType()));
 				toReturn.setGameSetParameters(GameSetParametersConverter.convertToRest(gameSet.getGameSetParameters()));
 				toReturn.setPlayers(PlayerConverter.convertToRest(gameSet.getPlayers().getPlayers()));
@@ -149,12 +127,8 @@ public class GameSetConverter {
 			return toReturn;
 		}
 	};
-	
-	/**
-	 * Cloud id to Rest gameset function.
-	 */
 	private static final Function<String, RestGameSet> cloudIdToRestGameSetFunction = new Function<String, RestGameSet>() {
-		
+
 		/* (non-Javadoc)
 		 * @see com.google.common.base.Function#apply(java.lang.Object)
 		 */
@@ -166,12 +140,10 @@ public class GameSetConverter {
 			return toReturn;
 		}
 	};
+
+	private GameSetConverter() {
+	}
 	
-	/**
-	 * Converts a Rest GameSet to a Model GameSet.
-	 * @param restGameSet
-	 * @return
-	 */
 	public static GameSet convertFromRest(RestGameSet restGameSet) {
 		if (restGameSet == null) {
 			return null;
@@ -180,11 +152,6 @@ public class GameSetConverter {
 		return restGameSetToModelGameSetFunction.apply(restGameSet);
 	}
 	
-	/**
-	 * Converts a Model GameSet to a Rest GameSet.
-	 * @param gameSet
-	 * @return
-	 */
 	public static RestGameSet convertToRest(GameSet gameSet) {
 		if (gameSet == null) {
 			return null;
@@ -193,11 +160,6 @@ public class GameSetConverter {
 		return modelGameSetToRestGameSetFunction.apply(gameSet);
 	}
 	
-	/**
-	 * Converts a list of Rest GameSet to a list of Model GameSet.
-	 * @param restGameSets
-	 * @return
-	 */
 	public static List<GameSet> convertFromRest(List<RestGameSet> restGameSets) {
 		if (restGameSets == null) {
 			return null;
@@ -206,11 +168,6 @@ public class GameSetConverter {
 		return Lists.transform(restGameSets, restGameSetToModelGameSetFunction);
 	}
 	
-	/**
-	 * Converts a list of Model GameSet to a list of Rest GameSet.
-	 * @param gameSets
-	 * @return
-	 */
 	public static List<RestGameSet> convertToRest(List<GameSet> gameSets) {
 		if (gameSets == null) {
 			return null;
@@ -219,11 +176,6 @@ public class GameSetConverter {
 		return Lists.transform(gameSets, modelGameSetToRestGameSetFunction);
 	}
 
-	/**
-	 * Converts a list of Model GameSets. 
-	 * @param idsOfGameSetsToInvalidate
-	 * @return
-	 */
 	public static List<RestGameSet> convertToRestForInvalidation(List<String> idsOfGameSetsToInvalidate) {
 		if (idsOfGameSetsToInvalidate == null) {
 			return null;

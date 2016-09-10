@@ -21,6 +21,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -31,11 +35,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
-import com.actionbarsherlock.view.SubMenu;
+import android.view.MenuItem.OnMenuItemClickListener;
+
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.nla.tarotdroid.R;
@@ -54,49 +55,9 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-/**
- * The main dashboard.
- * 
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class MainDashboardActivity extends SherlockActivity {
+public class MainDashboardActivity extends AppCompatActivity {
 
-	/**
-	 * Internal adapter to back up the dashboard list data.
-	 */
-	private class DashboardOptionAdapter extends ArrayAdapter<DashboardOption> {
-
-		/**
-		 * Constructs a DashboardOptionAdapter.
-		 * 
-		 * @param context
-		 * @param objects
-		 */
-		public DashboardOptionAdapter(Context context, List<DashboardOption> objects) {
-			super(context, R.layout.thumbnail_item, objects);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.widget.ArrayAdapter#getView(int, android.view.View,
-		 * android.view.ViewGroup)
-		 */
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			DashboardOption option = this.getItem(position);
-			return new ThumbnailItem(this.getContext(), option.getDrawableId(), option.getTitleResourceId(), option.getContentResourceId());
-		}
-	}
-
-	/**
-	 * Constant to use for file selection.
-	 */
 	private static final int FILE_SELECT_CODE = 0;
-
-	/**
-	 * Called when export db task is done.
-	 */
 	private final IAsyncCallback<String[]> exportDatabaseCallback = new IAsyncCallback<String[]>() {
 
 		@Override
@@ -105,15 +66,6 @@ public class MainDashboardActivity extends SherlockActivity {
 			onDatabaseExported(databaseContent);
 		}
 	};
-
-	/**
-	 * The image that takes user to facebook page.
-	 */
-	private ImageView imgLikeUsOnFacebook;
-
-	/**
-	 * Called when import db task is done.
-	 */
 	private final IAsyncCallback<String> importDatabaseCallback = new IAsyncCallback<String>() {
 
 		@Override
@@ -122,20 +74,10 @@ public class MainDashboardActivity extends SherlockActivity {
 			onDatabaseImported();
 		}
 	};
+    private ImageView imgLikeUsOnFacebook;
+    private InsertMockGameSetsTask insertMockGameSetsTask;
+    private ListView listOptions;
 
-	/**
-	 * The task to insert mock data.
-	 */
-	private InsertMockGameSetsTask insertMockGameSetsTask;
-
-	/**
-	 * The list of options to display.
-	 */
-	private ListView listOptions;
-
-	/**
-	 * Builds the menu for devices with version >= 4.2.
-	 */
 	private void buildMenuForNewAndroidDevices(Menu menu) {
 
 		MenuItem miExportDB = menu.add(R.string.lblDbExportItem);
@@ -189,9 +131,6 @@ public class MainDashboardActivity extends SherlockActivity {
 		}
 	}
 
-	/**
-	 * Builds a menu including a submenu for old devices.
-	 */
 	private void buildMenuForOldAndroidDevices(Menu menu) {
 		SubMenu subMenuMore = menu.addSubMenu("+");
 		MenuItem subMenuMoreItem = subMenuMore.getItem();
@@ -201,9 +140,9 @@ public class MainDashboardActivity extends SherlockActivity {
 		MenuItem miExportDB = subMenuMore.add(R.string.lblDbExportItem);
 		miExportDB.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				ExportDatabaseTask exportDatabaseTask = new ExportDatabaseTask(MainDashboardActivity.this);
-				exportDatabaseTask.setCallback(exportDatabaseCallback);
+            public boolean onMenuItemClick(MenuItem item) {
+                ExportDatabaseTask exportDatabaseTask = new ExportDatabaseTask(MainDashboardActivity.this);
+                exportDatabaseTask.setCallback(exportDatabaseCallback);
 				exportDatabaseTask.execute();
 				return true;
 			}
@@ -248,11 +187,6 @@ public class MainDashboardActivity extends SherlockActivity {
 		}
 	}
 
-	/**
-	 * Builds the email message body.
-	 * 
-	 * @return
-	 */
 	private StringBuilder buildMessageBody() {
 		StringBuilder contentText = new StringBuilder();
 		contentText.append("TarotDroid version: " + AppContext.getApplication().getAppPackage() + "[" + AppContext.getApplication().getAppVersion() + "]");
@@ -264,9 +198,6 @@ public class MainDashboardActivity extends SherlockActivity {
 		return contentText;
 	}
 
-	/**
-	 * Initializes the views.
-	 */
 	private void initializeViews(final Bundle savedInstanceState) {
 		DashboardOption newGameOption = new DashboardOption(R.drawable.icon_3cards_released, R.string.lblNewGameSet, R.string.lblNewGameSetDetails, R.id.new_gameset_item);
 		DashboardOption historyOption = new DashboardOption(R.drawable.icon_folder_released, R.string.lblGameSetHistory, R.string.lblGameSetHistoryDetails, R.id.history_item);
@@ -297,12 +228,6 @@ public class MainDashboardActivity extends SherlockActivity {
 		// this.setListAdapter(new DashboardOptionAdapter(this, options));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onActivityResult(int, int,
-	 * android.content.Intent)
-	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -328,11 +253,6 @@ public class MainDashboardActivity extends SherlockActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onBackPressed()
-	 */
 	@Override
 	public void onBackPressed() {
 		if (this.insertMockGameSetsTask != null && this.insertMockGameSetsTask.getStatus() == Status.RUNNING) {
@@ -341,11 +261,6 @@ public class MainDashboardActivity extends SherlockActivity {
 		super.onBackPressed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		try {
@@ -374,13 +289,6 @@ public class MainDashboardActivity extends SherlockActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.actionbarsherlock.app.SherlockListActivity#onCreateOptionsMenu(android
-	 * .view.Menu)
-	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -452,29 +360,16 @@ public class MainDashboardActivity extends SherlockActivity {
 		}
 	}
 
-	/**
-	 * Called when import is finished.
-	 */
 	private void onDatabaseImported() {
 		Toast.makeText(this, this.getString(R.string.lblDbHelperImportDone), Toast.LENGTH_SHORT).show();
 	}
 
-	/**
-	 * Called when import file is selected.
-	 * 
-	 * @param filePath
-	 */
 	private void onImportFileSelected(String filePath) {
 		ImportDatabaseTask importDatabaseTask = new ImportDatabaseTask(MainDashboardActivity.this, filePath);
 		importDatabaseTask.setCallback(importDatabaseCallback);
 		importDatabaseTask.execute();
 	}
 
-	/**
-	 * Called when user clicks on an option.
-	 * 
-	 * @param position
-	 */
 	protected void onListItemClick(int position) {
 		DashboardOption option = (DashboardOption) this.listOptions.getAdapter().getItem(position);
 		Intent intent;
@@ -510,31 +405,18 @@ public class MainDashboardActivity extends SherlockActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onStop()
-	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 		AuditHelper.auditSession(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onStop()
-	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
 		AuditHelper.stopSession(this);
 	}
 
-	/**
-	 * Shows the file chooser.
-	 */
 	private void showFileChooser() {
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.setType("*/*");
@@ -544,6 +426,22 @@ public class MainDashboardActivity extends SherlockActivity {
 			startActivityForResult(Intent.createChooser(intent, this.getString(R.string.lblDbHelperPickXMLFile)), FILE_SELECT_CODE);
 		} catch (android.content.ActivityNotFoundException ex) {
 			UIHelper.showSimpleRichTextDialog(this, this.getString(R.string.msgDbHelperYouNeedAFileExplorer), this.getString(R.string.titleDbHelperYouNeedAFileExplorer));
-		}
-	}
+        }
+    }
+
+    private class DashboardOptionAdapter extends ArrayAdapter<DashboardOption> {
+
+        public DashboardOptionAdapter(Context context, List<DashboardOption> objects) {
+            super(context, R.layout.thumbnail_item, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            DashboardOption option = this.getItem(position);
+            return new ThumbnailItem(this.getContext(),
+                                     option.getDrawableId(),
+                                     option.getTitleResourceId(),
+                                     option.getContentResourceId());
+        }
+    }
 }

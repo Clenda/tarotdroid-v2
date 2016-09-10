@@ -5,23 +5,17 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
-import org.nla.tarotdroid.cloud.clientmodel.RestGameSetParameters;
+import org.nla.tarotdroid.clientmodel.RestGameSetParameters;
 
 import java.util.List;
 
 public class GameSetParametersConverter {
 	
 	/**
-	 * Default constructor.
-	 */
-	private GameSetParametersConverter() {
-	}
-	
-	/**
 	 * Rest game set parameters to Model game set parameters function.
 	 */
 	private static final Function<RestGameSetParameters, GameSetParameters> restGameSetParametersToModelGameSetParametersFunction = new Function<RestGameSetParameters, GameSetParameters>() {
-		
+
 		/* (non-Javadoc)
 		 * @see com.google.common.base.Function#apply(java.lang.Object)
 		 */
@@ -47,16 +41,15 @@ public class GameSetParametersConverter {
 			toReturn.setAnnouncedAndFailedChelemPoints(restGameSetParameters.getAnnouncedAndFailedChelemPoints());
 			toReturn.setKidAtTheEndPoints(restGameSetParameters.getKidAtTheEndPoints());
 			toReturn.setBelgianBaseStepPoints(restGameSetParameters.getBelgianBaseStepPoints());
-			
+
 			return toReturn;
 		}
 	};
-	
 	/**
 	 * Model game set parameters to Rest game set parameters function.
 	 */
 	private static final Function<GameSetParameters, RestGameSetParameters> modelGameSetParametersToRestGameSetParametersFunction = new Function<GameSetParameters, RestGameSetParameters>() {
-		
+
 		/* (non-Javadoc)
 		 * @see com.google.common.base.Function#apply(java.lang.Object)
 		 */
@@ -86,7 +79,13 @@ public class GameSetParametersConverter {
 			return toReturn;
 		}
 	};
-	
+
+	/**
+	 * Default constructor.
+	 */
+	private GameSetParametersConverter() {
+	}
+
 	/**
 	 * Converts a Rest GameSetParameters to a GameSetParameters.
 	 * @param restGameSetParameters

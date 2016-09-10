@@ -3,6 +3,7 @@ package org.nla.tarotdroid.helpers;
 import android.content.Context;
 import android.os.Environment;
 
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
@@ -10,85 +11,38 @@ import org.nla.tarotdroid.biz.StandardBaseGame;
 import org.nla.tarotdroid.biz.StandardTarot5Game;
 import org.nla.tarotdroid.biz.enums.BetType;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
-import org.nla.tarotdroid.R;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import jxl.Workbook;
 import jxl.write.Label;
+import jxl.write.Number;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-/**
- * Helper class aimed to export a GameSet into an Excel file. 
- * @author Nico
- */
 public final class ExcelHelper {
     
-    /**
-     * File name date formatter.
-     */
     private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyyMMdd'_'hhmm");
-
-    /**
-     * 'Leader player' string. 
-     */
     private static String strLeaderPlayer;
-
-    /**
-     * 'Called player' string. 
-     */
     private static String strCalledPlayer;
-
-    /**
-     * 'Called king' string. 
-     */
     private static String strCalledColor;
-    
-    /**
-     * 'Dead' string. 
-     */
     private static String strDead;
     
-    /**
-     * Private default constructor. 
-     */
     private ExcelHelper() {
     }
     
-    /**
-     * Get file path for a GameSet.
-     * @param gameSet
-     * @return
-     */
     public static String getPath(final GameSet gameSet) {
     	return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + ExcelHelper.FORMATTER.format(gameSet.getCreationTs()) + ".xls";
     }
     
-    /**
-     * Returns file pat for all gamesets.
-     * @return
-     */
     public static String getPath() {
     	return Environment.getExternalStorageDirectory().getAbsolutePath() + "/allgamesets.xls";
     }
     
-    /**
-     * Exports a GameSet into an excel file located at the root of the internal storage with the name YYYYMMDD_HHMM.xls.
-     * @param context
-     * @param gameSet
-     * @return
-     * @throws IOException
-     * @throws RowsExceededException
-     * @throws WriteException
-     */
     public static String exportToExcel(final Context context, final List<GameSet> gameSets) throws Exception {
         checkArgument(gameSets != null, "gameSets is null");
         checkArgument(context != null, "context is null");
@@ -121,16 +75,7 @@ public final class ExcelHelper {
         workbook.close();
         return excelFile.getAbsolutePath();
     }
-    
-    /**
-     * Exports a GameSet into an excel file located at the root of the internal storage with the name YYYYMMDD_HHMM.xls.
-     * @param context
-     * @param gameSet
-     * @return
-     * @throws IOException
-     * @throws RowsExceededException
-     * @throws WriteException
-     */
+
     public static String exportToExcel(final Context context, final GameSet gameSet) throws Exception {
     	File sdcard = Environment.getExternalStorageDirectory();
 		File tarotDroidDir = new File(sdcard.getAbsolutePath(), "TarotDroid");
@@ -146,17 +91,6 @@ public final class ExcelHelper {
     	return fileName;
     }
     
-    /**
-     * Exports a GameSet into an excel file located at the root of the internal storage with the name YYYYMMDD_HHMM.xls.
-     * @param context
-     * @param gameSet
-     * @param excelFile
-     * @param workbook
-     * @return
-     * @throws IOException
-     * @throws RowsExceededException
-     * @throws WriteException
-     */
     public static String exportToExcel(final Context context, final GameSet gameSet, final File excelFile, final WritableWorkbook workbook, final int startIndex) throws Exception {
         checkArgument(gameSet != null, "gameSet is null");
         checkArgument(context != null, "context is null");
@@ -208,15 +142,6 @@ public final class ExcelHelper {
         return excelFile.getAbsolutePath();
     }
     
-    /**
-     * Export into the excel workbook the game with a standard template.
-     * @param context
-     * @param stdGame
-     * @param globalSheet
-     * @param deltaSheet
-     * @param row
-     * @throws Exception
-     */
     private static void exportStandardGame(final Context context, final GameSet gameSet, final StandardBaseGame stdGame, final WritableSheet globalSheet, final WritableSheet deltaSheet, final int row) throws Exception {
         // game description
         globalSheet.addCell(new Label(0, row, ExcelHelper.buildStandardDescription(context, stdGame.getIndex(), stdGame.getBet().getBetType(), (int)stdGame.getDifferentialPoints())));
@@ -247,15 +172,6 @@ public final class ExcelHelper {
         deltaSheet.addCell(new Label(gameSet.getPlayers().size() + 1, row, stdGame.getLeadingPlayer().getName()));
     }
     
-    /**
-     * Export into the excel workbook the game with a standard 5 player style template.
-     * @param context
-     * @param stdGame
-     * @param globalSheet
-     * @param deltaSheet
-     * @param row
-     * @throws Exception
-     */
     private static void exportStandardTarot5Game(final Context context, final GameSet gameSet, final StandardTarot5Game std5Game, final WritableSheet globalSheet, final WritableSheet deltaSheet, final int row) throws Exception {
         // game description
         globalSheet.addCell(new Label(0, row, ExcelHelper.buildStandardDescription(context, std5Game.getIndex(), std5Game.getBet().getBetType(), (int)std5Game.getDifferentialPoints())));
@@ -293,16 +209,7 @@ public final class ExcelHelper {
         globalSheet.addCell(new Label(gameSet.getPlayers().size() + 3, row, UIHelper.getKingTranslation(std5Game.getCalledKing().getKingType())));
         deltaSheet.addCell(new Label(gameSet.getPlayers().size() + 3, row, UIHelper.getKingTranslation(std5Game.getCalledKing().getKingType())));
     }
-    
-    /**
-     * Export into the excel workbook the game with a belgian template.
-     * @param context
-     * @param game
-     * @param globalSheet
-     * @param deltaSheet
-     * @param row
-     * @throws Exception
-     */
+
     private static void exportBelgianGame(final Context context, final GameSet gameSet, final BaseGame game, final WritableSheet globalSheet, final WritableSheet deltaSheet, final int row) throws Exception {
         // game description
         globalSheet.addCell(new Label(0, row, ExcelHelper.buildBelgianDescription(context, game.getIndex())));
@@ -328,15 +235,7 @@ public final class ExcelHelper {
             }
         }
     }
-    
-    /**
-     * Builds and returns the description for a standard game.
-     * @param context
-     * @param gameIndex
-     * @param bet
-     * @param points
-     * @return
-     */
+
     private static String buildStandardDescription(final Context context, final int gameIndex, final BetType bet, final int points) {
         String toReturn = String.format(
                 context.getResources().getString(R.string.lblStandardGameSynthesis),
@@ -348,19 +247,10 @@ public final class ExcelHelper {
         return toReturn;
     }
     
-    /**
-     * Builds and returns the description for a belgian game.
-     * @param context
-     * @param gameIndex
-     * @return
-     */
     private static String buildBelgianDescription(final Context context, final int gameIndex) {
         return gameIndex + " " + context.getResources().getString(R.string.belgeDescription); 
     }
     
-    /**
-     * Sets the static strings necessary to the export.
-     */
     private static void initializeStaticStrings(final Context context) {
         ExcelHelper.strLeaderPlayer = context.getResources().getString(R.string.lblExportLeaderPlayer);
         ExcelHelper.strCalledColor = context.getResources().getString(R.string.lblExportCalledColor);

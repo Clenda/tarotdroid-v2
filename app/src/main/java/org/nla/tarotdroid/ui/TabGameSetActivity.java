@@ -29,21 +29,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
-import com.actionbarsherlock.view.SubMenu;
 import com.facebook.FacebookRequestError;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -55,11 +55,11 @@ import com.facebook.model.GraphUser;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
 
-import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.dal.DalException;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.app.AppParams;
+import org.nla.tarotdroid.biz.GameSet;
+import org.nla.tarotdroid.dal.DalException;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.AuditHelper.ParameterTypes;
@@ -81,185 +81,56 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
-/**
- * The main game set activity.
- * 
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class TabGameSetActivity extends SherlockFragmentActivity {
+public class TabGameSetActivity extends AppCompatActivity {
 
-	/**
-	 * Facebook post response.
-	 */
-	private interface PostResponse extends GraphObject {
-		String getId();
-	}
-
-	/**
-	 * An adapter backing up the game set pager internal fragments.
-	 * 
-	 * @author Nicolas LAURENT daffycricket<a>yahoo.fr
-	 */
-	protected class TabGameSetPagerAdapter extends FragmentPagerAdapter {
-
-		/**
-		 * The list of fragments to display in the pager.
-		 */
-		private final List<Fragment> fragments;
-
-		/**
-		 * @param fm
-		 * @param fragments
-		 */
-		public TabGameSetPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
-			super(fm);
-			this.fragments = fragments;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.support.v4.view.PagerAdapter#getCount()
-		 */
-		@Override
-		public int getCount() {
-			return this.fragments.size();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.support.v4.app.FragmentPagerAdapter#getItem(int)
-		 */
-		@Override
-		public Fragment getItem(int position) {
-			return this.fragments.get(position);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.support.v4.view.PagerAdapter#getPageTitle(int)
-		 */
-		@Override
-		public CharSequence getPageTitle(int position) {
-			switch (position) {
-			case 0:
-				return AppContext.getApplication().getResources().getString(R.string.lblGamesTitle);
-			case 1:
-				return AppContext.getApplication().getResources().getString(R.string.lblSynthesisTitle);
-			default:
-				return "Unknown[" + position + "]";
-			}
-		}
-	}
-
-	/**
-	 * The singleton instance.
-	 */
-	private static TabGameSetActivity instance;
-
-	/**
-	 * List of additional write permissions being requested
-	 */
-	private static final List<String> PUBLISH_PERMISSIONS = Arrays.asList("publish_actions");
-
-	/**
-	 * List of read permissions being requested.
-	 */
-	private static final List<String> READ_PERMISSIONS = Arrays.asList("email");
-
-	/**
-	 * Activity code to flag an incoming activity result is due to a new
-	 * permissions request.
-	 */
-	private static final int REAUTH_ACTIVITY_CODE = 100;
-
-	/**
-	 * Flag to indicate a publish ation was required.
-	 */
-	// private boolean requestedPublishPermissions;
-
-	/**
-	 * Returns the singleton instance.
-	 * 
-	 * @return the singleton instance.
-	 */
-	public static TabGameSetActivity getInstance() {
-		return instance;
-	}
-
-	/**
-	 * Facebook session state change callback.
-	 */
-	private final Session.StatusCallback facebookSessionStatusCallback = new Session.StatusCallback() {
-		@Override
-		public void call(Session session, SessionState state, Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
-
-	/**
-	 * The current game set.
-	 */
-	protected GameSet gameSet;
-
-	/**
-	 * The GameSetGames fragment, to be displayed in the pager.
-	 */
-	private GameSetGamesFragment gameSetGamesFragment;
-
-	/**
-	 * The GameSetSynthesis fragment, to be displayed in the pager.
-	 */
-	private GameSetSynthesisFragment gameSetSynthesisFragment;
-
-	/**
-	 * "Yes / No" leaving dialog box listener.
-	 */
-	private final DialogInterface.OnClickListener leavingDialogClickListener = new DialogInterface.OnClickListener() {
-		@Override
-		public void onClick(final DialogInterface dialog, final int which) {
-			switch (which) {
-			case DialogInterface.BUTTON_POSITIVE:
-				TabGameSetActivity.this.finish();
-				break;
-			case DialogInterface.BUTTON_NEGATIVE:
-				break;
-			default:
-				break;
-			}
-		}
-	};
-
-	/**
-	 * The pager.
-	 */
-	private ViewPager mPager;
-
-	/**
-	 * The pager adapter.
-	 */
-	private PagerAdapter mPagerAdapter;
-
-	/**
-	 * Callback used after post on facebook wall.
-	 */
-	private final IAsyncCallback<Response> postToFacebookWallCallback = new IAsyncCallback<Response>() {
+    private static final List<String> PUBLISH_PERMISSIONS = Arrays.asList("publish_actions");
+    private static final List<String> READ_PERMISSIONS = Arrays.asList("email");
+    private static final int REAUTH_ACTIVITY_CODE = 100;
+    private static TabGameSetActivity instance;
+    /**
+     * "Yes / No" leaving dialog box listener.
+     */
+    private final DialogInterface.OnClickListener leavingDialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(final DialogInterface dialog, final int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    TabGameSetActivity.this.finish();
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    /**
+     * The current game set.
+     */
+    protected GameSet gameSet;
+    // private boolean requestedPublishPermissions;
+    /**
+     * Callback used after post on facebook wall.
+     */
+    private final IAsyncCallback<Response> postToFacebookWallCallback = new IAsyncCallback<Response>() {
 
 		@Override
-		public void execute(Response facebookResponse, Exception e) {
-			// TODO Check exception
-			TabGameSetActivity.this.onPostPublishGameSetOnFacebookWall(facebookResponse);
-		}
-	};
-
+        public void execute(Response facebookResponse, Exception e) {
+            // TODO Check exception
+            TabGameSetActivity.this.onPostPublishGameSetOnFacebookWall(facebookResponse);
+        }
+    };
 	/**
-	 * The progress dialog.
-	 */
-	protected ProgressDialog progressDialog;
-
-	/**
+     * The progress dialog.
+     */
+    protected ProgressDialog progressDialog;
+    private final Session.StatusCallback facebookSessionStatusCallback = new Session.StatusCallback() {
+        @Override
+        public void call(Session session, SessionState state, Exception exception) {
+            onSessionStateChange(session, state, exception);
+        }
+    };
+    /**
 	 * "Yes / No" publish on facebook dialog box listener.
 	 */
 	private final DialogInterface.OnClickListener publishOnFacebookDialogClickListener = new DialogInterface.OnClickListener() {
@@ -290,7 +161,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 			}
 		}
 	};
-
 	/**
 	 * "Yes / No" publish on facebook dialog box listener.
 	 */
@@ -317,8 +187,43 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 				TabGameSetActivity.this.finish();
 				break;
 			}
-		}
-	};
+        }
+    };
+    /**
+     * The GameSetGames fragment, to be displayed in the pager.
+     */
+    private GameSetGamesFragment gameSetGamesFragment;
+    /**
+     * The GameSetSynthesis fragment, to be displayed in the pager.
+     */
+    private GameSetSynthesisFragment gameSetSynthesisFragment;
+    /**
+     * The pager.
+     */
+    private ViewPager mPager;
+    /**
+     * The pager adapter.
+     */
+    private PagerAdapter mPagerAdapter;
+    /**
+     * The shortened url for the game set on the cloud.
+     */
+    private String shortenedUrl;
+    /**
+     * Callback to execute when post has been posted to facebook.
+     */
+    private final IAsyncCallback<Object> upSyncCallback = new IAsyncCallback<Object>() {
+
+        @Override
+        public void execute(Object object, Exception e) {
+            // TODO Check exception
+            TabGameSetActivity.this.publishGameSetOnFacebook();
+        }
+    };
+    /**
+     * The starting page index.
+     */
+    private int startPage;
 
 	// /**
 	// * Callback used after post on facebook app.
@@ -331,33 +236,14 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 	// TabGameSetActivity.this.onPostPublishGameSetOnFacebookApp(facebookResponse);
 	// }
 	// };
-
-	/**
-	 * The shortened url for the game set on the cloud.
-	 */
-	private String shortenedUrl;
-
-	/**
-	 * The starting page index.
-	 */
-	private int startPage;
-
 	/**
 	 * Facebook ui lifecyle manager.
 	 */
 	private UiLifecycleHelper uiHelper;
 
-	/**
-	 * Callback to execute when post has been posted to facebook.
-	 */
-	private final IAsyncCallback<Object> upSyncCallback = new IAsyncCallback<Object>() {
-
-		@Override
-		public void execute(Object object, Exception e) {
-			// TODO Check exception
-			TabGameSetActivity.this.publishGameSetOnFacebook();
-		}
-	};
+    public static TabGameSetActivity getInstance() {
+        return instance;
+    }
 
 	/**
 	 * Traces creation event.
@@ -387,10 +273,10 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		miSettings.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		miSettings.setIcon(R.drawable.perm_group_system_tools);
 		miSettings.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				Intent intent = new Intent(TabGameSetActivity.this, TabGameSetPreferencesActivity.class);
-				TabGameSetActivity.this.startActivity(intent);
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(TabGameSetActivity.this, TabGameSetPreferencesActivity.class);
+                TabGameSetActivity.this.startActivity(intent);
 				return true;
 			}
 		});
@@ -399,8 +285,8 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		miFacebook.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		miFacebook.setIcon(R.drawable.ic_facebook);
 		miFacebook.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
 
 				if (gameSet.getGameCount() == 0) {
 					Toast.makeText(TabGameSetActivity.this, TabGameSetActivity.this.getString(R.string.lblFacebookImpossibleToPublishGamesetWithNoGame), Toast.LENGTH_SHORT).show();
@@ -415,25 +301,16 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		miHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		miHelp.setIcon(R.drawable.gd_action_bar_help);
 		miHelp.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				UIHelper.showSimpleRichTextDialog(TabGameSetActivity.this, TabGameSetActivity.this.getText(R.string.msgHelp).toString(), TabGameSetActivity.this.getString(R.string.titleHelp));
-				return true;
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                UIHelper.showSimpleRichTextDialog(TabGameSetActivity.this,
+                                                  TabGameSetActivity.this.getText(R.string.msgHelp)
+                                                                         .toString(),
+                                                  TabGameSetActivity.this.getString(R.string.titleHelp));
+                return true;
 			}
 		});
 	}
-
-	// /**
-	// * Published session opened callback.
-	// */
-	// private Session.StatusCallback publishSessionOpenedCallback = new
-	// Session.StatusCallback() {
-	// @Override
-	// public void call(Session session, SessionState state, Exception
-	// exception) {
-	// launchPostProcess(session);
-	// }
-	// };
 
 	/**
 	 * Builds a menu including a submenu for old devices.
@@ -447,11 +324,11 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		MenuItem miSettings = subMenuMore.add(this.getString(R.string.lblPrefsItem));
 		miSettings.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		miSettings.setIcon(R.drawable.perm_group_system_tools);
-		miSettings.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				Intent intent = new Intent(TabGameSetActivity.this, TabGameSetPreferencesActivity.class);
-				TabGameSetActivity.this.startActivity(intent);
+        miSettings.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(TabGameSetActivity.this, TabGameSetPreferencesActivity.class);
+                TabGameSetActivity.this.startActivity(intent);
 				return true;
 			}
 		});
@@ -459,9 +336,9 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		MenuItem miFacebook = subMenuMore.add(this.getString(R.string.lblPublishGameSet));
 		miFacebook.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		miFacebook.setIcon(R.drawable.ic_facebook);
-		miFacebook.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
+        miFacebook.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
 
 				if (gameSet.getGameCount() == 0) {
 					Toast.makeText(TabGameSetActivity.this, TabGameSetActivity.this.getString(R.string.lblFacebookImpossibleToPublishGamesetWithNoGame), Toast.LENGTH_SHORT).show();
@@ -476,27 +353,42 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		miHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		miHelp.setIcon(R.drawable.gd_action_bar_help);
 		miHelp.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				UIHelper.showSimpleRichTextDialog(TabGameSetActivity.this, TabGameSetActivity.this.getText(R.string.msgHelp).toString(), TabGameSetActivity.this.getString(R.string.titleHelp));
-				return true;
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                UIHelper.showSimpleRichTextDialog(TabGameSetActivity.this,
+                                                  TabGameSetActivity.this.getText(R.string.msgHelp)
+                                                                         .toString(),
+                                                  TabGameSetActivity.this.getString(R.string.titleHelp));
+                return true;
 			}
 		});
 	}
 
 	/**
 	 * Returns the current game set.
-	 * 
-	 * @return
+     *
+     * @return
 	 */
 	public GameSet getGameSet() {
-		return this.gameSet;
-	}
+        return this.gameSet;
+    }
+
+    // /**
+    // * Published session opened callback.
+    // */
+    // private Session.StatusCallback publishSessionOpenedCallback = new
+    // Session.StatusCallback() {
+    // @Override
+    // public void call(Session session, SessionState state, Exception
+    // exception) {
+    // launchPostProcess(session);
+    // }
+    // };
 
 	/**
 	 * Handle facebook error.
-	 * 
-	 * @param error
+     *
+     * @param error
 	 */
 	private void handleFacebookError(final FacebookRequestError error) {
 		DialogInterface.OnClickListener listener = null;
@@ -515,43 +407,18 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 
 	/**
 	 * Checks whether the current session is allowed to publish on facebook.
-	 * 
-	 * @return true if the session can publish, false otherwisee.
+     *
+     * @return true if the session can publish, false otherwisee.
 	 */
 	private boolean hasPublishPermission() {
 		Session session = Session.getActiveSession();
 		return session != null && session.getPermissions().containsAll(PUBLISH_PERMISSIONS);
 	}
 
-	// /**
-	// * Post game set to Facebook Wall.
-	// */
-	// private void publishGameSetOnFacebookApp() {
-	// PostGameSetOnFacebookAppTask postGameSetOnFacebookAppTask = new
-	// PostGameSetOnFacebookAppTask(this, this.progressDialog,
-	// AppContext.getApplication().getBizService().getGameSet());
-	// postGameSetOnFacebookAppTask.setCallback(this.postToFacebookAppCallback);
-	// postGameSetOnFacebookAppTask.execute();
-	// }
-	//
-	// /**
-	// * Method called asynchronously after publishGameSetOnFacebookApp().
-	// * @param facebookResponse
-	// */
-	// private void onPostPublishGameSetOnFacebookApp(final Response
-	// facebookResponse) {
-	// PostResponse postResponse =
-	// facebookResponse.getGraphObjectAs(PostResponse.class);
-	//
-	// if (postResponse == null || postResponse.getId() == null) {
-	// // post error event
-	// }
-	// }
-
 	/**
 	 * Checks whether the current session is allowed to read on facebook.
-	 * 
-	 * @return
+     *
+     * @return
 	 */
 	private boolean hasReadPermission() {
 		Session session = Session.getActiveSession();
@@ -582,12 +449,37 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
 		indicator.setViewPager(mPager);
 		indicator.setFooterIndicatorStyle(IndicatorStyle.Triangle);
-	}
+    }
+
+    // /**
+    // * Post game set to Facebook Wall.
+    // */
+    // private void publishGameSetOnFacebookApp() {
+    // PostGameSetOnFacebookAppTask postGameSetOnFacebookAppTask = new
+    // PostGameSetOnFacebookAppTask(this, this.progressDialog,
+    // AppContext.getApplication().getBizService().getGameSet());
+    // postGameSetOnFacebookAppTask.setCallback(this.postToFacebookAppCallback);
+    // postGameSetOnFacebookAppTask.execute();
+    // }
+    //
+    // /**
+    // * Method called asynchronously after publishGameSetOnFacebookApp().
+    // * @param facebookResponse
+    // */
+    // private void onPostPublishGameSetOnFacebookApp(final Response
+    // facebookResponse) {
+    // PostResponse postResponse =
+    // facebookResponse.getGraphObjectAs(PostResponse.class);
+    //
+    // if (postResponse == null || postResponse.getId() == null) {
+    // // post error event
+    // }
+    // }
 
 	/**
 	 * Starts the whole Facebook post process.
-	 * 
-	 * @param session
+     *
+     * @param session
 	 */
 	private void launchPostProcess(final Session session) {
 
@@ -677,14 +569,14 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 	 */
 	private void navigateTowardsStandardGameCreationActivity() {
 		this.navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Standard);
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.support.v4.app.FragmentActivity#onActivityResult(int, int,
-	 * android.content.Intent)
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see android.support.v4.app.FragmentActivity#onActivityResult(int, int,
+     * android.content.Intent)
+     */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -723,14 +615,14 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 			// String gameSetSerialized =
 			// data.getStringExtra(ActivityParams.PARAM_GAMESET_SERIALIZED);
 			// this.gameSet = UIHelper.deserializeGameSet(gameSetSerialized);
-		}
-	}
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.support.v4.app.FragmentActivity#onBackPressed()
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see android.support.v4.app.FragmentActivity#onBackPressed()
+     */
 	@Override
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -742,13 +634,13 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		builder.setPositiveButton(this.getString(R.string.btnOk), this.leavingDialogClickListener);
 		builder.setNegativeButton(this.getString(R.string.btnCancel), this.leavingDialogClickListener).show();
 		builder.setIcon(android.R.drawable.ic_dialog_alert);
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
+     */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -803,13 +695,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.actionbarsherlock.app.SherlockFragmentActivity#onCreateOptionsMenu
-	 * (android.view.Menu)
-	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		AppParams appParams = AppContext.getApplication().getAppParams();
@@ -824,10 +709,10 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 			// Add standard game, always present
 			MenuItem miAddStdGame = subMenuAdd.add(R.string.lblAddGameStandardItem);
 			miAddStdGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-				@Override
-				public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-					TabGameSetActivity.this.navigateTowardsStandardGameCreationActivity();
-					return true;
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    TabGameSetActivity.this.navigateTowardsStandardGameCreationActivity();
+                    return true;
 				}
 			});
 
@@ -835,10 +720,10 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 			if (appParams.isBelgianGamesAllowed()) {
 				MenuItem miAddBelgianGame = subMenuAdd.add(R.string.lblAddGameBelgianItem);
 				miAddBelgianGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-					@Override
-					public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-						TabGameSetActivity.this.navigateTowardsBelgianGameCreationActivity();
-						return true;
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        TabGameSetActivity.this.navigateTowardsBelgianGameCreationActivity();
+                        return true;
 					}
 				});
 			}
@@ -847,10 +732,10 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 			if (appParams.isPassedGamesAllowed()) {
 				MenuItem miAddPassedGame = subMenuAdd.add(R.string.lblAddGamePassedItem);
 				miAddPassedGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-					@Override
-					public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-						TabGameSetActivity.this.navigateTowardsPassedGameCreationActivity();
-						return true;
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        TabGameSetActivity.this.navigateTowardsPassedGameCreationActivity();
+                        return true;
 					}
 				});
 			}
@@ -859,10 +744,10 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 			if (appParams.isPenaltyGamesAllowed()) {
 				MenuItem miAddPenaltyGame = subMenuAdd.add(R.string.lblAddGamePenaltyItem);
 				miAddPenaltyGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-					@Override
-					public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-						TabGameSetActivity.this.navigateTowardsPenaltyGameCreationActivity();
-						return true;
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        TabGameSetActivity.this.navigateTowardsPenaltyGameCreationActivity();
+                        return true;
 					}
 				});
 			}
@@ -871,10 +756,10 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 			miAddGame.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			miAddGame.setIcon(R.drawable.gd_action_bar_add);
 			miAddGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-				@Override
-				public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-					TabGameSetActivity.this.navigateTowardsStandardGameCreationActivity();
-					return true;
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    TabGameSetActivity.this.navigateTowardsStandardGameCreationActivity();
+                    return true;
 				}
 			});
 		}
@@ -883,9 +768,9 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		miStats.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		miStats.setIcon(R.drawable.gd_action_bar_pie_chart);
 		miStats.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				Intent intent = null;
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = null;
 
 				// running android version >= ICS, show new ui
 				if (android.os.Build.VERSION.SDK_INT >= 14) {
@@ -910,35 +795,20 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.actionbarsherlock.app.SherlockListActivity#onDestroy()
-	 */
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		this.uiHelper.onDestroy();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.actionbarsherlock.app.SherlockListActivity#onPause()
-	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
 		this.uiHelper.onPause();
-	}
+    }
 
-	/**
-	 * Method called asynchronously after publishGameSetOnFacebookWall().
-	 * 
-	 * @param facebookResponse
-	 */
-	private void onPostPublishGameSetOnFacebookWall(final Response facebookResponse) {
-		PostResponse postResponse = facebookResponse.getGraphObjectAs(PostResponse.class);
+    private void onPostPublishGameSetOnFacebookWall(final Response facebookResponse) {
+        PostResponse postResponse = facebookResponse.getGraphObjectAs(PostResponse.class);
 
 		int notificationId = AppContext.getApplication().getNotificationIds().get(this.gameSet.getUuid());
 		AppContext.getApplication().getNotificationIds().remove(this.gameSet.getUuid());
@@ -960,13 +830,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.actionbarsherlock.app.SherlockFragmentActivity#onRestoreInstanceState
-	 * (android.os.Bundle)
-	 */
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
@@ -975,11 +838,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.support.v4.app.FragmentActivity#onResume()
-	 */
 	@Override
 	protected void onResume() {
 		try {
@@ -992,11 +850,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
-	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -1004,13 +857,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		outState.putSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED, this.gameSet);
 	}
 
-	/**
-	 * Called when session changed.
-	 * 
-	 * @param session
-	 * @param state
-	 * @param exception
-	 */
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		// ask for publish permissions
 		if (session.getState() == SessionState.OPENED && !hasPublishPermission()) {
@@ -1029,11 +875,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onStop()
-	 */
 	@Override
 	protected void onStart() {
 		try {
@@ -1045,20 +886,12 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/**
-	 * Opens a read session before opening a publish session.
-	 * 
-	 * @param callback
-	 */
 	private void openFacebookSessionForRead(Session session) {
 		if (session != null && !session.isOpened()) {
 			session.openForRead(new Session.OpenRequest(this).setPermissions(READ_PERMISSIONS));
 		}
 	}
 
-	/**
-	 * Publish the game set on Facebook.
-	 */
 	private void publishGameSetOnFacebook() {
 		Session session = Session.getActiveSession();
 		if (session != null) {
@@ -1070,20 +903,12 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/**
-	 * Post game set to Facebook Wall.
-	 */
 	private void publishGameSetOnFacebookWall() {
 		PostGameSetLinkOnFacebookWallTask postGameSetLinkOnFacebookWallTask = new PostGameSetLinkOnFacebookWallTask(this, this.progressDialog, this.gameSet, this.shortenedUrl);
 		postGameSetLinkOnFacebookWallTask.setCallback(this.postToFacebookWallCallback);
 		postGameSetLinkOnFacebookWallTask.execute();
 	}
 
-	/**
-	 * Initiates a new request for permissions.
-	 * 
-	 * @param session
-	 */
 	private void requestPublishPermissions(Session session) {
 		if (!this.hasPublishPermission()) {
 			// request publish permissions if session was just opened
@@ -1107,9 +932,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/**
-	 * Show publish feed dialog.
-	 */
 	private void showPublishOnFacebookDialog(boolean isLeavingDialog) {
 		// check for active internet connexion first
 		// see post
@@ -1134,9 +956,6 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	/**
-	 * Attempts to start the publish process.
-	 */
 	private void startPostProcess() {
 		Session session = Session.getActiveSession();
 		if (session == null || session.isClosed()) {
@@ -1155,5 +974,60 @@ public class TabGameSetActivity extends SherlockFragmentActivity {
 		}
 
 		launchPostProcess(session);
+    }
+
+    /**
+     * Facebook post response.
+     */
+    private interface PostResponse extends GraphObject {
+        String getId();
+    }
+
+    /**
+     * An adapter backing up the game set pager internal fragments.
+     *
+     * @author Nicolas LAURENT daffycricket<a>yahoo.fr
+     */
+    protected class TabGameSetPagerAdapter extends FragmentPagerAdapter {
+
+        /**
+         * The list of fragments to display in the pager.
+         */
+        private final List<Fragment> fragments;
+
+        /**
+         * @param fm
+         * @param fragments
+         */
+        public TabGameSetPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
+            super(fm);
+            this.fragments = fragments;
+        }
+
+        @Override
+        public int getCount() {
+            return this.fragments.size();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return this.fragments.get(position);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return AppContext.getApplication()
+                                     .getResources()
+                                     .getString(R.string.lblGamesTitle);
+                case 1:
+                    return AppContext.getApplication()
+                                     .getResources()
+                                     .getString(R.string.lblSynthesisTitle);
+                default:
+                    return "Unknown[" + position + "]";
+            }
+        }
 	}
 }

@@ -23,7 +23,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import com.facebook.FacebookException;
 import com.facebook.widget.FriendPickerFragment;
 import com.facebook.widget.PickerFragment;
@@ -35,7 +35,7 @@ import org.nla.tarotdroid.app.AppContext;
  * Activity that allows you to select friends.
  * @author Nico
  */
-public class PlayerPickerActivity extends SherlockFragmentActivity {
+public class PlayerPickerActivity extends FragmentActivity {
 
 	/**
 	 * Friend picker uri.

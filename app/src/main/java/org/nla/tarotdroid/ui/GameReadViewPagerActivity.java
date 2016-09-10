@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui;
 
 import android.app.AlertDialog;
@@ -22,12 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.viewpagerindicator.PageIndicator;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
@@ -45,11 +28,8 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-/**
- * Activity that displays the game view pager.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class GameReadViewPagerActivity extends SherlockFragmentActivity {
+
+public class GameReadViewPagerActivity extends AppCompatActivity {
 
 	/**
 	 * Game view pager.
@@ -115,7 +95,7 @@ public class GameReadViewPagerActivity extends SherlockFragmentActivity {
 //			else {
 //				throw new IllegalArgumentException("Game set id or serialized game set must be provided");
 //			}
-			checkArgument(this.getIntent().getExtras().containsKey(ActivityParams.PARAM_GAME_INDEX), "Game index must be provided");
+//			checkArgument(this.getIntent().getExtras().containsKey(ActivityParams.PARAM_GAME_INDEX), "Game index must be provided");
 			this.currentGameIndex = this.getIntent().getExtras().getInt(ActivityParams.PARAM_GAME_INDEX);
 			
 			// set keep screen on 
@@ -135,7 +115,7 @@ public class GameReadViewPagerActivity extends SherlockFragmentActivity {
 	}
 	
 	/* (non-Javadoc)
-	 * @see com.actionbarsherlock.app.SherlockFragmentActivity#onCreateOptionsMenu(android.view.Menu)
+	 * @see android.support.v7.app.AppCompatActivity#onCreateOptionsMenu(android.view.Menu)
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -143,15 +123,12 @@ public class GameReadViewPagerActivity extends SherlockFragmentActivity {
 	        MenuItem miTrash = menu.add(this.getString(R.string.lblDeleteGameItem));
 	        miTrash.setIcon(R.drawable.gd_action_bar_trashcan);
 	        miTrash.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-	        miTrash.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-	            
-	        	/* (non-Javadoc)
-	        	 * @see com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener#onMenuItemClick(com.actionbarsherlock.view.MenuItem)
-	        	 */
-	        	@Override
-	            public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-	            	AlertDialog.Builder builder = new AlertDialog.Builder(GameReadViewPagerActivity.this);
-	    			String dialogTitle = String.format(
+			miTrash.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+				@Override
+				public boolean onMenuItemClick(MenuItem item) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(GameReadViewPagerActivity.this);
+					String dialogTitle = String.format(
 	    					GameReadViewPagerActivity.this.getString(R.string.titleRemoveGameYesNo),
 		    				GameReadViewPagerActivity.this.currentGameIndex
 		    			);
@@ -169,17 +146,10 @@ public class GameReadViewPagerActivity extends SherlockFragmentActivity {
 		return true;
 	}
 	
-	/**
-	 * Returns the game set on which activity has to work.
-	 * @return
-	 */
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().gameSet;
 	}
 
-	/**
-	 * Initialize the fragments to be paged
-	 */
 	private void initialisePaging() {
 		List<Fragment> fragments = newArrayList();
 		for(BaseGame game : this.getGameSet().getGames()) {
@@ -196,28 +166,18 @@ public class GameReadViewPagerActivity extends SherlockFragmentActivity {
         indicator.setFooterIndicatorStyle(IndicatorStyle.Triangle);
         mIndicator = indicator;
         
-        // We set this on the indicator, NOT the pager
         mIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             
-        	/* (non-Javadoc)
-        	 * @see android.support.v4.view.ViewPager.OnPageChangeListener#onPageSelected(int)
-        	 */
         	@Override
             public void onPageSelected(int position) {
             	GameReadViewPagerActivity.this.currentGameIndex = position + 1;
             	GameReadViewPagerActivity.this.invalidateOptionsMenu();
             }
 
-            /* (non-Javadoc)
-             * @see android.support.v4.view.ViewPager.OnPageChangeListener#onPageScrolled(int, float, int)
-             */
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
 
-            /* (non-Javadoc)
-             * @see android.support.v4.view.ViewPager.OnPageChangeListener#onPageScrollStateChanged(int)
-             */
             @Override
             public void onPageScrollStateChanged(int state) {
             }

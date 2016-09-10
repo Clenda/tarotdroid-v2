@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui;
 
 import android.os.Bundle;
@@ -29,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import android.support.v4.app.Fragment;
 
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.BelgianBaseGame;
@@ -54,251 +38,60 @@ import org.nla.tarotdroid.ui.controls.Selector;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Lists.newArrayList;
 
-/**
- * A fragment to read a game..
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class GameReadFragment extends SherlockFragment
+public class GameReadFragment extends Fragment
 {
-	/**
-	 * Dead player panel.
-	 */
-	private RelativeLayout panelDead;
-	
-	/**
-	 * Dead player selector.
-	 */
-	private Selector<Player> selectorDead;
-	
-	/**
-	 * Dead player panel.
-	 */
-	private RelativeLayout panelDealer;
-	
-	/**
-	 * Dealer player selector.
-	 */
-	private Selector<Player> selectorDealer;
-	
-	/**
-	 * Bet selector.
-	 */
-	private Selector<Bet> selectorBet;
-	
-	/**
-	 * Leader player selector.
-	 */
-	private Selector<Player> selectorLeader;
-	
-	/**
-	 * Called player panel.
-	 */
-	private RelativeLayout panelCalled;
-	
-	/**
-	 * Called player selector.
-	 */
-	private Selector<Player> selectorCalled;
-
-	/**
-	 * King panel.
-	 */
-	private RelativeLayout panelKing;
-
-	/**
-	 * King selector.
-	 */
-	private Selector<King> selectorKing;
-	
-	/**
-	 * Oudler selector.
-	 */
-	private Selector<Integer> selectorOudlers;
-	
-	/**
-	 * Attack points selector.
-	 */
-	private SeekBar barAttackPoints;
-	
-	/**
-	 * Attack team score as a textview.
-	 */
-	protected TextView txtAttackPoints;
-
-	/**
-	 * Defense points selector.
-	 */
-	private SeekBar barDefensePoints;
-	
-	/**
-	 * Defense team score as a textview.
-	 */
-	protected TextView txtDefensePoints;
-
-	/**
-	 * Handful points selector.
-	 */
-	private Selector<Team> selectorHandful;
-
-	/**
-	 * Double Handful points selector.
-	 */
-	private Selector<Team> selectorDoubleHandful;
-
-	/**
-	 * Triple Handful points selector.
-	 */
-	private Selector<Team> selectorTripleHandful;
-	
-	/**
-	 * Misery player selector.
-	 */
-	private Selector<Player> selectorMisery;
-	
-	/**
-	 * Kid at the end team selector.
-	 */
-	private Selector<Team> selectorKidAtTheEnd;
-	
-	/**
-	 * Slam selector.
-	 */
-	private Selector<Chelem> selectorSlam;
-
-	/**
-	 * Dead and dealer panel.
-	 */
-	private LinearLayout panelDeadAndDealerSection;
-
-	/**
-	 * Annoucement panel.
-	 */
-	private LinearLayout panelAnnoucementSection;
-	
-	/**
-	 * Annoucement panel.
-	 */
-	private LinearLayout panelAnnouncements;
-	
-	/**
-	 * Handful panel.
-	 */
-	private RelativeLayout panelHandful;
-
-	/**
-	 * Double Handful panel.
-	 */
-	private RelativeLayout panelDoubleHandful;
-
-	/**
-	 * Triple Handful panel.
-	 */
-	private RelativeLayout panelTripleHandful;
-	
-	/**
-	 * Misery panel.
-	 */
-	private RelativeLayout panelMisery;
-
-	/**
-	 * Kid at the end panel.
-	 */
-	private RelativeLayout panelKidAtTheEnd;
-	
-	/**
-	 * Slam panel.
-	 */
-	private RelativeLayout panelSlam;
-	
-	/**
-	 * First player selector.
-	 */
-	private Selector<Player> selectorFirst;
-
-	/**
-	 * Second player selector.
-	 */
-	private Selector<Player> selectorSecond;
-
-	/**
-	 * Third player selector.
-	 */
-	private Selector<Player> selectorThird;
-
-	/**
-	 * Fourth player panel.
-	 */
-	private RelativeLayout panelFourth;
-	
-	/**
-	 * Fourth player selector.
-	 */
-	private Selector<Player> selectorFourth;
-
-	/**
-	 * Fifth player panel.
-	 */
-	private RelativeLayout panelFifth;
-
-	/**
-	 * Fifth player selector.
-	 */
-	private Selector<Player> selectorFifth;
-	
-//	/**
-//	 * Penalted player selector.
-//	 */
-//	private Selector<Player> selectorPenalted;
-		
-	/**
-	 * Global penalty points as a textview.
-	 */
 	protected TextView txtGlobalPenaltyPoints;
-	
-//	/**
-//	 * Individual player penalty points seek bar.
-//	 */
-//	private SeekBar barPlayerPenaltyPoints;
-	
-//	/**
-//	 * The game set to display.
-//	 */
-//	private GameSet gameSet;
-	
-	/**
-	 * The game to display.
-	 */
+	protected TextView txtAttackPoints;
+	protected TextView txtDefensePoints;
+	private RelativeLayout panelDead;
+	private Selector<Player> selectorDead;
+	private RelativeLayout panelDealer;
+	private Selector<Player> selectorDealer;
+	private Selector<Bet> selectorBet;
+	private Selector<Player> selectorLeader;
+	private RelativeLayout panelCalled;
+	private Selector<Player> selectorCalled;
+	private RelativeLayout panelKing;
+	private Selector<King> selectorKing;
+	private Selector<Integer> selectorOudlers;
+	private SeekBar barAttackPoints;
+	private SeekBar barDefensePoints;
+	private Selector<Team> selectorHandful;
+	private Selector<Team> selectorDoubleHandful;
+	private Selector<Team> selectorTripleHandful;
+	private Selector<Player> selectorMisery;
+	private Selector<Team> selectorKidAtTheEnd;
+	private Selector<Chelem> selectorSlam;
+	private LinearLayout panelDeadAndDealerSection;
+	private LinearLayout panelAnnoucementSection;
+	private LinearLayout panelAnnouncements;
+	private RelativeLayout panelHandful;
+	private RelativeLayout panelDoubleHandful;
+	private RelativeLayout panelTripleHandful;
+	private RelativeLayout panelMisery;
+	private RelativeLayout panelKidAtTheEnd;
+	private RelativeLayout panelSlam;
+	private Selector<Player> selectorFirst;
+	private Selector<Player> selectorSecond;
+	private Selector<Player> selectorThird;
+	private RelativeLayout panelFourth;
+	private Selector<Player> selectorFourth;
+	private RelativeLayout panelFifth;
+	private Selector<Player> selectorFifth;
 	private BaseGame game;
-	
-	/**
-	 * The main layout
-	 */
 	private FrameLayout frameLayout;
-	
-	/**
-	 * Constructs a new instance of GameReadFragment. 
-	 * @param gameIndex
-	 * @param gameSet
-	 * @return
-	 */
+
 	public static GameReadFragment newInstance(int gameIndex, GameSet gameSet) {
 		checkArgument(gameSet != null, "gameSet is null");
 		GameReadFragment fragment = new GameReadFragment();
-		
+
 		Bundle args = new Bundle();
 		args.putInt(ActivityParams.PARAM_GAME_INDEX, gameIndex);
-//		if (!gameSet.isPersisted()) {
-//			//args.putString(ActivityParams.PARAM_GAMESET_SERIALIZED, UIHelper.serializeGameSet(gameSet));
-//			args.putSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED, gameSet);
-//		}
-//		else {
-//			args.putLong(ActivityParams.PARAM_GAMESET_ID, gameSet.getId());
-//		}
 		fragment.setArguments(args);
-		
+
 		return fragment;
 	}
-	
+
 	/**
 	 * Returns the game set on which activity has to work.
 	 * @return

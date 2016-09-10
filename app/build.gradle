@@ -21,12 +21,15 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.google.guava:guava:19.0'
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.jakewharton:butterknife:8.1.0'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile project(':libFacebookSDK-release')
+    compile project(':libviewpageindicator-release')
+    compile project(':libaFileChooser-release')
 
     // tests
     testCompile 'junit:junit:4.12'

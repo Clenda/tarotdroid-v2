@@ -20,6 +20,7 @@ import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.nla.tarotdroid.R;
 
 /**
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr

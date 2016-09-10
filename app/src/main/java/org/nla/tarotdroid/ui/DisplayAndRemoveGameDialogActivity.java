@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui;
 
 import android.app.AlertDialog;
@@ -21,22 +5,21 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
-
+import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.BelgianBaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PassedGame;
 import org.nla.tarotdroid.biz.PenaltyGame;
 import org.nla.tarotdroid.biz.StandardBaseGame;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.UIHelper;
@@ -45,25 +28,10 @@ import org.nla.tarotdroid.ui.tasks.RemoveGameTask;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-/**
- * Activity to aknowledge removal of game.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class DisplayAndRemoveGameDialogActivity extends SherlockActivity
+public class DisplayAndRemoveGameDialogActivity extends AppCompatActivity
 {
-//	/**
-//	 * The current game set.
-//	 */
-//	private GameSet gameSet;
-	
-	/**
-	 * Game to be displayed or removed.
-	 */
 	private BaseGame game;
 	
-	/**
-	 * "Yes / No" game removal dialog box listener.
-	 */
 	private DialogInterface.OnClickListener removeGameDialogClickListener = new DialogInterface.OnClickListener() {
 	    @Override
 	    public void onClick(final DialogInterface dialog, final int which) {
@@ -229,24 +197,25 @@ public class DisplayAndRemoveGameDialogActivity extends SherlockActivity
 	}
 	
 	private static class Item {
-		
-		protected enum ItemTypes {
-			View,
-			Edit,
-			Delete
-		};
-		
-	    public final String text;
-	    public final int icon;
-	    public final ItemTypes itemType;
+
+		public final String text;
+		public final int icon;
+		public final ItemTypes itemType;
 	    public Item(String text, Integer icon, ItemTypes itemType) {
 	        this.text = text;
 	        this.icon = icon;
 	        this.itemType = itemType;
 	    }
+
 	    @Override
 	    public String toString() {
 	        return text;
 	    }
+
+		protected enum ItemTypes {
+			View,
+			Edit,
+			Delete
+		}
 	}
 }

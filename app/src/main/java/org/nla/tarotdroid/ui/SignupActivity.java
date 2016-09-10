@@ -14,7 +14,6 @@ import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.ValidationHelper;
 import org.nla.tarotdroid.model.TarotDroidUser;
 import org.nla.tarotdroid.ui.tasks.IAsyncCallback;
-import org.nla.tarotdroid.ui.tasks.SignupTask;
 
 /**
  * Handles signup process.
@@ -28,7 +27,8 @@ public class SignupActivity extends Activity {
 	private EditText edtPassword;
 
 	private EditText edtPasswordConfirm;
-
+	private ProgressDialog progressDialog;
+	private TarotDroidUser signupTarotDroidUser;
 	/**
 	 * Signup callback.
 	 */
@@ -44,10 +44,6 @@ public class SignupActivity extends Activity {
 		}
 	};
 
-	private ProgressDialog progressDialog;
-
-	private TarotDroidUser signupTarotDroidUser;
-
 	public void onClickOnBtnLater(View view) {
 		finish();
 	}
@@ -60,9 +56,9 @@ public class SignupActivity extends Activity {
 		isFormvalid &= ValidationHelper.validateEditTextsAreEqual(edtPassword, edtPasswordConfirm, "Password and confirmation must be the same");
 
 		if (isFormvalid) {
-			SignupTask signupTask = new SignupTask(edtEmail.getText().toString(), edtPassword.getText().toString());
-			signupTask.setCallback(onPostSignupCallback);
-			signupTask.execute();
+//			SignupTask signupTask = new SignupTask(edtEmail.getText().toString(), edtPassword.getText().toString());
+//			signupTask.setCallback(onPostSignupCallback);
+//			signupTask.execute();
 
 			progressDialog = ProgressDialog.show(this, "Signing up...", "Signing up...", false);
 			progressDialog.setCancelable(false);

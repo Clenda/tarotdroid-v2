@@ -13,7 +13,6 @@ import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.ValidationHelper;
 import org.nla.tarotdroid.model.TarotDroidUser;
 import org.nla.tarotdroid.ui.tasks.IAsyncCallback;
-import org.nla.tarotdroid.ui.tasks.SigninTask;
 
 /**
  * Handles signup process.
@@ -31,7 +30,10 @@ public class SigninActivity extends Activity {
 	// onPostSignin(user, e);
 	// }
 	// };
-
+	/**
+	 * The progress dialog.
+	 */
+	private ProgressDialog progressDialog;
 	/**
 	 * Signin callback.
 	 */
@@ -46,11 +48,6 @@ public class SigninActivity extends Activity {
 			onPostSignin(result, exception);
 		}
 	};
-
-	/**
-	 * The progress dialog.
-	 */
-	private ProgressDialog progressDialog;
 
 	/**
 	 * Handles click on button 'Later'.
@@ -77,9 +74,9 @@ public class SigninActivity extends Activity {
 			progressDialog = ProgressDialog.show(this, "Signing in...", "Signing in...", false);
 			progressDialog.setCancelable(false);
 
-			SigninTask signinTask = new SigninTask(edtEmail.getText().toString(), edtPassword.getText().toString());
-			signinTask.setCallback(onPostSigninCallback);
-			signinTask.execute();
+//			SigninTask signinTask = new SigninTask(edtEmail.getText().toString(), edtPassword.getText().toString());
+//			signinTask.setCallback(onPostSigninCallback);
+//			signinTask.execute();
 		}
 	}
 

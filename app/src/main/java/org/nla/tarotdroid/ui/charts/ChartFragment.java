@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import android.support.v4.app.Fragment;
 
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
@@ -35,7 +35,7 @@ import org.nla.tarotdroid.ui.constants.FragmentParameters;
  * A base fragment for all chart fragments.
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
  */
-public abstract class ChartFragment extends SherlockFragment
+public abstract class ChartFragment extends Fragment
 {
     /**
      * The statistics computer.

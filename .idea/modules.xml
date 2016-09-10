@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/TarotDroid2.iml" filepath="$PROJECT_DIR$/TarotDroid2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/libFacebookSDK-release/libFacebookSDK-release.iml" filepath="$PROJECT_DIR$/libFacebookSDK-release/libFacebookSDK-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libaFileChooser-release/libaFileChooser-release.iml" filepath="$PROJECT_DIR$/libaFileChooser-release/libaFileChooser-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libviewpageindicator-release/libviewpageindicator-release.iml" filepath="$PROJECT_DIR$/libviewpageindicator-release/libviewpageindicator-release.iml" />
     </modules>
   </component>
 </project>

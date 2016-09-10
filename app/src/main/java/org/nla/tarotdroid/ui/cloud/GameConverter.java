@@ -20,25 +20,19 @@ import org.nla.tarotdroid.biz.StandardTarot3Game;
 import org.nla.tarotdroid.biz.StandardTarot4Game;
 import org.nla.tarotdroid.biz.StandardTarot5Game;
 import org.nla.tarotdroid.biz.Team;
-import org.nla.tarotdroid.cloud.clientmodel.RestBetTypes;
-import org.nla.tarotdroid.cloud.clientmodel.RestColorTypes;
-import org.nla.tarotdroid.cloud.clientmodel.RestGame;
-import org.nla.tarotdroid.cloud.clientmodel.RestGameTypes;
-import org.nla.tarotdroid.cloud.clientmodel.RestPlayer;
-import org.nla.tarotdroid.cloud.clientmodel.RestSlamTypes;
-import org.nla.tarotdroid.cloud.clientmodel.RestTeamTypes;
+import org.nla.tarotdroid.clientmodel.RestBetTypes;
+import org.nla.tarotdroid.clientmodel.RestColorTypes;
+import org.nla.tarotdroid.clientmodel.RestGame;
+import org.nla.tarotdroid.clientmodel.RestGameTypes;
+import org.nla.tarotdroid.clientmodel.RestPlayer;
+import org.nla.tarotdroid.clientmodel.RestSlamTypes;
+import org.nla.tarotdroid.clientmodel.RestTeamTypes;
 
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 
 public class GameConverter {
-	
-	/**
-	 * Default constructor.
-	 */
-	private GameConverter() {
-	}
 	
 	/**
 	 * Rest ColorTypes to King function.
@@ -53,7 +47,7 @@ public class GameConverter {
 			if (restColorType == null) {
 				return null;
 			}
-			
+
 			King colorType = null;
 			switch (restColorType) {
 				case coeur:
@@ -75,7 +69,6 @@ public class GameConverter {
 			return colorType;
 		}
 	};
-	
 	/**
 	 * King to Rest ColorTypes function.
 	 */
@@ -90,7 +83,7 @@ public class GameConverter {
 				return null;
 			}
 
-			RestColorTypes restcolorType = null; 
+			RestColorTypes restcolorType = null;
 			if (colorType == King.HEART) {
 					restcolorType = RestColorTypes.coeur;
 			}
@@ -109,7 +102,6 @@ public class GameConverter {
 			return restcolorType;
 		}
 	};
-	
 	/**
 	 * Rest SlamTypes to Chelem function.
 	 */
@@ -142,7 +134,6 @@ public class GameConverter {
 			return slamType;
 		}
 	};
-	
 	/**
 	 * Chelem to Rest SlamTypes function.
 	 */
@@ -156,8 +147,8 @@ public class GameConverter {
 			if (slamType == null) {
 				return null;
 			}
-			
-			RestSlamTypes restslamType = null; 
+
+			RestSlamTypes restslamType = null;
 			if (slamType == Chelem.CHELEM_ANOUNCED_AND_SUCCEEDED) {
 				restslamType = RestSlamTypes.annoncePasse;
 			}
@@ -173,7 +164,6 @@ public class GameConverter {
 			return restslamType;
 		}
 	};
-	
 	/**
 	 * Rest BetTypes to Bet function.
 	 */
@@ -187,7 +177,7 @@ public class GameConverter {
 			if (restBetTypes == null) {
 				return null;
 			}
-			
+
 			Bet bet = null;
 			switch (restBetTypes) {
 				case petite:
@@ -212,7 +202,6 @@ public class GameConverter {
 			return bet;
 		}
 	};
-	
 	/**
 	 * Bet to Rest BetTypes function.
 	 */
@@ -226,8 +215,8 @@ public class GameConverter {
 			if (bet == null) {
 				return null;
 			}
-			
-			RestBetTypes restBetTypes = null; 
+
+			RestBetTypes restBetTypes = null;
 			if (bet == Bet.PETITE) {
 				restBetTypes = RestBetTypes.petite;
 			}
@@ -249,7 +238,6 @@ public class GameConverter {
 			return restBetTypes;
 		}
 	};
-	
 	/**
 	 * Rest TeamTypes to Team function.
 	 */
@@ -263,7 +251,7 @@ public class GameConverter {
 			if (restTeamTypes == null) {
 				return null;
 			}
-			
+
 			Team teamType = null;
 			switch (restTeamTypes) {
 				case attack:
@@ -279,7 +267,6 @@ public class GameConverter {
 			return teamType;
 		}
 	};
-	
 	/**
 	 * Team to Rest TeamTypes function.
 	 */
@@ -293,8 +280,8 @@ public class GameConverter {
 			if (teamType == null) {
 				return null;
 			}
-			
-			RestTeamTypes restTeamTypes = null; 
+
+			RestTeamTypes restTeamTypes = null;
 			if (teamType == Team.LEADING_TEAM) {
 				restTeamTypes = RestTeamTypes.attack;
 			}
@@ -304,23 +291,22 @@ public class GameConverter {
 			else {
 				restTeamTypes = null;
 			}
-			
+
 			return restTeamTypes;
 		}
 	};
-	
 	/**
 	 * RestGame to BaseGame function.
 	 */
 	private static final Function<RestGame, BaseGame> restGameToBizGameFunction = new Function<RestGame, BaseGame>() {
-		
+
 		/* (non-Javadoc)
 		 * @see com.google.common.base.Function#apply(java.lang.Object)
 		 */
 		@Override
 		public BaseGame apply(RestGame restGame) {
 			BaseGame toReturn = null;
-			
+
 			try {
 				if (restGame.getGameType() == RestGameTypes.standard3) {
 					toReturn = new StandardTarot3Game();
@@ -350,16 +336,16 @@ public class GameConverter {
 					throw new IllegalArgumentException(MessageFormat.format("Unknown game type {0}", restGame.getClass().getName()));
 				}
 
-				
+
 				// set common properties
 				toReturn.setIndex(restGame.getIndex());
 				toReturn.setUuid(restGame.getUuid());
 				toReturn.setDealer(PlayerConverter.convertFromRest(restGame.getDealer(), true));
-				
+
 				List<RestPlayer> listOfRestPlayers = restGame.getPlayers();
 				List<Player> listOfPlayers = PlayerConverter.convertFromRest(listOfRestPlayers, true);
 				PlayerList playerList = new PlayerList(listOfPlayers);
-				
+
 				toReturn.setPlayers(playerList);
 				toReturn.setDeadPlayers(new PlayerList(PlayerConverter.convertFromRest(restGame.getDeadPlayers(), true)));
 				toReturn.setCreationTs(new Date(restGame.getCreationTs()));
@@ -385,13 +371,14 @@ public class GameConverter {
 					standard5Game.setCalledPlayer(PlayerConverter.convertFromRest(restGame.getCalledPlayer(), true));
 					standard5Game.setCalledKing(restColorTypesToBizKingFunction.apply(restGame.getCalledKing()));
 				}
-				
+
 				// set belgian common properties
 				if (toReturn instanceof BelgianBaseGame) {
 					BelgianBaseGame belgianGame = (BelgianBaseGame)toReturn;
 					belgianGame.setFirst(PlayerConverter.convertFromRest(restGame.getFirst(), true));
 					belgianGame.setSecond(PlayerConverter.convertFromRest(restGame.getSecond(), true));
-					belgianGame.setThird(PlayerConverter.convertFromRest(restGame.getThird(), true));			
+					belgianGame.setThird(PlayerConverter.convertFromRest(restGame.getThird(),
+																		 true));
 				}
 
 				// set belgian 4 properties
@@ -399,14 +386,14 @@ public class GameConverter {
 					BelgianTarot4Game belgian4Game = (BelgianTarot4Game)toReturn;
 					belgian4Game.setFourth(PlayerConverter.convertFromRest(restGame.getFourth(), true));
 				}
-				
+
 				// set belgian 5 properties
 				if (toReturn instanceof BelgianTarot5Game) {
 					BelgianTarot5Game belgian5Game = (BelgianTarot5Game)toReturn;
 					belgian5Game.setFourth(PlayerConverter.convertFromRest(restGame.getFourth(), true));
 					belgian5Game.setFifth(PlayerConverter.convertFromRest(restGame.getFifth(), true));
 				}
-				
+
 				// set penalty properties
 				if (toReturn instanceof PenaltyGame) {
 					PenaltyGame penaltyGame = (PenaltyGame)toReturn;
@@ -417,17 +404,16 @@ public class GameConverter {
 			}
 			catch (Exception e) {
 				throw new ConvertException(RestGame.class, BaseGame.class, e);
-			}			
-			
+			}
+
 			return toReturn;
 		}
 	};
-
 	/**
 	 * BaseGame to RestGame function.
 	 */
 	private static final Function<BaseGame, RestGame> bizGameToRestGameFunction = new Function<BaseGame, RestGame>() {
-		
+
 		/* (non-Javadoc)
 		 * @see com.google.common.base.Function#apply(java.lang.Object)
 		 */
@@ -436,7 +422,7 @@ public class GameConverter {
 			RestGame toReturn = new RestGame();
 			try {
 				toReturn.setUuid(game.getUuid());
-				
+
 				if (game instanceof StandardTarot3Game) {
 					toReturn.setGameType(RestGameTypes.standard3);
 				}
@@ -464,14 +450,14 @@ public class GameConverter {
 				else {
 					throw new IllegalArgumentException(MessageFormat.format("Unknown game type {0}", game.getClass().getName()));
 				}
-				
+
 				// set common properties
 				toReturn.setIndex(game.getIndex());
 				toReturn.setDealer(PlayerConverter.convertToRest(game.getDealer()));
 				toReturn.setPlayers(PlayerConverter.convertToRest(game.getPlayers().getPlayers()));
 				toReturn.setDeadPlayers(PlayerConverter.convertToRest(game.getDeadPlayers().getPlayers()));
 				toReturn.setCreationTs(game.getCreationTs().getTime());
-				
+
 				// set common standard properties
 				if (game instanceof StandardBaseGame) {
 					StandardBaseGame stdGame = (StandardBaseGame)game;
@@ -488,35 +474,35 @@ public class GameConverter {
 					}
 					toReturn.setChelem(bizChelemToRestSlamTypesFunction.apply(stdGame.getChelem()));
 				}
-				
+
 				// set standard 5 properties
 				if (game instanceof StandardTarot5Game) {
 					StandardTarot5Game std5Game = (StandardTarot5Game)game;
 					toReturn.setCalledPlayer(PlayerConverter.convertToRest(std5Game.getCalledPlayer()));
 					toReturn.setCalledKing(bizKingToRestColorTypesFunction.apply(std5Game.getCalledKing()));
 				}
-				
+
 				// set belgian common properties
 				if (game instanceof BelgianBaseGame) {
 					BelgianBaseGame belgianGame = (BelgianBaseGame)game;
 					toReturn.setFirst(PlayerConverter.convertToRest(belgianGame.getFirst()));
 					toReturn.setSecond(PlayerConverter.convertToRest(belgianGame.getSecond()));
-					toReturn.setThird(PlayerConverter.convertToRest(belgianGame.getThird()));			
+					toReturn.setThird(PlayerConverter.convertToRest(belgianGame.getThird()));
 				}
-				
+
 				// set belgian 4 properties
 				if (game instanceof BelgianTarot4Game) {
 					BelgianTarot4Game belgian4Game = (BelgianTarot4Game)game;
 					toReturn.setFourth(PlayerConverter.convertToRest(belgian4Game.getFourth()));
 				}
-				
+
 				// set belgian 5 properties
 				if (game instanceof BelgianTarot5Game) {
 					BelgianTarot5Game belgian5Game = (BelgianTarot5Game)game;
 					toReturn.setFourth(PlayerConverter.convertToRest(belgian5Game.getFourth()));
 					toReturn.setFifth(PlayerConverter.convertToRest(belgian5Game.getFifth()));
 				}
-				
+
 				// set penalty properties
 				if (game instanceof PenaltyGame) {
 					PenaltyGame penaltyGame = (PenaltyGame)game;
@@ -528,11 +514,17 @@ public class GameConverter {
 			catch (Exception re) {
 				throw new ConvertException(BaseGame.class, RestGame.class, re);
 			}
-			
+
 			return toReturn;
 		}
 	};
-	
+
+	/**
+	 * Default constructor.
+	 */
+	private GameConverter() {
+	}
+
 	/**
 	 * Converts a Rest Game to a BaseGame.
 	 * @param convertToRest

@@ -1,1 +1,1 @@
-include ':app', ':libFacebookSDK-release'
+include ':app', ':libFacebookSDK-release', ':libviewpageindicator-release', ':libaFileChooser-release'

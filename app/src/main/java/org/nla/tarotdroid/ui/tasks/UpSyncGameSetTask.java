@@ -9,21 +9,13 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
+import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
-import org.nla.tarotdroid.cloud.clientmodel.RestAccount;
-import org.nla.tarotdroid.cloud.clientmodel.RestGameSet;
-import org.nla.tarotdroid.cloud.clientmodel.RestPlayer;
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.clientmodel.RestAccount;
+import org.nla.tarotdroid.clientmodel.RestGameSet;
+import org.nla.tarotdroid.clientmodel.RestPlayer;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.ui.cloud.GameSetConverter;
 import org.nla.tarotdroid.ui.cloud.PlayerConverter;
@@ -36,6 +28,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import twitter4j.internal.http.HttpResponse;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -44,17 +42,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Object> {
 
 	/**
-	 * The context.
-	 */
-	private Activity activity;
-
-	/**
-	 * Indicates whether task was canceled;
-	 */
-	private final boolean isCanceled;
-
-	/**
-	 * Progress dialog to display messages.
+     * Indicates whether task was canceled;
+     */
+    private final boolean isCanceled;
+    /**
+     * The context.
+     */
+    private Activity activity;
+    /**
+     * Progress dialog to display messages.
 	 */
 	private ProgressDialog progressDialog;
 
@@ -71,12 +67,9 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 		this.isCanceled = false;
 
 		if (this.httpClient == null) {
-			this.httpClient = new DefaultHttpClient();
-			HttpParams httpParams = new BasicHttpParams();
-			HttpProtocolParams.setContentCharset(httpParams, Charsets.UTF_8.toString());
-			this.httpClient.setParams(httpParams);
-		}
-		if (this.progressDialog == null) {
+            this.httpClient = new OkHttpClient();
+        }
+        if (this.progressDialog == null) {
 			this.progressDialog = new ProgressDialog(this.activity);
 			this.progressDialog.setCanceledOnTouchOutside(false);
 		}
@@ -113,6 +106,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 			//
 			// Check cloud account exists
 			//
+
 			HttpGet request = new HttpGet("http://" + AppContext.getApplication().getCloudDns() + "/rest/accounts");
 			request.setHeader("Content-type", "application/json; charset=UTF-8");
 			request.setHeader("Accept-Language", "fr-FR");
@@ -200,16 +194,25 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 
 			List<RestGameSet> gameSetsToUploadRest = GameSetConverter.convertToRest(Arrays.asList(gameSetToUpload));
 
-			HttpPost postRequest = new HttpPost("http://" + AppContext.getApplication().getCloudDns() + "/rest/gamesets");
-			postRequest.setHeader("Content-type", "application/json; charset=UTF-8");
-			postRequest.setHeader("Accept-Language", "fr-FR");
-			postRequest.addHeader("Cookie", MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}", facebookEmail, user.getId(), "facebook", Session.getActiveSession().getAccessToken()));
-			postRequest.setEntity(new StringEntity(gson.toJson(gameSetsToUploadRest)));
+            RequestBody body = RequestBody.create(JSON,
+                                                  new StringEntity(gson.toJson(gameSetsToUploadRest)));
+            Request httpRequest = new Request.Builder()
+                    .url("http://" + AppContext.getApplication().getCloudDns() + "/rest/gamesets")
+                    .header("Content-type", "application/json; charset=UTF-8")
+                    .header("Accept-Language", "fr-FR")
+                    .header("Cookie",
+                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
+                                                 facebookEmail,
+                                                 user.getId(),
+                                                 "facebook",
+                                                 Session.getActiveSession().getAccessToken())
+                                         .build();
+            Response httpResponse = httpClient.newCall(httpRequest).execute();
+            String responseBody = httpResponse.body().string();
 
-			response = httpClient.execute(postRequest);
-			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				// update the game set with its cloud info
-				gameSetToUpload.setSyncTimestamp(new Date());
+            if (httpResponse.getStatusCode() == HttpStatus.SC_OK) {
+                // update the game set with its cloud info
+                gameSetToUpload.setSyncTimestamp(new Date());
 				gameSetToUpload.setSyncAccount(facebookEmail);
 				AppContext.getApplication().getDalService().updateGameSetAfterSync(gameSetToUpload);
 			} else if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {

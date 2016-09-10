@@ -20,6 +20,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.ScaleAnimation;
@@ -32,11 +35,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.BelgianBaseGame;
@@ -74,290 +72,161 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
-/**
- * Activity to create a game.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class GameCreationActivity extends SherlockActivity
+public class GameCreationActivity extends AppCompatActivity
 {
-	/**
-	 * Dead player panel.
-	 */
-	private RelativeLayout panelDead;
-	
-	/**
-	 * Dead player selector.
-	 */
-	private Selector<Player> selectorDead;
-	
-	/**
-	 * Dead player panel.
-	 */
-	private RelativeLayout panelDealer;
-	
-	/**
-	 * Dealer player selector.
-	 */
-	private Selector<Player> selectorDealer;
-	
-	/**
-	 * Bet selector.
-	 */
-	private Selector<Bet> selectorBet;
-	
-	/**
-	 * Leader player selector.
-	 */
-	private Selector<Player> selectorLeader;
-	
-	/**
-	 * Called player panel.
-	 */
-	private RelativeLayout panelCalled;
-	
-	/**
-	 * Called player selector.
-	 */
-	private Selector<Player> selectorCalled;
-
-	/**
-	 * King panel.
-	 */
-	private RelativeLayout panelKing;
-
-	/**
-	 * King selector.
-	 */
-	private Selector<King> selectorKing;
-	
-	/**
-	 * Oudler selector.
-	 */
-	private Selector<Integer> selectorOudlers;
-	
-	/**
-	 * Attack points selector.
-	 */
-	private SeekBar barAttackPoints;
-	
 	/**
 	 * Attack team score as a textview.
 	 */
 	protected TextView txtAttackPoints;
-	
 	/**
 	 * Plus button for attack score.
 	 */
 	protected Button btnPlusAttackPoints;
-	
 	/**
 	 * Minus button for attack score.
 	 */
 	protected Button btnMinusAttackPoints;
-
-	/**
-	 * Defense points selector.
-	 */
-	private SeekBar barDefensePoints;
-	
 	/**
 	 * Defense team score as a textview.
 	 */
 	protected TextView txtDefensePoints;
-	
 	/**
 	 * Plus button for defense score.
 	 */
 	protected Button btnPlusDefensePoints;
-	
 	/**
 	 * Minus button for defense score.
 	 */
 	protected Button btnMinusDefensePoints;
-
-	/**
-	 * Handful points selector.
-	 */
-	private Selector<Team> selectorHandful;
-
-	/**
-	 * Double Handful points selector.
-	 */
-	private Selector<Team> selectorDoubleHandful;
-
-	/**
-	 * Triple Handful points selector.
-	 */
-	private Selector<Team> selectorTripleHandful;
-	
-	/**
-	 * Misery panel.
-	 */
-	private RelativeLayout panelMisery;
-
-	/**
-	 * Misery player selector.
-	 */
-	private Selector<Player> selectorMisery;
-	
-	/**
-	 * Kid at the end team selector.
-	 */
-	private Selector<Team> selectorKidAtTheEnd;
-	
-	/**
-	 * Slam selector.
-	 */
-	private Selector<Chelem> selectorSlam;
-	
-	/**
-	 * Dead and dealer panel.
-	 */
-	private LinearLayout panelDeadAndDealerSection;
-
-	/**
-	 * Dead and dealer panel.
-	 */
-	private LinearLayout panelDeadAndDealer;
-
-	/**
-	 * Main parameters title.
-	 */
-	private TextView txtTitleMainParameters;
-
-	/**
-	 * Main parameters panel.
-	 */
-	private LinearLayout panelMainParameters;
-
-	/**
-	 * Annoucement panel title.
-	 */
-	private TextView txtTitleAnnouncements;
-
-	/**
-	 * Annoucement panel.
-	 */
-	private LinearLayout panelAnnouncements;
-	
 	/**
 	 * Global penalty points as a textview.
 	 */
 	protected TextView txtGlobalPenaltyPoints;
-	
 	/**
 	 * Plus button for global penalty points.
 	 */
 	protected Button btnPlusGlobalPenaltyPoints;
-	
 	/**
 	 * Minus button for global penalty points.
 	 */
 	protected Button btnMinusGlobalPenaltyPoints;
-
-	/**
-	 * Individual player penalty points seek bar.
-	 */
-	private SeekBar barPlayerPenaltyPoints;
-	
 	/**
 	 * Individual player penalty points as a textview.
 	 */
 	protected TextView txtPlayerPenaltyPoints;
-	
 	/**
-	 * Change event Listener for the attack seek bar.
+	 * Dead player panel.
 	 */
-	private OnSeekBarChangeListener attackPointsChangeListener = new OnSeekBarChangeListener() {
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStopTrackingTouch(android.widget.SeekBar)
-		 */
-		@Override
-		public void onStopTrackingTouch(final SeekBar seekBar) {
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStartTrackingTouch(android.widget.SeekBar)
-		 */
-		@Override
-		public void onStartTrackingTouch(final SeekBar seekBar) {
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
-		 */
-		@Override
-		public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
-			GameCreationActivity.this.attackScore = progress;
-			GameCreationActivity.this.updatePointsViews();
-		}
-	};
-	
+	private RelativeLayout panelDead;
 	/**
-	 * Change event Listener for the defense seek bar.
+	 * Dead player selector.
 	 */
-	private OnSeekBarChangeListener defensePointsChangeListener = new OnSeekBarChangeListener() {
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStopTrackingTouch(android.widget.SeekBar)
-		 */
-		@Override
-		public void onStopTrackingTouch(final SeekBar seekBar) {
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStartTrackingTouch(android.widget.SeekBar)
-		 */
-		@Override
-		public void onStartTrackingTouch(final SeekBar seekBar) {
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
-		 */
-		@Override
-		public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
-			GameCreationActivity.this.attackScore = 91 - progress;
-			GameCreationActivity.this.updatePointsViews();
-		}
-	};
-	
+	private Selector<Player> selectorDead;
 	/**
-	 * Change event Listener for the player penalty points seek bar.
+	 * Dead player panel.
 	 */
-	private OnSeekBarChangeListener playerPenaltyPointsChangeListener = new OnSeekBarChangeListener() {
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStopTrackingTouch(android.widget.SeekBar)
-		 */
-		@Override
-		public void onStopTrackingTouch(final SeekBar seekBar) {
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStartTrackingTouch(android.widget.SeekBar)
-		 */
-		@Override
-		public void onStartTrackingTouch(final SeekBar seekBar) {
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
-		 */
-		@Override
-		public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
-			GameCreationActivity.this.playerPenaltyPoints = progress;
-			GameCreationActivity.this.updatePenaltyPointsViews();
-		}
-	};
-
-	
+	private RelativeLayout panelDealer;
+	/**
+	 * Dealer player selector.
+	 */
+	private Selector<Player> selectorDealer;
+	/**
+	 * Bet selector.
+	 */
+	private Selector<Bet> selectorBet;
+	/**
+	 * Leader player selector.
+	 */
+	private Selector<Player> selectorLeader;
+	/**
+	 * Called player panel.
+	 */
+	private RelativeLayout panelCalled;
+	/**
+	 * Called player selector.
+	 */
+	private Selector<Player> selectorCalled;
+	/**
+	 * King panel.
+	 */
+	private RelativeLayout panelKing;
+	/**
+	 * King selector.
+	 */
+	private Selector<King> selectorKing;
+	/**
+	 * Oudler selector.
+	 */
+	private Selector<Integer> selectorOudlers;
+	/**
+	 * Attack points selector.
+	 */
+	private SeekBar barAttackPoints;
+	/**
+	 * Defense points selector.
+	 */
+	private SeekBar barDefensePoints;
+	/**
+	 * Handful points selector.
+	 */
+	private Selector<Team> selectorHandful;
+	/**
+	 * Double Handful points selector.
+	 */
+	private Selector<Team> selectorDoubleHandful;
+	/**
+	 * Triple Handful points selector.
+	 */
+	private Selector<Team> selectorTripleHandful;
+	/**
+	 * Misery panel.
+	 */
+	private RelativeLayout panelMisery;
+	/**
+	 * Misery player selector.
+	 */
+	private Selector<Player> selectorMisery;
+	/**
+	 * Kid at the end team selector.
+	 */
+	private Selector<Team> selectorKidAtTheEnd;
+	/**
+	 * Slam selector.
+	 */
+	private Selector<Chelem> selectorSlam;
+	/**
+	 * Dead and dealer panel.
+	 */
+	private LinearLayout panelDeadAndDealerSection;
+	/**
+	 * Dead and dealer panel.
+	 */
+	private LinearLayout panelDeadAndDealer;
+	/**
+	 * Main parameters title.
+	 */
+	private TextView txtTitleMainParameters;
+	/**
+	 * Main parameters panel.
+	 */
+	private LinearLayout panelMainParameters;
+	/**
+	 * Annoucement panel title.
+	 */
+	private TextView txtTitleAnnouncements;
+	/**
+	 * Annoucement panel.
+	 */
+	private LinearLayout panelAnnouncements;
+	/**
+	 * Individual player penalty points seek bar.
+	 */
+	private SeekBar barPlayerPenaltyPoints;
 	/**
 	 * Panels Click listener to use when no dead player is selected.
 	 */
 	private OnClickListener onNoDeadPlayerSelectedClickListener = new OnClickListener() {
-		
+
 		/* (non-Javadoc)
 		 * @see android.view.View.OnClickListener#onClick(android.view.View)
 		 */
@@ -370,12 +239,107 @@ public class GameCreationActivity extends SherlockActivity
 			).show();
 		}
 	};
-	
+	/**
+	 * First player selector.
+	 */
+	private Selector<Player> selectorFirst;
+	/**
+	 * Second player selector.
+	 */
+	private Selector<Player> selectorSecond;
+	/**
+	 * Third player selector.
+	 */
+	private Selector<Player> selectorThird;
+	/**
+	 * Fourth player panel.
+	 */
+	private RelativeLayout panelFourth;
+	/**
+	 * Fourth player selector.
+	 */
+	private Selector<Player> selectorFourth;
+	/**
+	 * Fifth player panel.
+	 */
+	private RelativeLayout panelFifth;
+	/**
+	 * Fifth player selector.
+	 */
+	private Selector<Player> selectorFifth;
+	/**
+	 * All players.
+	 */
+	private List<Player> allPlayers;
+	/**
+	 * Only players in game, that is all players minus dead players.
+	 */
+	private List<Player> inGamePlayers;
+	/**
+	 * Attack score.
+	 */
+	private int attackScore;
+	/**
+	 * Change event Listener for the attack seek bar.
+	 */
+	private OnSeekBarChangeListener attackPointsChangeListener = new OnSeekBarChangeListener() {
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStopTrackingTouch(android.widget.SeekBar)
+		 */
+		@Override
+		public void onStopTrackingTouch(final SeekBar seekBar) {
+		}
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStartTrackingTouch(android.widget.SeekBar)
+		 */
+		@Override
+		public void onStartTrackingTouch(final SeekBar seekBar) {
+		}
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
+		 */
+		@Override
+		public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+			GameCreationActivity.this.attackScore = progress;
+			GameCreationActivity.this.updatePointsViews();
+		}
+	};
+	/**
+	 * Change event Listener for the defense seek bar.
+	 */
+	private OnSeekBarChangeListener defensePointsChangeListener = new OnSeekBarChangeListener() {
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStopTrackingTouch(android.widget.SeekBar)
+		 */
+		@Override
+		public void onStopTrackingTouch(final SeekBar seekBar) {
+		}
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStartTrackingTouch(android.widget.SeekBar)
+		 */
+		@Override
+		public void onStartTrackingTouch(final SeekBar seekBar) {
+		}
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
+		 */
+		@Override
+		public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+			GameCreationActivity.this.attackScore = 91 - progress;
+			GameCreationActivity.this.updatePointsViews();
+		}
+	};
 	/**
 	 * Handles increase attack score.
-	 */ 
+	 */
 	private OnClickListener onIncreaseAttackScoreClickListener = new OnClickListener() {
-		
+
 		/* (non-Javadoc)
 		 * @see android.view.View.OnClickListener#onClick(android.view.View)
 		 */
@@ -385,12 +349,11 @@ public class GameCreationActivity extends SherlockActivity
 			GameCreationActivity.this.updatePointsViews();
 		}
 	};
-	
 	/**
 	 * Handles decrease attack score.
-	 */ 
+	 */
 	private OnClickListener onDecreaseAttackScoreClickListener = new OnClickListener() {
-		
+
 		/* (non-Javadoc)
 		 * @see android.view.View.OnClickListener#onClick(android.view.View)
 		 */
@@ -400,12 +363,51 @@ public class GameCreationActivity extends SherlockActivity
 			GameCreationActivity.this.updatePointsViews();
 		}
 	};
-	
+	/**
+	 * Player penalty points.
+	 */
+	private int playerPenaltyPoints;
+	/**
+	 * Player multiplication rate for global penalty points.
+	 */
+	private int playerMultiplicationRate;
+	/**
+	 * Change event Listener for the player penalty points seek bar.
+	 */
+	private OnSeekBarChangeListener playerPenaltyPointsChangeListener = new OnSeekBarChangeListener() {
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStopTrackingTouch(android.widget.SeekBar)
+		 */
+		@Override
+		public void onStopTrackingTouch(final SeekBar seekBar) {
+		}
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onStartTrackingTouch(android.widget.SeekBar)
+		 */
+		@Override
+		public void onStartTrackingTouch(final SeekBar seekBar) {
+		}
+
+		/* (non-Javadoc)
+		 * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
+		 */
+		@Override
+		public void onProgressChanged(
+				final SeekBar seekBar,
+				final int progress,
+				final boolean fromUser
+		) {
+			GameCreationActivity.this.playerPenaltyPoints = progress;
+			GameCreationActivity.this.updatePenaltyPointsViews();
+		}
+	};
 	/**
 	 * Handles increase global penalty points.
-	 */ 
+	 */
 	private OnClickListener onIncreasePenaltyPointsClickListener = new OnClickListener() {
-		
+
 		/* (non-Javadoc)
 		 * @see android.view.View.OnClickListener#onClick(android.view.View)
 		 */
@@ -415,12 +417,11 @@ public class GameCreationActivity extends SherlockActivity
 			GameCreationActivity.this.updatePenaltyPointsViews();
 		}
 	};
-	
 	/**
 	 * Handles decrease global penalty points.
-	 */ 
+	 */
 	private OnClickListener onDecreasePenaltyPointsClickListener = new OnClickListener() {
-		
+
 		/* (non-Javadoc)
 		 * @see android.view.View.OnClickListener#onClick(android.view.View)
 		 */
@@ -430,67 +431,6 @@ public class GameCreationActivity extends SherlockActivity
 			GameCreationActivity.this.updatePenaltyPointsViews();
 		}
 	};
-	
-	/**
-	 * First player selector.
-	 */
-	private Selector<Player> selectorFirst;
-
-	/**
-	 * Second player selector.
-	 */
-	private Selector<Player> selectorSecond;
-
-	/**
-	 * Third player selector.
-	 */
-	private Selector<Player> selectorThird;
-
-	/**
-	 * Fourth player panel.
-	 */
-	private RelativeLayout panelFourth;
-	
-	/**
-	 * Fourth player selector.
-	 */
-	private Selector<Player> selectorFourth;
-
-	/**
-	 * Fifth player panel.
-	 */
-	private RelativeLayout panelFifth;
-
-	/**
-	 * Fifth player selector.
-	 */
-	private Selector<Player> selectorFifth;
-
-	/**
-	 * All players.
-	 */
-	private List<Player> allPlayers;
-
-	/**
-	 * Only players in game, that is all players minus dead players.
-	 */
-	private List<Player> inGamePlayers;
-	
-	/**
-	 * Attack score.
-	 */
-	private int attackScore;
-	
-	/**
-	 * Player penalty points.
-	 */
-	private int playerPenaltyPoints;
-
-	/**
-	 * Player multiplication rate for global penalty points.
-	 */
-	private int playerMultiplicationRate;
-	
 	/**
 	 * The game type.
 	 */
@@ -698,15 +638,15 @@ public class GameCreationActivity extends SherlockActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuItem miSaveGame = menu.add(R.string.lblValidateGame);
-		miSaveGame.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		miSaveGame.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		miSaveGame.setIcon(R.drawable.ic_compose);
-		miSaveGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            
+		miSaveGame.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
 			/* (non-Javadoc)
 			 * @see com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener#onMenuItemClick(com.actionbarsherlock.view.MenuItem)
 			 */
 			@Override
-            public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
+			public boolean onMenuItemClick(MenuItem item) {
 				if (!GameCreationActivity.this.isFormValid()) {
 					Toast.makeText(
 							GameCreationActivity.this,
@@ -730,13 +670,13 @@ public class GameCreationActivity extends SherlockActivity
 		MenuItem miInfo = menu.add(R.string.lblHelpItem);
 		miInfo.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		miInfo.setIcon(R.drawable.gd_action_bar_info);
-		miInfo.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            
+		miInfo.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
 			/* (non-Javadoc)
 			 * @see com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener#onMenuItemClick(com.actionbarsherlock.view.MenuItem)
 			 */
 			@Override
-            public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
+			public boolean onMenuItemClick(MenuItem item) {
 				
 				// identify content to display
 				String content = null;
@@ -844,7 +784,7 @@ public class GameCreationActivity extends SherlockActivity
 							content = GameCreationActivity.this.getString(R.string.msgHelpNewPassedGame);
 							break;
 						case Penalty :
-							title = GameCreationActivity.this.getString(R.string.titleHelpNewPenaltyGame);;
+							title = GameCreationActivity.this.getString(R.string.titleHelpNewPenaltyGame);
 							content = GameCreationActivity.this.getString(R.string.msgHelpNewPenaltyGame);
 							break;
 					}
@@ -913,16 +853,19 @@ public class GameCreationActivity extends SherlockActivity
 	 * @return true if the dead player panel must be displayed.
 	 */
 	private boolean isDisplayDeadPlayerPanel() {
-		if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot5 && this.getGameSet().getPlayers().size() == 5) {
+		if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot5 && this.getGameSet()
+																				.getPlayers()
+																				.size() == 5) {
 			return false;
 		}
-		if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot4 && this.getGameSet().getPlayers().size() == 4) {
+		if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot4 && this.getGameSet()
+																				.getPlayers()
+																				.size() == 4) {
 			return false;
 		}
-		if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot3 && this.getGameSet().getPlayers().size() == 3) {
-			return false;
-		}
-		return true;
+		return !(this.getGameSet().getGameStyleType() == GameStyleType.Tarot3 && this.getGameSet()
+																					 .getPlayers()
+																					 .size() == 3);
 	}
     
     /**
@@ -1143,17 +1086,14 @@ public class GameCreationActivity extends SherlockActivity
     }
 
     /**
-     * Indicates whether the passed form is valid.
-     * @return
-     */
+	 * Indicates whether the passed form is valid.
+	 * @return
+	 */
     private boolean isPassedFormValid() {
-    	if (!this.selectorDealer.isSelected()) {
-    		return false;
-    	}
-    	
-    	return true;
-    }
-    
+		return this.selectorDealer.isSelected();
+
+	}
+
 	/**
      * Creates and returns a penalty game.
      * @return
@@ -2135,15 +2075,13 @@ public class GameCreationActivity extends SherlockActivity
 	private class PersistGameTask extends AsyncTask<BaseGame, Void, Void> {
 
 		/**
-		 * The context.
-		 */
-		private Context context;
-
-		/**
 		 * A progress dialog shown during the game creation and storage.
 		 */
 		private final ProgressDialog dialog;
-
+		/**
+		 * The context.
+		 */
+		private Context context;
 		/**
 		 * Flag indicating whether an error occured in the background. 
 		 */

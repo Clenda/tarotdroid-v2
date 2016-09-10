@@ -29,11 +29,15 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -42,12 +46,10 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
-import com.actionbarsherlock.view.SubMenu;
 import com.facebook.FacebookRequestError;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -56,16 +58,11 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
-import com.google.common.base.Charsets;
 
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.dal.DalException;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.GameSet;
+import org.nla.tarotdroid.dal.DalException;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.AuditHelper.EventTypes;
@@ -93,201 +90,20 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Displays all the stored game sets.
- * 
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
 @TargetApi(Build.VERSION_CODES.CUPCAKE)
-public class GameSetHistoryActivity extends SherlockListActivity {
+public class GameSetHistoryActivity extends AppCompatActivity {
 
-	/**
-	 * A listener to transfer a game set to a selected bluetooth device.
-	 */
-	private class BluetoothDeviceClickListener implements DialogInterface.OnClickListener {
-
-		/**
-		 * The device names towards which to send the GameSet.
-		 */
-		private final String[] bluetoothDeviceNames;
-
-		/**
-		 * The GameSet to transfer.
-		 */
-		private final GameSet gameSet;
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param gameSet
-		 * @param bluetoothDeviceNames
-		 */
-		public BluetoothDeviceClickListener(final GameSet gameSet, final String[] bluetoothDeviceNames) {
-			this.gameSet = gameSet;
-			this.bluetoothDeviceNames = bluetoothDeviceNames;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * android.content.DialogInterface.OnClickListener#onClick(android.content
-		 * .DialogInterface, int)
-		 */
-		@Override
-		public void onClick(final DialogInterface dialog, final int which) {
-			AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSendGameSet);
-			GameSetHistoryActivity.this.sendGameSetOverBluetooth(this.gameSet, GameSetHistoryActivity.this.bluetoothHelper.getBluetoothDevice(this.bluetoothDeviceNames[which]));
-		}
-	}
-
-	/**
-	 * Internal adapter to back up the list.
-	 */
-	private class GameSetAdapter extends ArrayAdapter<GameSet> {
-
-		/**
-		 * Constructs a GameSetAdapter.
-		 * 
-		 * @param context
-		 * @param gameSets
-		 */
-		public GameSetAdapter(Context context, List<GameSet> gameSets) {
-			super(context, R.layout.thumbnail_item, gameSets);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			GameSet gameSet = this.getItem(position);
-
-			int drawableId;
-			switch (gameSet.getGameStyleType()) {
-			case Tarot3:
-				if (gameSet.getFacebookPostTs() != null) {
-					drawableId = R.drawable.icon_3players_facebook;
-				} else {
-					drawableId = R.drawable.icon_3players;
-				}
-				break;
-			case Tarot4:
-				if (gameSet.getFacebookPostTs() != null) {
-					drawableId = R.drawable.icon_4players_facebook;
-				} else {
-					drawableId = R.drawable.icon_4players;
-				}
-				break;
-			case Tarot5:
-				if (gameSet.getFacebookPostTs() != null) {
-					drawableId = R.drawable.icon_5players_facebook;
-				} else {
-					drawableId = R.drawable.icon_5players;
-				}
-				break;
-			case None:
-			default:
-				throw new IllegalStateException("unknown gameSet type: " + gameSet.getGameStyleType());
-			}
-
-			ThumbnailItem thumbnailItem = new ThumbnailItem(this.getContext(), drawableId, UIHelper.buildGameSetHistoryTitle(gameSet), UIHelper.buildGameSetHistoryDescription(gameSet));
-
-			return thumbnailItem;
-		}
-	}
-
-	/**
-	 * A list item.
-	 */
-	private static class Item {
-
-		protected enum ItemTypes {
-			edit, exportToExcel, publishOnFacebook, publishOnTwitter, remove, transferOverBluetooth
-		};
-
-		public final int icon;
-
-		public final ItemTypes itemType;
-
-		public final String text;
-
-		public Item(String text, Integer icon, ItemTypes itemType) {
-			this.text = text;
-			this.icon = icon;
-			this.itemType = itemType;
-		}
-
-		@Override
-		public String toString() {
-			return text;
-		}
-	}
-
-	/**
-	 * Facebook post response.
-	 */
-	private interface PostResponse extends GraphObject {
-		String getId();
-	}
-
-	/**
-	 * A listener to delete a game set.
-	 */
-	private class RemoveGameSetDialogClickListener implements DialogInterface.OnClickListener {
-
-		/**
-		 * The GameSet to transfer.
-		 */
-		private final GameSet gameSet;
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param gameSet
-		 */
-		public RemoveGameSetDialogClickListener(final GameSet gameSet) {
-			this.gameSet = gameSet;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * android.content.DialogInterface.OnClickListener#onClick(android.content
-		 * .DialogInterface, int)
-		 */
-		@Override
-		public void onClick(final DialogInterface dialog, final int which) {
-			switch (which) {
-			case DialogInterface.BUTTON_POSITIVE:
-				RemoveGameSetTask removeGameSetTask = new RemoveGameSetTask(GameSetHistoryActivity.this, GameSetHistoryActivity.this.progressDialog, this.gameSet);
-				removeGameSetTask.setCallback(refreshCallback);
-				removeGameSetTask.execute();
-				break;
-
-			case DialogInterface.BUTTON_NEGATIVE:
-			default:
-				break;
-			}
-		}
-	}
-
-	/**
-	 * Items for non limited app.
-	 */
 	private static final Item[] allItems = { new Item(AppContext.getApplication().getResources().getString(R.string.lblPublishGameSet), R.drawable.facebook_white, Item.ItemTypes.publishOnFacebook),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblPublishGameSet), R.drawable.facebook_white, Item.ItemTypes.publishOnTwitter),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblEditGameSet), android.R.drawable.ic_menu_edit, Item.ItemTypes.edit),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblDeleteGameSet), R.drawable.gd_action_bar_trashcan, Item.ItemTypes.remove),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblBluetoothSend), R.drawable.stat_sys_data_bluetooth, Item.ItemTypes.transferOverBluetooth),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblExcelExport), R.drawable.ic_excel, Item.ItemTypes.exportToExcel), };
-
-	/**
-	 * Comparator of gamesets based upon their creation dates.
-	 */
 	private static final Comparator<GameSet> gameSetCreationDateDescendingComparator = new Comparator<GameSet>() {
 
 		/*
-		 * (non-Javadoc)
-		 * 
+         * (non-Javadoc)
+		 *
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@Override
@@ -295,60 +111,74 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 			return (arg1.getCreationTs().compareTo(arg0.getCreationTs()));
 		}
 	};
-
-	/**
-	 * Items for limited app.
-	 */
 	private static final Item[] limitedItems = {
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblPublishGameSet), R.drawable.facebook_white, Item.ItemTypes.publishOnFacebook),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblPublishGameSet), R.drawable.facebook_white, Item.ItemTypes.publishOnTwitter),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblEditGameSet), android.R.drawable.ic_menu_edit, Item.ItemTypes.edit),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblDeleteGameSet), R.drawable.gd_action_bar_trashcan, Item.ItemTypes.remove),
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblBluetoothSend), R.drawable.stat_sys_data_bluetooth, Item.ItemTypes.transferOverBluetooth) };
-
-	/**
-	 * Key used in storing the pendingReauthRequest flag
-	 */
 	private static final String PENDING_REAUTH_KEY = "pendingReauthRequest";
-
-	/**
-	 * List of additional write permissions being requested
-	 */
 	private static final List<String> PUBLISH_PERMISSIONS = Arrays.asList("publish_actions");
-
-	/**
-	 * List of read permissions being requested.
-	 */
 	private static final List<String> READ_PERMISSIONS = Arrays.asList("email");
-
-	/**
-	 * Activity code to flag an incoming activity result is due to a new
-	 * permissions request.
-	 */
 	private static final int REAUTH_ACTIVITY_CODE = 100;
+    private ListView listView;
+    /**
+     * Callback used to refresh the list.
+     */
+    private final IAsyncCallback<Object> refreshCallback = new IAsyncCallback<Object>() {
 
+        @Override
+        public void execute(Object isNull, Exception e) {
+            // TODO Check if exception must not be handled
+            GameSetHistoryActivity.this.refresh();
+        }
+    };
+    private BluetoothHelper bluetoothHelper;
+    @SuppressWarnings("rawtypes")
+    private AsyncTask currentRunningTask;
 	/**
-	 * The bluetooth helper.
-	 */
-	private BluetoothHelper bluetoothHelper;
+     * Indicates an on-going reauthorization request
+     */
+    private boolean pendingReauthRequest;
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialog progressDialog;
+    /**
+     * "Yes / No" remove all gamesets dialog box listener.
+     */
+    private final DialogInterface.OnClickListener removeAllGameSetsDialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(final DialogInterface dialog, final int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    RemoveAllGameSetsTask removeAllGameSetsTask = new RemoveAllGameSetsTask(
+                            GameSetHistoryActivity.this,
+                            GameSetHistoryActivity.this.progressDialog);
+                    removeAllGameSetsTask.setCallback(refreshCallback);
+                    removeAllGameSetsTask.execute();
+                    break;
 
-	@SuppressWarnings("rawtypes")
-	private AsyncTask currentRunningTask;
-
-	/**
-	 * Callback called when excel export task is done.
-	 */
-	private final IAsyncCallback<String> excelExportCallback = new IAsyncCallback<String>() {
-
-		@Override
-		public void execute(String filePath, Exception e) {
-
-			// TODO Check exception
-			onGameSetExportedToExcelFile(filePath);
-		}
-	};
-
-	/**
+                case DialogInterface.BUTTON_NEGATIVE:
+                default:
+                    break;
+            }
+        }
+    };
+    /**
+     * The AsyncTask to receive a GameSet.
+     */
+    private ReceiveGameSetTask receiveGameSetTask;
+    /**
+     * The AsyncTask to send a GameSet.
+     */
+    private SendGameSetTask sendGameSetTask;
+    /**
+     * Temporary path for Excel path. Use with care, this is pretty much a
+     * global variable (it's used between differents inner classes).
+     */
+    private String tempExcelFilePath;
+    /**
 	 * "Yes / No" export excel by email.
 	 */
 	private final DialogInterface.OnClickListener exportExcelByEmailDialogClickListener = new DialogInterface.OnClickListener() {
@@ -374,33 +204,26 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 				}
 				break;
 			case DialogInterface.BUTTON_NEGATIVE:
-			default:
-				break;
-			}
-		}
-	};
+                default:
+                    break;
+            }
+        }
+    };
+    private final IAsyncCallback<String> excelExportCallback = new IAsyncCallback<String>() {
 
-	/**
-	 * Facebook session state change callback.
-	 */
-	private final Session.StatusCallback facebookSessionStatusCallback = new Session.StatusCallback() {
-		@Override
-		public void call(Session session, SessionState state, Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
+        @Override
+        public void execute(String filePath, Exception e) {
 
-	/**
-	 * Http client for communication with the cloud.
-	 */
-	private DefaultHttpClient httpClient;
-
-	/**
-	 * Indicates an on-going reauthorization request
-	 */
-	private boolean pendingReauthRequest;
-
-	/**
+            // TODO Check exception
+            onGameSetExportedToExcelFile(filePath);
+        }
+    };
+    /**
+     * Temporary GameSet. Use with care, this is pretty much a global variable
+     * (it's used between differents inner classes).
+     */
+    private GameSet tempGameSet;
+    /**
 	 * Callback used after post on facebook wall.
 	 */
 	private final IAsyncCallback<Response> postToFacebookWallCallback = new IAsyncCallback<Response>() {
@@ -409,84 +232,32 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		public void execute(Response facebookResponse, Exception e) {
 			// TODO Check Exception
 			GameSetHistoryActivity.this.onPostPublishGameSetOnFacebookWall(facebookResponse);
-		}
-	};
+        }
+    };
+    /**
+     * Callback to execute when post has been posted to facebook.
+     */
+    private final IAsyncCallback<Object> upSyncCallback = new IAsyncCallback<Object>() {
 
-	/**
-	 * The progress dialog.
-	 */
-	private ProgressDialog progressDialog;
-
-	/**
-	 * The AsyncTask to receive a GameSet.
-	 */
-	private ReceiveGameSetTask receiveGameSetTask;
-
-	/**
-	 * Callback used to refresh the list.
-	 */
-	private final IAsyncCallback<Object> refreshCallback = new IAsyncCallback<Object>() {
-
-		@Override
-		public void execute(Object isNull, Exception e) {
-			// TODO Check if exception must not be handled
-			GameSetHistoryActivity.this.refresh();
-		}
-	};
-
-	/**
-	 * "Yes / No" remove all gamesets dialog box listener.
-	 */
-	private final DialogInterface.OnClickListener removeAllGameSetsDialogClickListener = new DialogInterface.OnClickListener() {
-		@Override
-		public void onClick(final DialogInterface dialog, final int which) {
-			switch (which) {
-			case DialogInterface.BUTTON_POSITIVE:
-				RemoveAllGameSetsTask removeAllGameSetsTask = new RemoveAllGameSetsTask(GameSetHistoryActivity.this, GameSetHistoryActivity.this.progressDialog);
-				removeAllGameSetsTask.setCallback(refreshCallback);
-				removeAllGameSetsTask.execute();
-				break;
-
-			case DialogInterface.BUTTON_NEGATIVE:
-			default:
-				break;
-			}
-		}
-	};
-
-	/**
-	 * The AsyncTask to send a GameSet.
-	 */
-	private SendGameSetTask sendGameSetTask;
-
-	/**
-	 * Temporary path for Excel path. Use with care, this is pretty much a
-	 * global variable (it's used between differents inner classes).
-	 */
-	private String tempExcelFilePath;
-
-	/**
-	 * Temporary GameSet. Use with care, this is pretty much a global variable
-	 * (it's used between differents inner classes).
-	 */
-	private GameSet tempGameSet;
-
+        @Override
+        public void execute(Object object, Exception e) {
+            // TODO Check exception
+            GameSetHistoryActivity.this.publishGameSetOnFacebook();
+        }
+    };
+    /**
+     * Facebook session state change callback.
+     */
+    private final Session.StatusCallback facebookSessionStatusCallback = new Session.StatusCallback() {
+        @Override
+        public void call(Session session, SessionState state, Exception exception) {
+            onSessionStateChange(session, state, exception);
+        }
+    };
 	/**
 	 * Facebook ui lifecyle manager.
 	 */
 	private UiLifecycleHelper uiHelper;
-
-	/**
-	 * Callback to execute when post has been posted to facebook.
-	 */
-	private final IAsyncCallback<Object> upSyncCallback = new IAsyncCallback<Object>() {
-
-		@Override
-		public void execute(Object object, Exception e) {
-			// TODO Check exception
-			GameSetHistoryActivity.this.publishGameSetOnFacebook();
-		}
-	};
 
 	/**
 	 * Traces creation event.
@@ -495,10 +266,10 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetHistoryPage);
 	}
 
-	/**
-	 * Handle facebook error.
-	 * 
-	 * @param error
+    /**
+     * Handle facebook error.
+     *
+     * @param error
 	 */
 	private void handleFacebookError(final FacebookRequestError error) {
 		DialogInterface.OnClickListener listener = null;
@@ -518,8 +289,8 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 
 	/**
 	 * Checks whether the current session is allowed to publish on facebook.
-	 * 
-	 * @return true if the session can publish, false otherwisee.
+     *
+     * @return true if the session can publish, false otherwisee.
 	 */
 	private boolean hasPublishPermission() {
 		Session session = Session.getActiveSession();
@@ -528,8 +299,8 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 
 	/**
 	 * Checks whether the current session is allowed to read on facebook.
-	 * 
-	 * @return
+     *
+     * @return
 	 */
 	private boolean hasReadPermission() {
 		Session session = Session.getActiveSession();
@@ -538,8 +309,8 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 
 	/**
 	 * Indicates whether the bluetooth is activated on the device.
-	 * 
-	 * @return
+     *
+     * @return
 	 */
 	private boolean isBluetoothActivated() {
 		boolean isActivated = GameSetHistoryActivity.this.bluetoothHelper.isBluetoothEnabled();
@@ -551,8 +322,8 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 
 	/**
 	 * Starts the whole Facebook post process.
-	 * 
-	 * @param session
+     *
+     * @param session
 	 */
 	private void launchPostProcess(final Session session) {
 
@@ -601,8 +372,8 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
+     * (non-Javadoc)
+	 *
 	 * @see android.app.Activity#onActivityResult(int, int,
 	 * android.content.Intent)
 	 */
@@ -613,8 +384,8 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
+     * (non-Javadoc)
+	 *
 	 * @see android.app.Activity#onBackPressed()
 	 */
 	@Override
@@ -638,15 +409,12 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		super.onBackPressed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
+            this.setContentView(R.layout.activity_gameset_history);
+            this.listView = (ListView) findViewById(R.id.listView);
 
 			// facebook lifecycle objects
 			this.uiHelper = new UiLifecycleHelper(this, facebookSessionStatusCallback);
@@ -657,22 +425,17 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 			this.progressDialog = new ProgressDialog(this);
 			this.progressDialog.setCanceledOnTouchOutside(false);
 
-			this.httpClient = new DefaultHttpClient();
-			HttpParams httpParams = new BasicHttpParams();
-			HttpProtocolParams.setContentCharset(httpParams, Charsets.UTF_8.toString());
-			httpClient.setParams(httpParams);
-
 			// initialize bluetooth
 			this.bluetoothHelper = AppContext.getApplication().getBluetoothHelper();
 			this.bluetoothHelper.setActivity(this);
 
 			// set excuse as background image
-			this.getListView().setCacheColorHint(0);
-			this.getListView().setBackgroundResource(R.drawable.img_excuse);
+            this.listView.setCacheColorHint(0);
+            this.listView.setBackgroundResource(R.drawable.img_excuse);
 
 			// set action bar properties
-			this.setTitle();
-			this.registerForContextMenu(this.getListView());
+            this.setTitle();
+            this.registerForContextMenu(listView);
 
 			// set internal properties
 			this.tempExcelFilePath = null;
@@ -707,20 +470,20 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 					task.attach(this);
 				} else if (currentRunningTask instanceof PostGameSetLinkOnFacebookWallTask) {
 					PostGameSetLinkOnFacebookWallTask task = (PostGameSetLinkOnFacebookWallTask) currentRunningTask;
-					task.attach(this);
-				}
-			}
+                    task.attach(this);
+                }
+            }
 
-			this.getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+            this.listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 				@Override
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
 					onListItemClick(pos);
-					return false;
-				}
-			});
+                    return false;
+                }
+            });
 
-			this.getListView().setOnItemClickListener(new OnItemClickListener() {
+            this.listView.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
@@ -729,34 +492,31 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 			});
 		} catch (Exception e) {
 			AuditHelper.auditError(ErrorTypes.gameSetHistoryActivityError, e, this);
-		}
-	}
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.actionbarsherlock.app.SherlockListActivity#onCreateOptionsMenu(android
-	 * .view.Menu)
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
 		SubMenu subMenuBlueTooth = menu.addSubMenu(this.getString(R.string.lblBluetoothItem));
-		com.actionbarsherlock.view.MenuItem miBluetooth = subMenuBlueTooth.getItem();
-		miBluetooth.setIcon(R.drawable.stat_sys_data_bluetooth);
-		miBluetooth.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        MenuItem miBluetooth = subMenuBlueTooth.getItem();
+        miBluetooth.setIcon(R.drawable.stat_sys_data_bluetooth);
+        miBluetooth.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
-		com.actionbarsherlock.view.MenuItem miBlueToothDiscover = subMenuBlueTooth.add(R.string.lblBluetoothDiscover).setIcon(R.drawable.ic_menu_allfriends);
-		com.actionbarsherlock.view.MenuItem miBlueToothGetDiscoverable = subMenuBlueTooth.add(R.string.lblBluetoothGetDiscoverable).setIcon(android.R.drawable.ic_menu_myplaces);
-		com.actionbarsherlock.view.MenuItem miBlueToothReceive = subMenuBlueTooth.add(R.string.lblBluetoothReceive).setIcon(R.drawable.ic_menu_download);
-		com.actionbarsherlock.view.MenuItem miBlueToothHelp = subMenuBlueTooth.add(R.string.lblBluetoothHelp).setIcon(android.R.drawable.ic_menu_info_details);
+        MenuItem miBlueToothDiscover = subMenuBlueTooth.add(R.string.lblBluetoothDiscover)
+                                                       .setIcon(R.drawable.ic_menu_allfriends);
+        MenuItem miBlueToothGetDiscoverable = subMenuBlueTooth.add(R.string.lblBluetoothGetDiscoverable)
+                                                              .setIcon(android.R.drawable.ic_menu_myplaces);
+        MenuItem miBlueToothReceive = subMenuBlueTooth.add(R.string.lblBluetoothReceive)
+                                                      .setIcon(R.drawable.ic_menu_download);
+        MenuItem miBlueToothHelp = subMenuBlueTooth.add(R.string.lblBluetoothHelp)
+                                                   .setIcon(android.R.drawable.ic_menu_info_details);
 
-		miBlueToothDiscover.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				if (isBluetoothActivated()) {
-					GameSetHistoryActivity.this.bluetoothHelper.startDiscovery();
+        miBlueToothDiscover.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (isBluetoothActivated()) {
+                    GameSetHistoryActivity.this.bluetoothHelper.startDiscovery();
 					AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothDiscoverDevices);
 				}
 				return true;
@@ -764,10 +524,10 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		});
 
 		miBlueToothGetDiscoverable.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				if (isBluetoothActivated()) {
-					GameSetHistoryActivity.this.bluetoothHelper.setBluetoothDeviceDiscoverable();
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (isBluetoothActivated()) {
+                    GameSetHistoryActivity.this.bluetoothHelper.setBluetoothDeviceDiscoverable();
 					AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSetDiscoverable);
 				}
 				return true;
@@ -775,10 +535,10 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		});
 
 		miBlueToothReceive.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				if (isBluetoothActivated()) {
-					// retrieve game count
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (isBluetoothActivated()) {
+                    // retrieve game count
 					int gameSetCount;
 					try {
 						gameSetCount = AppContext.getApplication().getDalService().getGameSetCount();
@@ -811,10 +571,15 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		});
 
 		miBlueToothHelp.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				UIHelper.showSimpleRichTextDialog(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getText(R.string.msgHelpBluetooth).toString(), AppContext.getApplication()
-						.getResources().getString(R.string.titleHelpBluetooth));
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                UIHelper.showSimpleRichTextDialog(GameSetHistoryActivity.this,
+                                                  AppContext.getApplication()
+                                                            .getResources()
+                                                            .getText(R.string.msgHelpBluetooth)
+                                                            .toString(),
+                                                  AppContext.getApplication()
+                                                            .getResources().getString(R.string.titleHelpBluetooth));
 				return true;
 			}
 		});
@@ -835,19 +600,19 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		// ExportToExcelTask(GameSetHistoryActivity.this, progressDialog);
 		// task.execute();
 		// return true;
-		// }
-		// });
-		// }
+        // }
+        // });
+        // }
 
-		com.actionbarsherlock.view.MenuItem miBin = menu.add(this.getString(R.string.lblInitDalItem));
-		miBin.setShowAsAction(com.actionbarsherlock.view.MenuItem.SHOW_AS_ACTION_NEVER);
-		miBin.setIcon(R.drawable.gd_action_bar_trashcan);
+        MenuItem miBin = menu.add(this.getString(R.string.lblInitDalItem));
+        miBin.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        miBin.setIcon(R.drawable.gd_action_bar_trashcan);
 
 		miBin.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(GameSetHistoryActivity.this);
-				builder.setTitle(GameSetHistoryActivity.this.getString(R.string.titleReinitDalYesNo));
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(GameSetHistoryActivity.this);
+                builder.setTitle(GameSetHistoryActivity.this.getString(R.string.titleReinitDalYesNo));
 				builder.setMessage(Html.fromHtml(GameSetHistoryActivity.this.getText(R.string.msgReinitDalYesNo).toString()));
 				builder.setPositiveButton(GameSetHistoryActivity.this.getString(R.string.btnOk), GameSetHistoryActivity.this.removeAllGameSetsDialogClickListener);
 				builder.setNegativeButton(GameSetHistoryActivity.this.getString(R.string.btnCancel), GameSetHistoryActivity.this.removeAllGameSetsDialogClickListener).show();
@@ -859,11 +624,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.actionbarsherlock.app.SherlockListActivity#onDestroy()
-	 */
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -874,23 +634,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		}
 	}
 
-	// /**
-	// * Read session opened callback.
-	// */
-	// private Session.StatusCallback readSessionOpenedStatusCallback = new
-	// Session.StatusCallback() {
-	// @Override
-	// public void call(Session session, SessionState state, Exception
-	// exception) {
-	// requestPublishPermissions(session);
-	// }
-	// };
-
-	/**
-	 * Called when excel export task is done.
-	 * 
-	 * @param filePath
-	 */
 	private void onGameSetExportedToExcelFile(String filePath) {
 		// should never happen
 		if (filePath == null) {
@@ -909,13 +652,13 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		}
 	}
 
-	/**
-	 * Manage click on GameSet.
-	 * 
-	 * @param pos
+    /**
+     * Manage click on GameSet.
+     *
+     * @param pos
 	 */
 	private void onListItemClick(final int pos) {
-		final GameSet gameSet = (GameSet) getListAdapter().getItem(pos);
+        final GameSet gameSet = (GameSet) listView.getAdapter().getItem(pos);
 
 		final Item[] items = AppContext.getApplication().isAppLimited() ? limitedItems : allItems;
 
@@ -1054,8 +797,8 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
+     * (non-Javadoc)
+	 *
 	 * @see com.actionbarsherlock.app.SherlockListActivity#onPause()
 	 */
 	@Override
@@ -1066,8 +809,8 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 
 	/**
 	 * Method called asynchronously after publishGameSetOnFacebookWall().
-	 * 
-	 * @param facebookResponse
+     *
+     * @param facebookResponse
 	 */
 	private void onPostPublishGameSetOnFacebookWall(final Response facebookResponse) {
 		PostResponse postResponse = facebookResponse.getGraphObjectAs(PostResponse.class);
@@ -1091,54 +834,25 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		}
 	}
 
-	// /**
-	// * Published session opened callback.
-	// */
-	// private Session.StatusCallback publishSessionOpenedCallback = new
-	// Session.StatusCallback() {
-	// @Override
-	// public void call(Session session, SessionState state, Exception
-	// exception) {
-	// launchPostProcess(session);
-	// }
-	// };
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.actionbarsherlock.app.SherlockListActivity#onRestoreInstanceState
-	 * (android.os.Bundle)
-	 */
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		this.pendingReauthRequest = savedInstanceState.getBoolean(PENDING_REAUTH_KEY, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onResume()
-	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
 		this.uiHelper.onResume();
 		if (AppContext.getApplication().getLoadDalTask().getStatus() == AsyncTask.Status.FINISHED) {
 			this.refresh();
-		}
-	}
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onRetainNonConfigurationInstance()
-	 */
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		Object toReturn = null;
-		if (currentRunningTask == null) {
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        Object toReturn = null;
+        if (currentRunningTask == null) {
 			toReturn = null;
 		} else if (currentRunningTask instanceof UpSyncGameSetTask) {
 			UpSyncGameSetTask task = (UpSyncGameSetTask) currentRunningTask;
@@ -1153,11 +867,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		return toReturn;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
-	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -1165,36 +874,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		this.uiHelper.onSaveInstanceState(outState);
 	}
 
-	// /**
-	// * Post game set to Facebook Wall.
-	// */
-	// private void publishGameSetOnFacebookApp() {
-	// PostGameSetOnFacebookAppTask postGameSetOnFacebookAppTask = new
-	// PostGameSetOnFacebookAppTask(this, this.progressDialog, tempGameSet);
-	// postGameSetOnFacebookAppTask.setCallback(this.postToFacebookAppCallback);
-	// postGameSetOnFacebookAppTask.execute();
-	// }
-
-	// /**
-	// * Method called asynchronously after publishGameSetOnFacebookApp().
-	// * @param facebookResponse
-	// */
-	// private void onPostPublishGameSetOnFacebookApp(final Response
-	// facebookResponse) {
-	// PostResponse postResponse =
-	// facebookResponse.getGraphObjectAs(PostResponse.class);
-	//
-	// if (postResponse == null || postResponse.getId() == null) {
-	// }
-	// }
-
-	/**
-	 * Called when session changed.
-	 * 
-	 * @param session
-	 * @param state
-	 * @param exception
-	 */
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		// ask for publish permissions
 		if (tempGameSet != null && session.getState() == SessionState.OPENED && !hasPublishPermission()) {
@@ -1213,11 +892,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		}
 	}
 
-	/**
-	 * Opens a read session before opening a publish session.
-	 * 
-	 * @param callback
-	 */
 	private void openFacebookSessionForRead(Session session) {
 		if (session != null) {
 			// session.openForRead(new
@@ -1226,9 +900,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		}
 	}
 
-	/**
-	 * Publish the game set on Facebook.
-	 */
 	private void publishGameSetOnFacebook() {
 		Session session = Session.getActiveSession();
 		this.pendingReauthRequest = false;
@@ -1242,33 +913,19 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		}
 	}
 
-	/**
-	 * Post game set to Facebook Wall.
-	 */
 	private void publishGameSetOnFacebookWall() {
 		PostGameSetLinkOnFacebookWallTask postGameSetLinkOnFacebookWallTask = new PostGameSetLinkOnFacebookWallTask(this, this.progressDialog, tempGameSet, null);
 		postGameSetLinkOnFacebookWallTask.setCallback(this.postToFacebookWallCallback);
 		postGameSetLinkOnFacebookWallTask.execute();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.nla.tarotdroid.ui.IRefreshableGameSetContainer#refresh()
-	 */
-	// @Override
 	public void refresh() {
 		List<GameSet> gameSets = AppContext.getApplication().getDalService().getAllGameSets();
 		Collections.sort(gameSets, gameSetCreationDateDescendingComparator);
-		this.setListAdapter(new GameSetAdapter(this, gameSets));
-		this.setTitle();
-	}
+        this.listView.setAdapter(new GameSetAdapter(this, gameSets));
+        this.setTitle();
+    }
 
-	/**
-	 * Initiates a new request for permissions.
-	 * 
-	 * @param session
-	 */
 	private void requestPublishPermissions(Session session) {
 		if (!this.hasPublishPermission()) {
 
@@ -1293,9 +950,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		}
 	}
 
-	/**
-	 * Runs a task to transfer a game set.
-	 */
 	private void sendGameSetOverBluetooth(final GameSet gameSet, final BluetoothDevice bluetoothDevice) {
 		try {
 			AuditHelper.auditEvent(EventTypes.actionBluetoothSendGameSet);
@@ -1308,9 +962,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 		}
 	}
 
-	/**
-	 * Sets adhoc title.
-	 */
 	private void setTitle() {
 		if (AppContext.getApplication().getDalService() == null || AppContext.getApplication().getDalService().getAllGameSets().size() == 0) {
 			this.setTitle(this.getResources().getString(R.string.lblGameSetHistoryActivityTitleNone));
@@ -1322,9 +973,6 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 
 	}
 
-	/**
-	 * Attempts to start the publish process.
-	 */
 	private void startPostProcess() {
 		Session session = Session.getActiveSession();
 		if (session == null || session.isClosed()) {
@@ -1342,6 +990,171 @@ public class GameSetHistoryActivity extends SherlockListActivity {
 			return;
 		}
 
-		this.launchPostProcess(session);
-	}
+        this.launchPostProcess(session);
+    }
+
+    private interface PostResponse extends GraphObject {
+        String getId();
+    }
+
+    private static class Item {
+
+        public final int icon;
+        public final ItemTypes itemType;
+        public final String text;
+
+        public Item(String text, Integer icon, ItemTypes itemType) {
+            this.text = text;
+            this.icon = icon;
+            this.itemType = itemType;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+
+        protected enum ItemTypes {
+            edit, exportToExcel, publishOnFacebook, publishOnTwitter, remove, transferOverBluetooth
+        }
+    }
+
+    private class BluetoothDeviceClickListener implements DialogInterface.OnClickListener {
+
+        /**
+         * The device names towards which to send the GameSet.
+         */
+        private final String[] bluetoothDeviceNames;
+
+        /**
+         * The GameSet to transfer.
+         */
+        private final GameSet gameSet;
+
+        /**
+         * Constructor.
+         *
+         * @param gameSet
+         * @param bluetoothDeviceNames
+         */
+        public BluetoothDeviceClickListener(
+                final GameSet gameSet,
+                final String[] bluetoothDeviceNames
+        ) {
+            this.gameSet = gameSet;
+            this.bluetoothDeviceNames = bluetoothDeviceNames;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see
+         * android.content.DialogInterface.OnClickListener#onClick(android.content
+         * .DialogInterface, int)
+         */
+        @Override
+        public void onClick(final DialogInterface dialog, final int which) {
+            AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSendGameSet);
+            GameSetHistoryActivity.this.sendGameSetOverBluetooth(this.gameSet,
+                                                                 GameSetHistoryActivity.this.bluetoothHelper
+                                                                         .getBluetoothDevice(this.bluetoothDeviceNames[which]));
+        }
+    }
+
+    private class GameSetAdapter extends ArrayAdapter<GameSet> {
+
+        /**
+         * Constructs a GameSetAdapter.
+         *
+         * @param context
+         * @param gameSets
+         */
+        public GameSetAdapter(Context context, List<GameSet> gameSets) {
+            super(context, R.layout.thumbnail_item, gameSets);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            GameSet gameSet = this.getItem(position);
+
+            int drawableId;
+            switch (gameSet.getGameStyleType()) {
+                case Tarot3:
+                    if (gameSet.getFacebookPostTs() != null) {
+                        drawableId = R.drawable.icon_3players_facebook;
+                    } else {
+                        drawableId = R.drawable.icon_3players;
+                    }
+                    break;
+                case Tarot4:
+                    if (gameSet.getFacebookPostTs() != null) {
+                        drawableId = R.drawable.icon_4players_facebook;
+                    } else {
+                        drawableId = R.drawable.icon_4players;
+                    }
+                    break;
+                case Tarot5:
+                    if (gameSet.getFacebookPostTs() != null) {
+                        drawableId = R.drawable.icon_5players_facebook;
+                    } else {
+                        drawableId = R.drawable.icon_5players;
+                    }
+                    break;
+                case None:
+                default:
+                    throw new IllegalStateException("unknown gameSet type: " + gameSet.getGameStyleType());
+            }
+
+            ThumbnailItem thumbnailItem = new ThumbnailItem(this.getContext(),
+                                                            drawableId,
+                                                            UIHelper.buildGameSetHistoryTitle(
+                                                                    gameSet),
+                                                            UIHelper.buildGameSetHistoryDescription(
+                                                                    gameSet));
+
+            return thumbnailItem;
+        }
+    }
+
+    private class RemoveGameSetDialogClickListener implements DialogInterface.OnClickListener {
+
+        /**
+         * The GameSet to transfer.
+         */
+        private final GameSet gameSet;
+
+        /**
+         * Constructor.
+         *
+         * @param gameSet
+         */
+        public RemoveGameSetDialogClickListener(final GameSet gameSet) {
+            this.gameSet = gameSet;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see
+         * android.content.DialogInterface.OnClickListener#onClick(android.content
+         * .DialogInterface, int)
+         */
+        @Override
+        public void onClick(final DialogInterface dialog, final int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    RemoveGameSetTask removeGameSetTask = new RemoveGameSetTask(
+                            GameSetHistoryActivity.this,
+                            GameSetHistoryActivity.this.progressDialog,
+                            this.gameSet);
+                    removeGameSetTask.setCallback(refreshCallback);
+                    removeGameSetTask.execute();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                default:
+                    break;
+            }
+        }
+    }
 }

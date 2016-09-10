@@ -3,7 +3,7 @@ package org.nla.tarotdroid.ui.cloud;
 import com.google.common.base.Predicate;
 
 import org.nla.tarotdroid.biz.Player;
-import org.nla.tarotdroid.cloud.clientmodel.RestPlayer;
+import org.nla.tarotdroid.clientmodel.RestPlayer;
 
 import java.util.List;
 

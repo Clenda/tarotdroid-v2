@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="Theme.TarotDroid" parent="Theme.AppCompat.Light">
+
+    <style name="Theme.TarotDroid" parent="@style/Theme.AppCompat.Light.DarkActionBar">
 		<!--  item name="gdActionBarBackground">@drawable/action_bar_background</item-->
 		<!--  item name="gdActionBarApplicationDrawable">@drawable/greendroid_application_logo</item-->
 	</style>
@@ -8,6 +9,15 @@
 	<style name="Theme.TarotDroid.Dialog" parent="@android:style/Theme.Dialog">
 	    <item name="android:windowNoTitle">true</item>	
 	</style>
+
+    <style name="Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:theme">@style/Toolbar.Theme</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="titleTextAppearance">@style/Toolbar.Title</item>
+    </style>
 	
     <style name="MainButtonStyle">
         <item name="android:layout_gravity">center_vertical</item>
@@ -81,5 +91,13 @@
         <item name="android:singleLine">true</item>
     </style>
 
+    <style name="Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/subhead</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="Toolbar.Theme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!--<item name="fontPath">@string/open_sans_regular</item>-->
+    </style>
     
 </resources>
