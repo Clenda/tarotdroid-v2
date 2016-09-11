@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui;
 
 import android.annotation.TargetApi;
@@ -24,15 +8,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
-import com.actionbarsherlock.view.SubMenu;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -42,6 +26,8 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.FriendPickerFragment;
 import com.google.common.base.Throwables;
 
+import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.computers.IPlayerStatisticsComputer;
 import org.nla.tarotdroid.biz.computers.PlayerStatisticsComputerFactory;
@@ -49,8 +35,6 @@ import org.nla.tarotdroid.biz.enums.BetType;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.biz.enums.ResultType;
 import org.nla.tarotdroid.dal.DalException;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.UIHelper;
@@ -64,51 +48,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Activity aimed to display info about a player.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class PlayerStatisticsActivity extends SherlockListActivity {
+
+public class PlayerStatisticsActivity extends AppCompatActivity {
 	
-	/**
-	 * List of read permissions being requested.
-	 */
 	private static final List<String> READ_PERMISSIONS = Arrays.asList("email");
 	
-	/**
-	 * Picture actions.
-	 */
 	private enum ActionTypes {
 		setMyImageAsPlayerPicture,
 		setFriendImageAsPlayerPicture
 	}
 	
 	private ActionTypes actionType;
-	
-	/**
-	 * The player.
-	 */
 	private Player player;
-	
-	/**
-	 * A context menu for selecting a picture.
-	 */
 	private IconContextMenu pictureContextMenu;
-
-	/**
-	 * The list backing adapter.
-	 */
 	private PlayerStatisticsAdapter adapter;
-	
-	/**
-	 * Internal flag to check whether player picture was modified. 
-	 */
 	private boolean pictureChanged;
-	
-	/**
-	 * Facebook ui lifecyle manager.
-	 */
 	private UiLifecycleHelper uiHelper;
+	private ListView listView;
     
     /**
      *	Set my image as a player picture.
@@ -155,9 +111,6 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
         this.startActivityForResult(intent, R.id.select_picture_from_facebook_action_code);
     }
 	
-	/**
-	 * Facebook session state change callback.
-	 */
     private Session.StatusCallback facebookSessionStatusCallback = new Session.StatusCallback() {
         @Override
         public void call(Session session, SessionState state, Exception exception) {
@@ -165,12 +118,6 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
         }
     };
     
-    /**
-     * Called when session changed.
-     * @param session
-     * @param state
-     * @param exception
-     */
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
     	if (session.isOpened() && this.hasReadPermission()) {
     		if (actionType == ActionTypes.setFriendImageAsPlayerPicture) {
@@ -185,22 +132,17 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
     	}
     }
     
-    /**
-     * Checks whether the current session is allowed to read on facebook.
-     * @return 
-     */
     private boolean hasReadPermission() {
         Session session = Session.getActiveSession();
         return session != null && session.getPermissions().containsAll(READ_PERMISSIONS);
     }
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
     public void onCreate(final Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
+			setContentView(R.layout.activity_player_statistics);
+			listView = (ListView)findViewById(R.id.listView);
 			
 			// facebook session creation
 	        this.uiHelper = new UiLifecycleHelper(this, facebookSessionStatusCallback);
@@ -209,8 +151,8 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 			this.auditEvent();
 			this.pictureChanged = false;
 
-			this.getListView().setCacheColorHint(0);
-			this.getListView().setBackgroundResource(R.drawable.img_excuse);
+			listView.setCacheColorHint(0);
+            listView.setBackgroundResource(R.drawable.img_excuse);
 
 			// make sure player name is provided
 			if (!this.getIntent().getExtras().containsKey("player")) {
@@ -354,7 +296,7 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 		
 		MenuItem miFromFacebook = menuPicture.add(this.getString(R.string.lblPictureFromFriendsFacebookItem));
 		miFromFacebook.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		miFromFacebook.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		miFromFacebook.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -380,7 +322,7 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 		
 		MenuItem miMeFacebook = menuPicture.add(this.getString(R.string.lblPictureFromMeFacebookItem));
 		miMeFacebook.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		miMeFacebook.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		miMeFacebook.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -406,7 +348,7 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 		
 		MenuItem miFromContacts = menuPicture.add(this.getString(R.string.lblPictureFromContactsItem));
 		miFromContacts.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		miFromContacts.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		miFromContacts.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			
 			@TargetApi(Build.VERSION_CODES.ECLAIR)
 			@Override
@@ -419,7 +361,7 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 		
 		MenuItem miNoPicture = menuPicture.add(this.getString(R.string.lblPictureNoPictureItem));
 		miNoPicture.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		miNoPicture.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		miNoPicture.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -453,17 +395,11 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 		return true;
 	}
 	
-	/**
-	 * Refreshes the list items.
-	 */
 	private void refresh() {
-		this.adapter = new PlayerStatisticsAdapter(this);
-		this.setListAdapter(this.adapter);
+		adapter = new PlayerStatisticsAdapter(this);
+		listView.setAdapter(this.adapter);
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onBackPressed()
-	 */
 	@Override
 	public void onBackPressed() {
 		if (this.pictureChanged) {
@@ -478,31 +414,17 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 		this.finish();
 	}
 	
-	/**
-	 * Internal adapter to back up the list data.
-	 */
 	private class PlayerStatisticsAdapter extends BaseAdapter {
 		
 		private View playerItem;
-		
 		private TextItem playedGameSetCountItem;
-		
 		private TextItem playedGameSetCountByGameStyleTypeItem;
-		
 		private TextItem playedGameCountItem;
-		
 		private TextItem playedGameCountByBetTypeItem;
-		
 		private TextItem leaderInGameCountItem;
-		
 		private TextItem calledInGameCountItem;
-
 		private Context context;
 		
-		/**
-		 * Constructs a PlayerStatisticsAdapter.
-		 * @param context
-		 */
 		public PlayerStatisticsAdapter(Context context) {
 			this.context = context;
 			
@@ -599,10 +521,7 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 					context.getString(R.string.lblPlayerStatsCalledPlayerDetails, gameCountAsCalledPlayer)
 			);
 		}
-		
-		/**
-		 * Updates the thumbnail item containing the player picture.
-		 */
+
 		public void setPlayerPicture() {
 			
 			// facebook pic was set
@@ -638,17 +557,11 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 			//this.notifyDataSetChanged();
 		}
 		
-		/* (non-Javadoc)
-		 * @see android.widget.Adapter#getCount()
-		 */
 		@Override
 		public int getCount() {
 			return 7;
 		}
 		
-		/* (non-Javadoc)
-		 * @see android.widget.Adapter#getItem(int)
-		 */
 		@Override
 		public Object getItem(int position) {
 			switch(position) {
@@ -671,17 +584,11 @@ public class PlayerStatisticsActivity extends SherlockListActivity {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see android.widget.Adapter#getItemId(int)
-		 */
 		@Override
 		public long getItemId(int position) {
 			return position;
 		}
 
-		/* (non-Javadoc)
-		 * @see android.widget.Adapter#getView(int, android.view.View, android.view.ViewGroup)
-		 */
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			switch(position) {

@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.nla.tarotdroid.ui;
 
 import android.content.Context;
@@ -21,14 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockListActivity;
 
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.R;
@@ -44,32 +28,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class PlayerListActivity extends SherlockListActivity {
+public class PlayerListActivity extends AppCompatActivity {
 
-	/**
-	 * Internal adapter to backup the list data.
-	 */
+	private ListView listView;
+
 	private class PlayerAdapter extends ArrayAdapter<Player> {
 
-		/**
-		 * Constructs a PlayerAdapter().
-		 * 
-		 * @param context
-		 * @param players
-		 */
 		public PlayerAdapter(Context context, List<Player> players) {
 			super(context, R.layout.thumbnail_item, players);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.widget.ArrayAdapter#getView(int, android.view.View,
-		 * android.view.ViewGroup)
-		 */
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Player player = this.getItem(position);
@@ -122,9 +90,6 @@ public class PlayerListActivity extends SherlockListActivity {
 		}
 	}
 
-	/**
-	 * Compare two players upon their names.
-	 */
 	private final Comparator<Player> playerNameComparator = new Comparator<Player>() {
 
 		/*
@@ -145,19 +110,10 @@ public class PlayerListActivity extends SherlockListActivity {
 		}
 	};
 
-	/**
-	 * Traces creation event.
-	 */
 	private void auditEvent() {
 		AuditHelper.auditEvent(AuditHelper.EventTypes.displayPlayerListPage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onActivityResult(int, int,
-	 * android.content.Intent)
-	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -168,20 +124,23 @@ public class PlayerListActivity extends SherlockListActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see greendroid.app.GDActivity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	public void onCreate(final Bundle icicle) {
 		try {
 			super.onCreate(icicle);
 			this.auditEvent();
+			setContentView(R.layout.activity_player_list);
+			listView = (ListView)findViewById(R.id.listView);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    onListItemClick(view, position, id);
+                }
+            });
 
 			// set excuse as background image
-			this.getListView().setCacheColorHint(0);
-			this.getListView().setBackgroundResource(R.drawable.img_excuse);
+			listView.setCacheColorHint(0);
+			listView.setBackgroundResource(R.drawable.img_excuse);
 
 			// set action bar properties
 			this.setTitle(this.getResources().getString(R.string.lblPlayerListActivityTitle));
@@ -207,40 +166,24 @@ public class PlayerListActivity extends SherlockListActivity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * greendroid.app.GDListActivity#onListItemClick(android.widget.ListView,
-	 * android.view.View, int, long)
-	 */
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	protected void onListItemClick(View v, int position, long id) {
 		Intent intent = new Intent(this, PlayerStatisticsActivity.class);
-		intent.putExtra("player", ((Player) this.getListAdapter().getItem(position)).getName());
+		intent.putExtra("player", ((Player) listView.getAdapter().getItem(position)).getName());
 		this.startActivityForResult(intent, RequestCodes.DISPLAY_PLAYER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onStop()
-	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 		AuditHelper.auditSession(this);
 	}
 
-	/**
-	 * Refreshes the player list.
-	 */
 	private void refresh() {
 		try {
 
 			List<Player> players = AppContext.getApplication().getDalService().getAllPlayers();
 			Collections.sort(players, playerNameComparator);
-			this.setListAdapter(new PlayerAdapter(this, players));
+			listView.setAdapter(new PlayerAdapter(this, players));
 		} catch (final Exception e) {
 			Log.v(AppContext.getApplication().getAppLogTag(), this.getClass().toString(), e);
 			Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();

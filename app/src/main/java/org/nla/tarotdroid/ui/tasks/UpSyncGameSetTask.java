@@ -206,7 +206,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
                                                  user.getId(),
                                                  "facebook",
                                                  Session.getActiveSession().getAccessToken())
-                                         .build();
+                                         .build());
             Response httpResponse = httpClient.newCall(httpRequest).execute();
             String responseBody = httpResponse.body().string();
 

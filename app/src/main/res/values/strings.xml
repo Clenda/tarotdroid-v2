@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>    
+<resources>
     <!-- General info -->
     <string name="google_map_api_key_debug">0IgVgWFseCoAyOOEFSXlrEhfjQE99UGBY_sh2CA</string>
     <string name="app_name">TarotDroid Lite</string>
@@ -8,7 +8,7 @@
     <!-- Misc activity strings -->
     <string name="btnOk">OK</string>
     <string name="btnCancel">Annuler</string>
-    
+
     <!-- Main preferences activity strings -->
     <string name="lblComputationPrefs">Préférences de calcul</string>
     <string name="lblViewPrefs">Préférences d\'affichage</string>
@@ -25,7 +25,7 @@
     <string name="lblIsPetiteAuthorized">Petite autorisée (non officiel)</string>
     <string name="lblIsOneDeadPlayerAuthorized">Mort autorisé</string>
     <string name="lblDeadPlayerAutomaticallySelected">Sélection du mort automatique</string>
-	<string name="lblPetitePoints">Points de Petite</string>
+    <string name="lblPetitePoints">Points de Petite</string>
     <string name="lblPetiteRate">Taux de Petite</string>
     <string name="lblPrisePoints">Points de Prise</string>
     <string name="lblPriseRate">Taux de Prise</string>
@@ -34,7 +34,7 @@
     <string name="lblGardeSansPoints">Points de Garde Sans</string>
     <string name="lblGardeSansRate">Taux de Garde Sans</string>
     <string name="lblGardeContrePoints">Points de Garde Contre</string>
-    <string name="lblGardeContreRate">Taux de Garde Contre</string> 
+    <string name="lblGardeContreRate">Taux de Garde Contre</string>
     <string name="lblKidAtTheEndPoints">Points de petit au bout</string>
     <string name="lblMiseryPoints">Points de misère</string>
     <string name="lblPoigneePoints">Points de poignée</string>
@@ -49,7 +49,7 @@
     <string name="lblGameOrderDisplay">Affichage des jeux descendant</string>
     <string name="lblGameScoreDisplay">Affichage des scores globaux pour chaque jeu</string>
     <string name="lblKeepScreenOn">Maintenir l\'écran allumé</string>
-    
+
     <!-- Main dashboard activity strings -->
     <string name="lblMainActivityTitle">TarotDroid</string>
     <string name="lblNewGameSet">Nouvelle partie</string>
@@ -73,7 +73,7 @@
     <string name="lblContactItem">Contact</string>
     <string name="lblMockItem">Mock</string>
     <string name="lblContactUs">Contactez-nous par email</string>
-        
+
     <!-- New game set activity strings -->
     <string name="lblNewGameActivityTitle">Nouvelle partie</string>
     <string name="lblNewTarot3">Tarot à 3</string>
@@ -98,7 +98,7 @@
     <string name="lblOptionalPlayerSection">Joueur facultatif</string>
     <string name="lblStartItem">Démarrer</string>
     <string name="lblPlayerNumber">Joueur %1s</string>
-    
+
     <!-- Game set history activity strings -->
     <string name="lblGameSetHistoryActivityTitlePlural">%1d parties historisées</string>
     <string name="lblGameSetHistoryActivityTitleSingle">1 partie historisée</string>
@@ -122,7 +122,7 @@
     <string name="lblGameSetDescriptionPlural">%1$s donnes, joueurs: %2$s</string>
     <string name="lblBluetoothItem">Transférer par Bluetooth</string>
     <string name="lblInitDalItem">Supprimer tout</string>
-    
+
     <!-- New game activities strings -->
     <string name="lblNewStandardGameTitle">Nouvelle donne</string>
     <string name="lblUpdateGameTitle">Modification</string>
@@ -135,7 +135,7 @@
     <string name="lblDeadPlayer">Mort</string>
     <string name="pointsEarnedByAttack">Score attaque</string>
     <string name="pointsEarnedByDefense">Score défense</string>
-	<string name="lblDealer">Distributeur</string>    
+    <string name="lblDealer">Distributeur</string>
     <string name="lblBet">Contrat</string>
     <string name="gameOfindex">Donne n°</string>
     <string name="first">Premier</string>
@@ -179,16 +179,16 @@
     <string name="lblPenaltedPlayer">Joueur pénalisé</string>
     <string name="lblGlobalPenaltyPoints">Pénalité globale</string>
     <string name="lblPlayerPenaltyPoints">Points de pénalité</string>
-    
-    <!-- Game view activities strings -->	
+
+    <!-- Game view activities strings -->
     <string name="lblViewGameActivityTitle">Consultation de donne</string>
-	<string name="lblViewStdTarotActivityTitle">Donne n°%1$s sur %2$s</string>
+    <string name="lblViewStdTarotActivityTitle">Donne n°%1$s sur %2$s</string>
     <string name="lblViewBelgianTarotActivityTitle">Donne n°%1$s sur %2$s (belge)</string>
     <string name="lblDeleteGameItem">Supprimer</string>
-    
+
     <!-- Stats activity strings -->
     <string name="lblMainStatActivityTitle">Statistiques de la partie</string>
-    
+
     <!-- Tab game set activity strings -->
     <string name="lblTabGameSetActivityNoGameTitle">Aucune donne jouée</string>
     <string name="lblTabGameSetActivityOneGameTitle">1 donne jouée</string>
@@ -234,27 +234,27 @@
     <string name="lblHelpItem">Aide</string>
     <string name="lblGamesTitle">Donnes</string>
     <string name="lblSynthesisTitle">Synthèse</string>
-    
+
     <!-- Excel export strings -->
     <string name="lblExportLeaderPlayer">Preneur</string>
     <string name="lblExportCalledPlayer">Joueur appelé</string>
     <string name="lblExportCalledColor">Roi appelé</string>
     <string name="lblExportDeadAdjective">MORT</string>
     <string name="lblExportInProgress">Export Excel en cours...</string>
-    
+
     <!-- DB import/export strings -->
     <string name="lblDbHelperImportDone">Import terminé</string>
     <string name="lblDbHelperPickXMLFile">Selectionnez un fichier XML</string>
     <string name="lblDbExportEmailContent">Ci-joint l\'export de la partie jouée sur TarotDroid</string>
     <string name="lblDbExportEmailTitle">Export Excel TarotDroid</string>
     <string name="lblDbExportAndroidIntentTitle">Envoyer l\'export par email...</string>
-    
+
     <!-- Player selection activity -->
     <string name="lblPlayerSelectionActivityTitle">Sélection des joueurs</string>
 
     <!-- TarotDroid Community activity -->
     <string name="lblCommunityActivityTitle">Communauté TarotDroid</string>
-    
+
     <!-- Game set statistics activity strings -->
     <string name="statNameCalledKingFrequency">Rois appelés</string>
     <string name="statDescCalledKingFrequency">Fréquence d\'appel des rois</string>
@@ -274,7 +274,7 @@
     <string name="lblScoreEvolutionPoints">Points</string>
     <string name="lblSuccesses">Succès</string>
     <string name="lblFailures">Chutes</string>
-    
+
     <!-- Player statistics activity -->
     <string name="lblPlayerListActivityTitle">Joueurs</string>
     <string name="lblPlayerStatisticsActivityTitle">Statistiques de %1s</string>
@@ -300,41 +300,41 @@
     <string name="lblPictureNoPictureItem">Aucune photo</string>
     <string name="lblGameSetCountByGameStyleType">%1$s parties à 3 dont %2$s gagnées; %3$s parties à 4 dont %4$s gagnées; %5$s parties à 5 dont %6$s gagnées.</string>
     <string name="lblGameCountByBetTypeItem">%1$s prises dont %2$s gagnées; %3$s gardes dont %4$s gagnées; %5$s gardes sans dont %6$s gagnées; %7$s gardes contre dont %8$s gagnées.</string>
-    
+
     <!-- Rate dialog -->
     <string name="lblRateAppTitle">Notez TarotDroid</string>
     <string name="lblRateAppContent">Si vous appréciez TarotDroid, prenez quelques moments pour nous encourager en nous laissant un commentaire sur le Google Play Store. Merci de votre soutien :)</string>
     <string name="lblRateNow">Maintenant</string>
     <string name="lblRateLater">Plus tard</string>
     <string name="lblRateNever">Non merci</string>
-    
+
     <!-- Error strings -->
     <string name="lblErrorImageRefresh">Erreur de rafraichissement d\'une image</string>
     <string name="lblErrorStatisticsComputation">Erreur lors du calcul des statistiques: %1$s</string>
     <string name="lblUnexpectedError">Unexpected error: %1$s</string>
-    
+
     <!-- Facebook strings -->
     <string name="lblFacebookImpossibleToPublishGamesetWithNoGame">Impossible de publier sur Facebook si aucune donne n\'a été jouée</string>
     <string name="lblFacebookGamesetBeingPublished">Une partie est déjà en cours de publication</string>
     <string name="lblFacebookPostName">Nouvelle partie sur TarotDroid</string>
     <string name="lblFacebookPostCaption">%1$s ont joué %2$s donnes</string>
     <string name="lblFacebookPostHasWon">%1$s a gagné avec %2$s points</string>
-        
-	<string name="error_dialog_default_text">Problème de communication avec Facebook.</string>
-	<!-- <string name="error_authentication_retry">An error occurred that requires your attention. %1$s</string> -->
-	<!-- <string name="error_authentication_reopen">An error occurred, please re-login.</string> -->
-	<!-- <string name="error_permission">Please allow us to post on your behalf.</string> -->
-	<!-- <string name="error_server">The server is busy, please retry later.</string> -->
-	<!-- <string name="error_bad_request">An error occurred, please contact the developer with the following message: %1$s</string> -->
-	<!-- <string name="error_unknown">An unknown error occurred, please contact the developer with the following message: %1$s</string> -->
-	<!-- <string name="result_dialog_title">Result</string> -->
-	<!-- <string name="result_dialog_button_text">Thanks!</string> -->
-	<!-- <string name="result_dialog_text">Posted Open Graph action, id: %1$s</string> -->
-	<!-- <string name="progress_dialog_text">Announcing, please wait...</string> -->
-	<string name="error_dialog_title">Erreur Facebook</string>
-	<string name="error_dialog_button_text">OK</string>
-	
-<!--     <string name="app_name">HelloFacebookSample</string>
+
+    <string name="error_dialog_default_text">Problème de communication avec Facebook.</string>
+    <!-- <string name="error_authentication_retry">An error occurred that requires your attention. %1$s</string> -->
+    <!-- <string name="error_authentication_reopen">An error occurred, please re-login.</string> -->
+    <!-- <string name="error_permission">Please allow us to post on your behalf.</string> -->
+    <!-- <string name="error_server">The server is busy, please retry later.</string> -->
+    <!-- <string name="error_bad_request">An error occurred, please contact the developer with the following message: %1$s</string> -->
+    <!-- <string name="error_unknown">An unknown error occurred, please contact the developer with the following message: %1$s</string> -->
+    <!-- <string name="result_dialog_title">Result</string> -->
+    <!-- <string name="result_dialog_button_text">Thanks!</string> -->
+    <!-- <string name="result_dialog_text">Posted Open Graph action, id: %1$s</string> -->
+    <!-- <string name="progress_dialog_text">Announcing, please wait...</string> -->
+    <string name="error_dialog_title">Erreur Facebook</string>
+    <string name="error_dialog_button_text">OK</string>
+
+    <!--     <string name="app_name">HelloFacebookSample</string>
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
     <string name="ok">OK</string>
@@ -349,9 +349,68 @@
     <string name="no_place_selected">&lt;No place selected&gt;</string>
     <string name="pick_seattle_place">Pick a Seattle Place</string> -->
 
-	<string name="crash_toast_text">Ooooops, TarotDroid a crashé, toutes nos excuses :/</string>
-	<string name="crash_dialog_title">TarotDroid a crashé</string>
-	<string name="crash_dialog_text">Une erreur inconnue a fait crasher TarotDroid. En cliquant sur OK vous nous enverrez un rapport par email afin de nous aider à la corriger.</string>  
-	<string name="crash_dialog_ok_toast">Merci !</string>
+    <string name="crash_toast_text">Ooooops, TarotDroid a crashé, toutes nos excuses :/</string>
+    <string name="crash_dialog_title">TarotDroid a crashé</string>
+    <string name="crash_dialog_text">Une erreur inconnue a fait crasher TarotDroid. En cliquant sur OK vous nous enverrez un rapport par email afin de nous aider à la corriger.</string>
+    <string name="crash_dialog_ok_toast">Merci !</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
 
 </resources>

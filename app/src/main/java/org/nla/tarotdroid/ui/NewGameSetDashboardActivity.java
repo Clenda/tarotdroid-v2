@@ -1,34 +1,18 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-
-import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.ui.constants.ActivityParams;
 import org.nla.tarotdroid.ui.controls.ThumbnailItem;
@@ -37,27 +21,32 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-/**
- * Main dashboard. 
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
-public class NewGameSetDashboardActivity extends SherlockListActivity {
+public class NewGameSetDashboardActivity extends AppCompatActivity {
+
+	private ListView listView;
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
     public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_gameset_dashboard);
+
 		try {
             this.auditEvent();
-			
+
+            listView = (ListView)findViewById(R.id.listView);
             // set excuse as background image
-			this.getListView().setCacheColorHint(0);
-			this.getListView().setBackgroundResource(R.drawable.img_excuse);
+			this.listView.setCacheColorHint(0);
+			this.listView.setBackgroundResource(R.drawable.img_excuse);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    onListItemClick(view, position, id);
+                }
+            });
             
 			// set action bar properties
-			this.setTitle(AppContext.getApplication().getResources().getString(R.string.lblMainActivityTitle, AppContext.getApplication().getAppVersion()));
+			this.setTitle(AppContext.getApplication().getResources().getString(R.string.lblMainActivityTitle));
 
 			// initializes the views
 			this.initializeViews();
@@ -67,25 +56,16 @@ public class NewGameSetDashboardActivity extends SherlockListActivity {
         }
     }
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
 		AuditHelper.auditSession(this);
 	}
 	
-	/**
-	 *	Traces creation event. 
-	 */
 	private void auditEvent() {
 		AuditHelper.auditEvent(AuditHelper.EventTypes.displayNewGameSetDashboardPage);
 	}
 	
-	/**
-	 * Initializes the views.
-	 */
 	private void initializeViews() {
 		DashboardOption newTarot3Option = new DashboardOption(
 				R.drawable.icon_3players, 
@@ -110,26 +90,15 @@ public class NewGameSetDashboardActivity extends SherlockListActivity {
 		options.add(newTarot3Option);
 		options.add(newTarot4Option);
 		options.add(newTarot5Option);
-		this.setListAdapter(new DashboardOptionAdapter(this, options));
+		listView.setAdapter(new DashboardOptionAdapter(this, options));
 	}
-	
-	/**
-	 * Internal adapter to back up the list data. 
-	 */
-	private class DashboardOptionAdapter extends ArrayAdapter<DashboardOption> {
 
-		/**
-		 * Constructs a DashboardOptionAdapter.
-		 * @param context
-		 * @param objects
-		 */
+    private class DashboardOptionAdapter extends ArrayAdapter<DashboardOption> {
+
 		public DashboardOptionAdapter(Context context, List<DashboardOption> objects) {
 			super(context, R.layout.thumbnail_item, objects);	
 		}
 		
-		/* (non-Javadoc)
-		 * @see android.widget.ArrayAdapter#getView(int, android.view.View, android.view.ViewGroup)
-		 */
 		@Override
 	    public View getView(int position, View convertView, ViewGroup parent) {
 			DashboardOption option = this.getItem(position);
@@ -137,14 +106,10 @@ public class NewGameSetDashboardActivity extends SherlockListActivity {
 	        return thumbnailItem;
 	    }
 	}
-	
-	/* (non-Javadoc)
-	 * @see greendroid.app.GDListActivity#onListItemClick(android.widget.ListView, android.view.View, int, long)
-	 */
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+
+	protected void onListItemClick(View v, int position, long id) {
         // handle click selection
-		DashboardOption option = (DashboardOption)this.getListAdapter().getItem(position);
+		DashboardOption option = (DashboardOption)listView.getAdapter().getItem(position);
 		GameStyleType gameStyleType = null;
 		int tagValue = ((Integer)option.getTag()).intValue();
 		if (tagValue == R.id.new_tarot3_gameset_item) {

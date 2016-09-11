@@ -21,24 +21,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 
+import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.PlayerList;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.dal.DalException;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.ActivityParams;
@@ -50,75 +49,25 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class PlayerSelectorActivity extends SherlockActivity {
+public class PlayerSelectorActivity extends AppCompatActivity {
   
-	/**
-	 * Player row count.
-	 */
 	private static final String PLAYER_ROW_COUNT = "player_row_count";
-	
-	/**
-	 * Player name constant.
-	 */
 	private static final String PLAYER_NAME = "player_name";
-	
-	/**
-	 * Optional player name constant.
-	 */
 	private static final String OPTIONAL_PLAYER_NAME = "optional_player_name";
-
-	/**
-	 * The layout for compulsory players.
-	 */
 	private LinearLayout layoutCompulsoryPlayers;
-	
-	/**
-	 * The progress dialog.
-	 */
 	private ProgressDialog progressDialog;
-	
-	/**
-	 * The game style type.
-	 */
 	private GameStyleType gameStyleType;
-	
-	/**
-	 * The number of added rows.
-	 */
 	private int rowCount;
-	
-	/**
-	 * The list of compulsory player rows.
-	 */
 	private List<PlayerSelectorRow> playerSelectorRows;
-	
-	/**
-	 * The optional player row.
-	 */
 	private PlayerSelectorRow optionalPlayerSelectorRow;
-	
-	/**
-	 * Facebook ui lifecyle manager.
-	 */
 	private UiLifecycleHelper uiHelper;
-	
-	/**
-	 * The game set to create.
-	 */
 	private GameSet gameSet;
-	
-	/**
-	 * Facebook session state change callback.
-	 */
     private Session.StatusCallback facebookSessionStatusCallback = new Session.StatusCallback() {
         @Override
         public void call(Session session, SessionState state, Exception exception) {
         }
     };
-	
-    /* (non-Javadoc)
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -176,9 +125,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
 		}
     }
     
-    /* (non-Javadoc)
-     * @see android.app.Activity#onResume()
-     */
     @Override
     protected void onResume() {
     	super.onResume();
@@ -197,9 +143,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
     	this.uiHelper.onDestroy();
     }
     
-    /* (non-Javadoc)
-     * @see com.actionbarsherlock.app.SherlockActivity#onSaveInstanceState(android.os.Bundle)
-     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     	super.onSaveInstanceState(outState);
@@ -215,9 +158,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
     	this.uiHelper.onSaveInstanceState(outState);
     };
     
-    /* (non-Javadoc)
-     * @see com.actionbarsherlock.app.SherlockActivity#onRestoreInstanceState(android.os.Bundle)
-     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
     	super.onRestoreInstanceState(savedInstanceState);
@@ -234,42 +174,30 @@ public class PlayerSelectorActivity extends SherlockActivity {
     	}
     }
     
-    /* (non-Javadoc)
-     * @see android.app.Activity#onStart()
-     */
     @Override
     protected void onStart() {
     	super.onStart();
     	AuditHelper.auditSession(this);
     }
     
-    /* (non-Javadoc)
-     * @see com.actionbarsherlock.app.SherlockActivity#onStop()
-     */
     @Override
     protected void onStop() {
     	super.onStop();
     }
     
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 */
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
 	    this.uiHelper.onActivityResult(requestCode, resultCode, data);
 	}
     
-    /* (non-Javadoc)
-     * @see com.actionbarsherlock.app.SherlockActivity#onCreateOptionsMenu(android.view.Menu)
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	
 		MenuItem miStartGameSet = menu.add(R.string.lblStartItem);
 		miStartGameSet.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		miStartGameSet.setIcon(R.drawable.ic_compose);
-		miStartGameSet.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		miStartGameSet.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -300,16 +228,10 @@ public class PlayerSelectorActivity extends SherlockActivity {
 		return super.onCreateOptionsMenu(menu);
     }
     
-	/**
-	 *	Traces creation event. 
-	 */
 	private void auditEvent() {
 		AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetCreationPage);
 	}
 	
-	/**
-	 * Figures out the game type using the given data passed through the intent.
-	 */
 	private void identifyGameSetType() {
 		if (this.getIntent().getExtras() != null && !this.getIntent().getExtras().containsKey(ActivityParams.PARAM_TYPE_OF_GAMESET)) {
 			throw new IllegalArgumentException("type of gameset must be provided");
@@ -318,9 +240,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
 		this.gameStyleType = GameStyleType.valueOf(this.getIntent().getExtras().getString(ActivityParams.PARAM_TYPE_OF_GAMESET));
 	}
 	
-	/**
-	 * Adds a compulsory player selector row.
-	 */
 	private void addCompulsoryPlayerRow() {
 		PlayerSelectorRow playerSelectorRow = new PlayerSelectorRow(this, this.rowCount);
 		this.layoutCompulsoryPlayers.addView(playerSelectorRow);
@@ -328,9 +247,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
 		this.rowCount += 1;
 	}
 	
-	/**
-	 * Initializes the views.
-	 */
 	private void initializeViews() {
     	switch(this.gameStyleType) {
 			case Tarot3:
@@ -354,9 +270,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
     	}
 	}
 	
-    /**
-     * Sets the players and the game style type. Must be overridden in subclasses.
-     */
     protected void setPlayersAndGameStyleType() {
     	
     	// sets the players
@@ -376,11 +289,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
 		this.gameSet.setGameStyleType(this.gameStyleType);
     }
     
-    /**
-     * Finds a Player by his name in the repository or build a new Player with his name. 
-     * @param playerName
-     * @return
-     */
     private Player getPlayerByName(String playerName) {
     	Player toReturn = null;
     	try {
@@ -396,9 +304,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
     	return toReturn;
     }
     
-    /**
-     * Sets the players for a 3 player style game set.
-     */
     private void setPlayers3() {
     	// get the player names
     	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
@@ -435,9 +340,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
 		this.gameSet.setPlayers(playerList);
     }
 
-    /**
-     * Sets the players for a 4 player style game set.
-     */
     private void setPlayers4() {
     	// get the player names
     	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
@@ -479,9 +381,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
 		this.gameSet.setPlayers(playerList);
     }
     
-    /**
-     * Sets the players for a 5 player style game set.
-     */
     private void setPlayers5() {
     	// get the player names
     	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
@@ -526,10 +425,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
 		this.gameSet.setPlayers(playerList);
     }
     
-    /**
-     * Indicates whether the form is valid.
-     * @return
-     */
     private boolean isFormValid() {
     	switch(this.gameStyleType) {
     		case Tarot3:
@@ -543,9 +438,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
     	}
     }
     
-    /**
-     * Indicates whether input data is valid for a 3 player style game set.
-     */
     protected boolean isForm3Valid() {
     	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
     	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
@@ -560,9 +452,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
     		&& !player2Name.equalsIgnoreCase(player3Name);
     }
 
-    /**
-     * Indicates whether input data is valid for a 4 player style game set.
-     */
     protected boolean isForm4Valid() {
     	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
     	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
@@ -582,9 +471,6 @@ public class PlayerSelectorActivity extends SherlockActivity {
     		&& !player3Name.equalsIgnoreCase(player4Name);
     }
 
-    /**
-     * Indicates whether input data is valid for a 5 player style game set.
-     */
     protected boolean isForm5Valid() {
     	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
     	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
