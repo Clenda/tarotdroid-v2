@@ -3,38 +3,107 @@
   xmlns:android="http://schemas.android.com/apk/res/android" 
   android:title="Preferences">
     <PreferenceCategory android:title="@string/lblViewPrefs">
-        <CheckBoxPreference android:title="@string/lblDisplayNextPlayer" android:key="displayNextDealer" android:defaultValue="true"/>
-        <CheckBoxPreference android:title="@string/lblGameOrderDisplay" android:key="displayGamesInReverseOrder" android:defaultValue="true"/>
-        <CheckBoxPreference android:title="@string/lblGameScoreDisplay" android:key="displayGlobalScoresForEachGame" android:defaultValue="true"/>
-        <CheckBoxPreference android:title="@string/lblKeepScreenOn" android:key="keepScreenOn" android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="displayNextDealer"
+            android:title="@string/lblDisplayNextPlayer"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="displayGamesInReverseOrder"
+            android:title="@string/lblGameOrderDisplay"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="displayGlobalScoresForEachGame"
+            android:title="@string/lblGameScoreDisplay"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="keepScreenOn"
+            android:title="@string/lblKeepScreenOn"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/lblGamePrefs">
-    	<CheckBoxPreference android:title="@string/lblIsPriseAuthorized" android:key="isPriseAuthorized" android:defaultValue="true"/>
-    	<CheckBoxPreference android:title="@string/lblIsPetiteAuthorized" android:key="isPetiteAuthorized" android:defaultValue="false" android:dependency="isPriseAuthorized"/>
-    	<CheckBoxPreference android:title="@string/lblIsBelgianAuthorized" android:key="areBelgianGamesAllowed" android:defaultValue="false"/>
-    	<CheckBoxPreference android:title="@string/lblIsPenaltyAuthorized" android:key="arePenaltyGamesAllowed" android:defaultValue="false"/>
-    	<CheckBoxPreference android:title="@string/lblIsPassAuthorized" android:key="arePassedGamesAllowed" android:defaultValue="true"/>
-    	<CheckBoxPreference android:title="@string/lblIsMiseryAuthorized" android:key="isMiseryAuthorized" android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="isPriseAuthorized"
+            android:title="@string/lblIsPriseAuthorized"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="isPriseAuthorized"
+            android:key="isPetiteAuthorized"
+            android:title="@string/lblIsPetiteAuthorized"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="areBelgianGamesAllowed"
+            android:title="@string/lblIsBelgianAuthorized"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="arePenaltyGamesAllowed"
+            android:title="@string/lblIsPenaltyAuthorized"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="arePassedGamesAllowed"
+            android:title="@string/lblIsPassAuthorized"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="isMiseryAuthorized"
+            android:title="@string/lblIsMiseryAuthorized"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/lblComputationPrefs">
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblPetitePoints" android:key="petitePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblPetiteRate" android:key="petiteRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblPrisePoints" android:key="prisePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblPriseRate" android:key="priseRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblGardePoints" android:key="gardePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblGardeRate" android:key="gardeRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblGardeSansPoints" android:key="gardeSansPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblGardeSansRate" android:key="gardeSansRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblGardeContrePoints" android:key="gardeContrePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblGardeContreRate" android:key="gardeContreRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblBelgianStepPoints" android:key="belgianStepPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblMiseryPoints" android:key="miseryPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblPoigneePoints" android:key="poigneePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblDoublePoigneePoints" android:key="doublePoigneePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblTriplePoigneePoints" android:key="triplePoigneePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblKidAtTheEndPoints" android:key="kidAtTheEndPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblAnnouncedAndSucceededChelemPoints" android:key="announcedAndSucceededChelemPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblAnnouncedAndFailedChelemPoints" android:key="announcedAndFailedChelemPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference android:title="@string/lblNotAnnouncedButSucceededChelemPoints" android:key="notAnnouncedButSucceededChelemPoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="petitePoints"
+            android:title="@string/lblPetitePoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="petiteRate"
+            android:title="@string/lblPetiteRate"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="prisePoints"
+            android:title="@string/lblPrisePoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="priseRate"
+            android:title="@string/lblPriseRate"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="gardePoints"
+            android:title="@string/lblGardePoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="gardeRate"
+            android:title="@string/lblGardeRate"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="gardeSansPoints"
+            android:title="@string/lblGardeSansPoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="gardeSansRate"
+            android:title="@string/lblGardeSansRate"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="gardeContrePoints"
+            android:title="@string/lblGardeContrePoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="gardeContreRate"
+            android:title="@string/lblGardeContreRate"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="belgianStepPoints"
+            android:title="@string/lblBelgianStepPoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="miseryPoints"
+            android:title="@string/lblMiseryPoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="poigneePoints"
+            android:title="@string/lblPoigneePoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="doublePoigneePoints"
+            android:title="@string/lblDoublePoigneePoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="triplePoigneePoints"
+            android:title="@string/lblTriplePoigneePoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="kidAtTheEndPoints"
+            android:title="@string/lblKidAtTheEndPoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="announcedAndSucceededChelemPoints"
+            android:title="@string/lblAnnouncedAndSucceededChelemPoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="announcedAndFailedChelemPoints"
+            android:title="@string/lblAnnouncedAndFailedChelemPoints"/>
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+            android:key="notAnnouncedButSucceededChelemPoints"
+            android:title="@string/lblNotAnnouncedButSucceededChelemPoints"/>
     </PreferenceCategory>
 </PreferenceScreen>

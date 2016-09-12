@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/org.nla.tarotdroid"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" 
-    android:id="@+id/frameLayout" >
+<FrameLayout
+	android:id="@+id/frameLayout"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
     
 <ScrollView 
     android:layout_width="fill_parent"
@@ -18,54 +17,54 @@
 
         <!-- Section Mort et Distributeur -->
         <LinearLayout
-            android:id="@+id/panelDeadAndDealerSection"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical" 
-            android:background="#0f0f0f" >
+			android:id="@+id/panelDeadAndDealerSection"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:background="#0f0f0f"
+			android:orientation="vertical">
 
 			<!-- Titre Mort et Distributeur -->
             <TextView
-                android:id="@+id/txtTitleDeadAndDealer"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="#005555"
-                android:padding="5dip"
-                style="@style/GameSectionTitleStyle"
-                android:text="@string/lblDealerSection" />
+				android:id="@+id/txtTitleDeadAndDealer"
+				style="@style/GameSectionTitleStyle"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="#005555"
+				android:padding="5dip"
+				android:text="@string/lblDealerSection" />
                 
             <!-- Panel Mort et Distributeur -->
             <LinearLayout
-                android:id="@+id/panelDeadAndDealer"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible" 
-                android:background="#0f0f0f"
-				android:paddingBottom="10dip">
+				android:id="@+id/panelDeadAndDealer"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="#0f0f0f"
+				android:orientation="vertical"
+				android:paddingBottom="10dip"
+				android:visibility="visible">
                 
                 <!-- Panel Dead -->
                 <RelativeLayout
-                    android:id="@+id/panelDead"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelDead"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 
                     <TextView
-                        android:id="@+id/txtTitleDead"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/lblDeadPlayer" />
+						android:id="@+id/txtTitleDead"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblDeadPlayer" />
 
-                    <org.nla.tarotdroid.lib.ui.controls.Selector
+					<org.nla.tarotdroid.ui.controls.Selector
                         
                         android:id="@+id/galleryDead"
                         android:layout_width="fill_parent"
@@ -76,25 +75,25 @@
                 
                 <!-- Panel Distributeur -->
                 <RelativeLayout
-                    android:id="@+id/panelDealer"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelDealer"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 
                     <TextView
-                        android:id="@+id/txtTitleDealer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/lblDealer"/>
+						android:id="@+id/txtTitleDealer"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblDealer"/>
 
-                    <org.nla.tarotdroid.lib.ui.controls.Selector
+					<org.nla.tarotdroid.ui.controls.Selector
                         
                         android:id="@+id/galleryDealer"
                         android:layout_width="fill_parent"
@@ -108,53 +107,53 @@
 
         <!-- Section Paramètres principaux -->
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical" 
-            android:background="#0f0f0f" >
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:background="#0f0f0f"
+			android:orientation="vertical">
 
 			<!-- Titre Paramètres principaux -->
             <TextView
-                android:id="@+id/txtTitleMainParameters"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="#005555"
-                android:padding="5dip"
-                style="@style/GameSectionTitleStyle"
-                android:text="@string/lblMainParametersSection" />
+				android:id="@+id/txtTitleMainParameters"
+				style="@style/GameSectionTitleStyle"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="#005555"
+				android:padding="5dip"
+				android:text="@string/lblMainParametersSection" />
             
             <!-- Panel Paramètres principaux -->
             <LinearLayout
-                android:id="@+id/panelMainParameters"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible"
-                android:background="#0f0f0f"
-				android:paddingBottom="10dip">
+				android:id="@+id/panelMainParameters"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="#0f0f0f"
+				android:orientation="vertical"
+				android:paddingBottom="10dip"
+				android:visibility="visible">
                 
                 <!-- Panel Bet -->
                 <RelativeLayout
-                    android:id="@+id/panelBet"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelBet"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 
                     <TextView
-                        android:id="@+id/txtTitleBet"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/lblBet"/>
+						android:id="@+id/txtTitleBet"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblBet"/>
 
-                    <org.nla.tarotdroid.lib.ui.controls.Selector
+					<org.nla.tarotdroid.ui.controls.Selector
                          
                         android:id="@+id/galleryBet"
                         android:layout_width="fill_parent"
@@ -165,25 +164,25 @@
                 
                 <!-- Panel Leader -->
                 <RelativeLayout
-                    android:id="@+id/panelLeader"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelLeader"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 
                     <TextView
-                        android:id="@+id/txtTitleLeader"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/leaderPlayer"/>
+						android:id="@+id/txtTitleLeader"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/leaderPlayer"/>
 
-                    <org.nla.tarotdroid.lib.ui.controls.Selector
+					<org.nla.tarotdroid.ui.controls.Selector
                          
                         android:id="@+id/galleryLeader"
                         android:layout_width="fill_parent"
@@ -194,25 +193,25 @@
                 
                 <!-- Panel King -->
                 <RelativeLayout
-                    android:id="@+id/panelKing"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelKing"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/txtTitleKing"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/lblCalledColor"/>
+						android:id="@+id/txtTitleKing"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblCalledColor"/>
 
-                    <org.nla.tarotdroid.lib.ui.controls.KingSelector
+					<org.nla.tarotdroid.ui.controls.KingSelector
                          
                         android:id="@+id/galleryKing"
                         android:layout_width="fill_parent"
@@ -223,25 +222,25 @@
 
                 <!-- Panel called player -->
                 <RelativeLayout
-                    android:id="@+id/panelCalled"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelCalled"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/txtTitleCalled"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/calledPlayer"/>
+						android:id="@+id/txtTitleCalled"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/calledPlayer"/>
 
-                    <org.nla.tarotdroid.lib.ui.controls.Selector
+					<org.nla.tarotdroid.ui.controls.Selector
                          
                         android:id="@+id/galleryCalled"
                         android:layout_width="fill_parent"
@@ -252,25 +251,25 @@
                 
                 <!-- Panel Oudlers -->
                 <RelativeLayout
-                    android:id="@+id/panelOudlers"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelOudlers"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 
                     <TextView
-                        android:id="@+id/txtTitleOudlers"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/oudlerCount"/>
+						android:id="@+id/txtTitleOudlers"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/oudlerCount"/>
 
-                    <org.nla.tarotdroid.lib.ui.controls.Selector
+					<org.nla.tarotdroid.ui.controls.Selector
                          
                         android:id="@+id/galleryOudlers"
                         android:layout_width="fill_parent"
@@ -281,23 +280,23 @@
                 
                 <!-- Panel attack points -->
                 <RelativeLayout
-                    android:id="@+id/panelAttackPoints"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelAttackPoints"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 
                     <TextView
-                        android:id="@+id/txtTitleAttackPoints"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/pointsEarnedByAttack"/>
+						android:id="@+id/txtTitleAttackPoints"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/pointsEarnedByAttack"/>
                     
 					<SeekBar
                         android:id="@+id/barAttackPoints"
@@ -307,46 +306,46 @@
                         android:max="91" />
 					
                     <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal" 
-                        android:layout_below="@id/barAttackPoints">
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_below="@id/barAttackPoints"
+						android:gravity="center"
+						android:orientation="horizontal">
 
                         <EditText
-                            android:id="@+id/txtAttackPoints"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="50dp"
-                            android:inputType="number"
-                            android:clickable="false"
-                            android:state_enabled="false"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false" />
+							android:id="@+id/txtAttackPoints"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:clickable="false"
+							android:focusable="false"
+							android:focusableInTouchMode="false"
+							android:gravity="center"
+							android:inputType="number"
+							android:minWidth="50dp"
+							android:state_enabled="false"/>
                     </LinearLayout>
 					
 				</RelativeLayout>
 				
 				<!-- Panel defense points -->
                 <RelativeLayout
-                    android:id="@+id/panelDefensePoints"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+					android:id="@+id/panelDefensePoints"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 
                     <TextView
-                        android:id="@+id/txtTitleDefensePoints"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dip"
-                        android:background="#0f0f0f"
-                        android:minWidth="130dip"
-                        android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-                        android:text="@string/pointsEarnedByDefense"/>
+						android:id="@+id/txtTitleDefensePoints"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/pointsEarnedByDefense"/>
                     
 					<SeekBar
                         android:id="@+id/barDefensePoints"
@@ -356,23 +355,23 @@
                         android:max="91" />
 					
                     <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal" 
-                        android:layout_below="@id/barDefensePoints">
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_below="@id/barDefensePoints"
+						android:gravity="center"
+						android:orientation="horizontal">
 
                         <EditText
-                            android:id="@+id/txtDefensePoints"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="50dp"
-                            android:inputType="number"
-                            android:clickable="false"
-                            android:state_enabled="false"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false" />
+							android:id="@+id/txtDefensePoints"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:clickable="false"
+							android:focusable="false"
+							android:focusableInTouchMode="false"
+							android:gravity="center"
+							android:inputType="number"
+							android:minWidth="50dp"
+							android:state_enabled="false"/>
                     </LinearLayout>
 				</RelativeLayout>
             </LinearLayout>
@@ -380,54 +379,54 @@
         
         <!-- Section Annonces -->
         <LinearLayout
-            android:id="@+id/panelAnnoucementSection"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical" 
-            android:background="#0f0f0f">
+			android:id="@+id/panelAnnoucementSection"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:background="#0f0f0f"
+			android:orientation="vertical">
 
 			<!-- Titre Annonces -->
             <TextView
-                android:id="@+id/txtTitleAnnouncements"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="#005555"
-                android:padding="5dip"
-                style="@style/GameSectionTitleStyle"
-                android:text="@string/lblAnnoucementsSection" />
+				android:id="@+id/txtTitleAnnouncements"
+				style="@style/GameSectionTitleStyle"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="#005555"
+				android:padding="5dip"
+				android:text="@string/lblAnnoucementsSection" />
             
             <!-- Panel Annonces -->
             <LinearLayout
-                android:id="@+id/panelAnnouncements"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible" 
-                android:background="#0f0f0f"
-				android:paddingBottom="10dip">
+				android:id="@+id/panelAnnouncements"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="#0f0f0f"
+				android:orientation="vertical"
+				android:paddingBottom="10dip"
+				android:visibility="visible">
                 
                 <!-- Panel Handful -->
 	            <RelativeLayout
-	                android:id="@+id/panelHandful"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="horizontal"
-	                android:visibility="visible" 
-	                android:background="#0f0f0f">
+					android:id="@+id/panelHandful"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 	
 	                <TextView
-	                    android:id="@+id/txtTitleHandful"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_margin="2dip"
-	                    android:background="#0f0f0f"
-	                    android:minWidth="130dip"
-	                    android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-	                    android:text="@string/lblPoignee"/>
-	
-	                <org.nla.tarotdroid.lib.ui.controls.Selector
+						android:id="@+id/txtTitleHandful"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblPoignee"/>
+
+					<org.nla.tarotdroid.ui.controls.Selector
                          
 	                    android:id="@+id/galleryHandful"
 	                    android:layout_width="fill_parent"
@@ -438,25 +437,25 @@
 	            
 	            <!-- Panel Double Handful -->
 	            <RelativeLayout
-	                android:id="@+id/panelDoubleHandful"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="horizontal"
-	                android:visibility="visible" 
-	                android:background="#0f0f0f">
+					android:id="@+id/panelDoubleHandful"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 	
 	                <TextView
-	                    android:id="@+id/txtTitleDoubleHandful"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_margin="2dip"
-	                    android:background="#0f0f0f"
-	                    android:minWidth="130dip"
-	                    android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-	                    android:text="@string/lblDoublePoignee"/>
-	
-	                <org.nla.tarotdroid.lib.ui.controls.Selector
+						android:id="@+id/txtTitleDoubleHandful"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblDoublePoignee"/>
+
+					<org.nla.tarotdroid.ui.controls.Selector
                          
 	                    android:id="@+id/galleryDoubleHandful"
 	                    android:layout_width="fill_parent"
@@ -467,25 +466,25 @@
 	            
 	            <!-- Panel Triple Handful -->
 	            <RelativeLayout
-	                android:id="@+id/panelTripleHandful"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="horizontal"
-	                android:visibility="visible" 
-	                android:background="#0f0f0f">
+					android:id="@+id/panelTripleHandful"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 	
 	                <TextView
-	                    android:id="@+id/txtTitleTribleHandful"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_margin="2dip"
-	                    android:background="#0f0f0f"
-	                    android:minWidth="130dip"
-	                    android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-	                    android:text="@string/lblTriplePoignee"/>
-	
-	                <org.nla.tarotdroid.lib.ui.controls.Selector
+						android:id="@+id/txtTitleTribleHandful"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblTriplePoignee"/>
+
+					<org.nla.tarotdroid.ui.controls.Selector
                          
 	                    android:id="@+id/galleryTribleHandful"
 	                    android:layout_width="fill_parent"
@@ -496,25 +495,25 @@
 	            
 	            <!-- Panel Misery -->
 	            <RelativeLayout
-	                android:id="@+id/panelMisery"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="horizontal"
-	                android:visibility="gone" 
-	                android:background="#0f0f0f">
+					android:id="@+id/panelMisery"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="gone">
 	
 	                <TextView
-	                    android:id="@+id/txtTitleMisery"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_margin="2dip"
-	                    android:background="#0f0f0f"
-	                    android:minWidth="130dip"
-	                    android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-	                    android:text="@string/lblMisery"/>
-	
-	                <org.nla.tarotdroid.lib.ui.controls.Selector
+						android:id="@+id/txtTitleMisery"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblMisery"/>
+
+					<org.nla.tarotdroid.ui.controls.Selector
                          
 	                    android:id="@+id/galleryMisery"
 	                    android:layout_width="fill_parent"
@@ -525,25 +524,25 @@
 
 	            <!-- Panel Kid at the end -->
 	            <RelativeLayout
-	                android:id="@+id/panelKidAtTheEnd"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="horizontal"
-	                android:visibility="visible" 
-	                android:background="#0f0f0f">
+					android:id="@+id/panelKidAtTheEnd"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 	
 	                <TextView
-	                    android:id="@+id/txtTitleKidAtTheEnd"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_margin="2dip"
-	                    android:background="#0f0f0f"
-	                    android:minWidth="130dip"
-	                    android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-	                    android:text="@string/lblKidAtTheEnd"/>
-	
-	                <org.nla.tarotdroid.lib.ui.controls.Selector
+						android:id="@+id/txtTitleKidAtTheEnd"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblKidAtTheEnd"/>
+
+					<org.nla.tarotdroid.ui.controls.Selector
                          
 	                    android:id="@+id/galleryKidAtTheEnd"
 	                    android:layout_width="fill_parent"
@@ -554,25 +553,25 @@
 	            
 	            <!-- Panel Slam -->
 	            <RelativeLayout
-	                android:id="@+id/panelSlam"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="horizontal"
-	                android:visibility="visible" 
-	                android:background="#0f0f0f">
+					android:id="@+id/panelSlam"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="#0f0f0f"
+					android:orientation="horizontal"
+					android:visibility="visible">
 	
 	                <TextView
-	                    android:id="@+id/txtTitleSlam"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_margin="2dip"
-	                    android:background="#0f0f0f"
-	                    android:minWidth="130dip"
-	                    android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
-	                    android:text="@string/lblChelem"/>
-	
-	                <org.nla.tarotdroid.lib.ui.controls.Selector
+						android:id="@+id/txtTitleSlam"
+						style="@style/GameSubsectionTitleStyle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_margin="2dip"
+						android:background="#0f0f0f"
+						android:minWidth="130dip"
+						android:padding="5dip"
+						android:text="@string/lblChelem"/>
+
+					<org.nla.tarotdroid.ui.controls.Selector
                          
 	                    android:id="@+id/gallerySlam"
 	                    android:layout_width="fill_parent"

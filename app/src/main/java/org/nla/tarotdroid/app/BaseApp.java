@@ -16,7 +16,6 @@
  */
 package org.nla.tarotdroid.app;
 
-import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
@@ -25,11 +24,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDexApplication;
 
 import com.facebook.model.GraphPlace;
 import com.facebook.model.GraphUser;
 import com.google.gson.Gson;
 
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.Bet;
 import org.nla.tarotdroid.biz.Chelem;
 import org.nla.tarotdroid.biz.GameSetParameters;
@@ -38,7 +39,6 @@ import org.nla.tarotdroid.biz.Result;
 import org.nla.tarotdroid.biz.Team;
 import org.nla.tarotdroid.dal.IDalService;
 import org.nla.tarotdroid.dal.sql.SqliteDalService;
-import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.helpers.BluetoothHelper;
 import org.nla.tarotdroid.model.TarotDroidUser;
 import org.nla.tarotdroid.ui.constants.PreferenceConstants;
@@ -53,7 +53,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
  */
-public abstract class BaseApp extends Application implements ITarotDroidApp {
+public abstract class BaseApp extends MultiDexApplication implements ITarotDroidApp {
 	
     /**
      * The DAL Service.
@@ -114,6 +114,8 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
      * The notifications ids for game sets being published.
      */
     private Map<String, Integer> notificationIds;
+	private List<GraphUser> selectedUsers;
+	private GraphPlace selectedPlace;
 
     /* (non-Javadoc)
      * @see android.app.Application#onCreate()
@@ -129,7 +131,7 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
         this.setLastLaunchTimestamp();
         this.notificationIds = newHashMap();
     }
-
+	
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#getUuid()
 	 */
@@ -137,7 +139,7 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 	public UUID getUuid() {
 		return UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#getServiceName()
 	 */
@@ -169,7 +171,7 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 			return this.getString(R.string.urlTarotDroidFacebookCloud);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#getFacebookAppUrl()
 	 */
@@ -186,7 +188,7 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 	public GraphUser getLoggedFacebookUser() {
 		return this.graphUser;
 	}
-
+    
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#setLoggedAccount(android.accounts.Account)
 	 */
@@ -194,14 +196,14 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 	public void setLoggedFacebookUser(GraphUser graphUser) {
 		this.graphUser = graphUser;
 	}
-	
+    
 	/**
 	 * Sets the last time the app was launched.
 	 */
     private void setLastLaunchTimestamp() {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
     	this.lastLaunchTimestamp = preferences.getLong(PreferenceConstants.PrefDateLastLaunch, 0);
-    	
+
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong(PreferenceConstants.PrefDateLastLaunch, System.currentTimeMillis());
         editor.commit();
@@ -242,24 +244,24 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 		Bet.GARDE.setLabel(this.getString(R.string.gardeDescription));
 		Bet.GARDESANS.setLabel(this.getString(R.string.gardeSansDescription));
 		Bet.GARDECONTRE.setLabel(this.getString(R.string.gardeContreDescription));
-		
+
 		King.HEART.setLabel(this.getString(R.string.lblHeartsColor));
 		King.DIAMOND.setLabel(this.getString(R.string.lblDiamondsColor));
 		King.SPADE.setLabel(this.getString(R.string.lblSpadesColor));
 		King.CLUB.setLabel(this.getString(R.string.lblClubsColor));
-		
+
 		Chelem.CHELEM_ANOUNCED_AND_SUCCEEDED.setLabel(this.getString(R.string.lblAnnouncedAndSucceededChelem));
 		Chelem.CHELEM_ANOUNCED_AND_FAILED.setLabel(this.getString(R.string.lblAnnouncedAndFailedChelem));
 		Chelem.CHELEM_NOT_ANOUNCED_BUT_SUCCEEDED.setLabel(this.getString(R.string.lblNotAnnouncedButSucceededChelem));
-		
+
 		Team.DEFENSE_TEAM.setLabel(this.getString(R.string.lblDefenseTeam));
 		Team.LEADING_TEAM.setLabel(this.getResources().getString(R.string.lblLeadingTeam));
 		Team.BOTH_TEAMS.setLabel(this.getResources().getString(R.string.lblBothTeams));
-		
+
 		Result.SUCCESS.setLabel(this.getString(R.string.lblSuccesses));
 		Result.FAILURE.setLabel(this.getString(R.string.lblFailures));
     }
-    
+
     /**
      * Initializes logged in user.
      */
@@ -270,7 +272,7 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
     		this.tarotDroidUser = new Gson().fromJson(prefTarotDroidUser, TarotDroidUser.class);
     	}
     }
-    
+
     /* (non-Javadoc)
      * @see ITarotDroidApp#isAppInDebugMode()
      */
@@ -285,16 +287,16 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
     @Override
     public String getAppVersion() {
     	return this.versionName;
-    } 
-
+    }
+    
     /* (non-Javadoc)
      * @see ITarotDroidApp#getAppPackage()
      */
     @Override
     public String getAppPackage() {
     	return this.packageName;
-    } 
-
+    }
+    
     /* (non-Javadoc)
      * @see ITarotDroidApp#getDalService()
      */
@@ -310,7 +312,7 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
     public void setDalService(final IDalService dalService) {
     	this.dalService = dalService;
     }
-    
+
     /* (non-Javadoc)
      * @see ITarotDroidApp#getLoadDalTask()
      */
@@ -335,7 +337,7 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
     @Override
     public BluetoothHelper getBluetoothHelper() {
     	if (this.bluetoothHelper == null) {
-    		this.bluetoothHelper = new BluetoothHelper(this); 
+    		this.bluetoothHelper = new BluetoothHelper(this);
     	}
     	return this.bluetoothHelper;
     }
@@ -354,7 +356,7 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
     @Override
 	public GameSetParameters initializeGameSetParameters() {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		
+
 		// initiailizes game set params
 		GameSetParameters gameSetParameters = new GameSetParameters();
 		gameSetParameters.setPetiteBasePoints(preferences.getInt(PreferenceConstants.PrefPetitePoints, 10));
@@ -377,19 +379,19 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 		gameSetParameters.setNotAnnouncedButSucceededChelemPoints(preferences.getInt(PreferenceConstants.PrefNotAnnouncedButSucceededChelemPoints, 200));
 		gameSetParameters.setBelgianBaseStepPoints(preferences.getInt(PreferenceConstants.PrefBelgianStepPoints, 100));
 
-		// initializes app params 
+		// initializes app params
 		this.initializeAppParams();
-		
+
 		return gameSetParameters;
 	}
-    
+	
     /**
      * Initializes the application params.
      */
     private void initializeAppParams() {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
     	this.appParams = new AppParams();
-    	
+
     	this.appParams.setBelgianGamesAllowed(preferences.getBoolean(PreferenceConstants.PrefAreBelgianGamesAllowed, false));
     	this.appParams.setPenaltyGamesAllowed(preferences.getBoolean(PreferenceConstants.PrefArePenaltyGamesAllowed, false));
     	this.appParams.setPassedGamesAllowed(preferences.getBoolean(PreferenceConstants.PrefArePassedGamesAllowed, true));
@@ -399,25 +401,25 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 		this.appParams.setDeadPlayerAuthorized(preferences.getBoolean(PreferenceConstants.PrefIsOneDeadPlayerAuthorized, false));
 		this.appParams.setDeadPlayerAutomaticallySelected(preferences.getBoolean(PreferenceConstants.PrefIsDeadPlayerAutomaticallySelected, true));
 		this.appParams.setMiseryAuthorized(preferences.getBoolean(PreferenceConstants.PrefIsMiseryAuthorized, false));
-		
+
 		// display preferences
 		this.appParams.setDisplayGamesInReverseOrder(preferences.getBoolean(PreferenceConstants.PrefDisplayGamesInReverseOrder, true));
 		this.appParams.setDisplayGlobalScoresForEachGame(preferences.getBoolean(PreferenceConstants.PrefDisplayGlobalScoresForEachGame, false));
 		this.appParams.setKeepScreenOn(preferences.getBoolean(PreferenceConstants.PrefKeepScreenOn, true));
-		
+
 		// dev preferences
 		this.appParams.setDevSimulationMode(preferences.getBoolean(PreferenceConstants.PrefIsSimulationMode, false));
 		this.appParams.setDevGameSetCount(preferences.getInt(PreferenceConstants.PrefDevGameSetCount, 5));
 		this.appParams.setDevMaxGameCount(preferences.getInt(PreferenceConstants.PrefDevMaxGameCount, 15));
     }
-
+    
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#getTarotDroidUser()
 	 */
 	public TarotDroidUser getTarotDroidUser() {
 		return this.tarotDroidUser;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#setTarotDroidUser(TarotDroidUser)
 	 */
@@ -433,14 +435,14 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 		}
 		editor.commit();
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#getSelectedUser()
 	 */
 	public GraphUser getSelectedUser() {
 		return this.selectedUser;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#setSelectedUser(com.facebook.model.GraphUser)
 	 */
@@ -456,16 +458,14 @@ public abstract class BaseApp extends Application implements ITarotDroidApp {
 		return this.notificationIds;
 	}
 	
-	private List<GraphUser> selectedUsers;
-	public void setSelectedUsers(List<GraphUser> users) {
-		this.selectedUsers = users;
-	}
-	
 	public List<GraphUser> getSelectedUsers() {
 		return this.selectedUsers;
 	}
 	
-	private GraphPlace selectedPlace;
+	public void setSelectedUsers(List<GraphUser> users) {
+		this.selectedUsers = users;
+	}
+
 	public GraphPlace getSelectedPlace() {
 	    return selectedPlace;
 	}

@@ -1,65 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<ScrollView
+	android:id="@+id/scrollView"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
 
     	<LinearLayout
-	    	android:id="@+id/mainLayout"  
-	    	android:orientation="vertical" 
-	    	android:layout_height="wrap_content" 
-	    	android:layout_width="fill_parent">
+			android:id="@+id/mainLayout"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
 	    
     	    <!-- Section joueurs obligatoires -->	
     	    <LinearLayout
-	    		android:id="@+id/layoutCompulsoryPlayers"  
-	    		android:orientation="vertical" 
-	    		android:layout_height="wrap_content" 
-	    		android:layout_width="fill_parent">
+				android:id="@+id/layoutCompulsoryPlayers"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
 	    
 		        <LinearLayout
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:layout_gravity="center"
-		            android:orientation="vertical" 
-		            android:background="#0f0f0f" >
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:background="#0f0f0f"
+					android:orientation="vertical">
 		            <TextView
-		                android:layout_width="fill_parent"
-		                android:layout_height="wrap_content"
-		                android:background="#005555"
-		                android:padding="5dip"
-		                style="@style/GameSectionTitleStyle"
-		                android:text="@string/lblCompulsoryPlayersSection" />
+						style="@style/GameSectionTitleStyle"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:background="#005555"
+						android:padding="5dip"
+						android:text="@string/lblCompulsoryPlayersSection" />
 				</LinearLayout>
 			</LinearLayout>
 
     	    <!-- Section joueurs facultatifs -->	
     	    <LinearLayout
-	    		android:id="@+id/layoutOptionalPlayers"  
-	    		android:orientation="vertical" 
-	    		android:layout_height="wrap_content" 
-	    		android:layout_width="fill_parent">
+				android:id="@+id/layoutOptionalPlayers"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
 	    
 		        <LinearLayout
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:layout_gravity="center"
-		            android:orientation="vertical" 
-		            android:background="#0f0f0f" >
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:background="#0f0f0f"
+					android:orientation="vertical">
 		            <TextView
-		                android:layout_width="fill_parent"
-		                android:layout_height="wrap_content"
-		                android:background="#005555"
-		                android:padding="5dip"
-		                style="@style/GameSectionTitleStyle"
-		                android:text="@string/lblOptionalPlayerSection" />
+						style="@style/GameSectionTitleStyle"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:background="#005555"
+						android:padding="5dip"
+						android:text="@string/lblOptionalPlayerSection" />
 				</LinearLayout>
-				
-		        <org.nla.tarotdroid.lib.ui.controls.PlayerSelectorRow
-		            android:id="@+id/optionalPlayerSelectorRow"   
-	    			android:layout_height="wrap_content" 
-	    			android:layout_width="fill_parent"/>
+
+				<org.nla.tarotdroid.ui.controls.PlayerSelectorRow
+					android:id="@+id/optionalPlayerSelectorRow"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"/>
 			</LinearLayout>
 			
     	     

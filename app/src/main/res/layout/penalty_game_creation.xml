@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
     android:id="@+id/scrollView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" 
+    android:layout_height="fill_parent"
     android:background="#0f0f0f">
 
     <LinearLayout
@@ -17,17 +17,17 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="vertical" 
-            android:background="#0f0f0f" >
+            android:background="#0f0f0f"
+            android:orientation="vertical">
 
 			<!-- Titre Mort et Distributeur -->
             <TextView
                 android:id="@+id/txtTitleDeadAndDealer"
+                style="@style/GameSectionTitleStyle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="#005555"
                 android:padding="5dip"
-                style="@style/GameSectionTitleStyle"
                 android:text="@string/lblDealerSection" />
                 
             <!-- Panel Mort et Distributeur -->
@@ -35,32 +35,32 @@
                 android:id="@+id/panelDeadAndDealer"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible" 
                 android:background="#0f0f0f"
-				android:paddingBottom="10dip">
+                android:orientation="vertical"
+                android:paddingBottom="10dip"
+                android:visibility="visible">
                 
                 <!-- Panel Dead -->
                 <RelativeLayout
                     android:id="@+id/panelDead"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:background="#0f0f0f"
                     android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/txtTitleDead"
+                        style="@style/GameSubsectionTitleStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="2dip"
                         android:background="#0f0f0f"
                         android:minWidth="130dip"
                         android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
                         android:text="@string/lblDeadPlayer" />
 
-                    <org.nla.tarotdroid.lib.ui.controls.Selector
+                    <org.nla.tarotdroid.ui.controls.Selector
                         android:id="@+id/galleryDead"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -73,22 +73,22 @@
                     android:id="@+id/panelDealer"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:background="#0f0f0f"
                     android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/txtTitleDealer"
+                        style="@style/GameSubsectionTitleStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="2dip"
                         android:background="#0f0f0f"
                         android:minWidth="130dip"
                         android:padding="5dip"
-                        android:text="@string/lblDealer"
-                        style="@style/GameSubsectionTitleStyle"/>
+                        android:text="@string/lblDealer"/>
 
-                    <org.nla.tarotdroid.lib.ui.controls.Selector
+                    <org.nla.tarotdroid.ui.controls.Selector
                         android:id="@+id/galleryDealer"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -104,17 +104,17 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="vertical" 
-            android:background="#0f0f0f" >
+            android:background="#0f0f0f"
+            android:orientation="vertical">
 
 			<!-- Titre Paramètres principaux -->
             <TextView
                 android:id="@+id/txtTitleMainParameters"
+                style="@style/GameSectionTitleStyle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="#005555"
                 android:padding="5dip"
-                style="@style/GameSectionTitleStyle"
                 android:text="@string/lblMainParametersSection" />
             
             <!-- Panel Paramètres principaux -->
@@ -122,10 +122,10 @@
                 android:id="@+id/panelMainParameters"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible"
                 android:background="#0f0f0f"
-				android:paddingBottom="10dip">
+                android:orientation="vertical"
+                android:paddingBottom="10dip"
+                android:visibility="visible">
                 
                 <!-- Panel Penalted -->
 <!--                 <RelativeLayout -->
@@ -225,28 +225,28 @@
                     android:id="@+id/panelPlayerPenaltyPoints"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:background="#0f0f0f"
                     android:orientation="horizontal"
-                    android:visibility="visible" 
-                    android:background="#0f0f0f">
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/txtTitlePlayerPenaltyPoints"
+                        style="@style/GameSubsectionTitleStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="2dip"
                         android:background="#0f0f0f"
                         android:minWidth="130dip"
                         android:padding="5dip"
-                        style="@style/GameSubsectionTitleStyle"
                         android:text="@string/lblPlayerPenaltyPoints"/>
                     
 					<SeekBar
                         android:id="@+id/barPlayerPenaltyPoints"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/txtTitlePlayerPenaltyPoints"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_below="@id/txtTitlePlayerPenaltyPoints"
                         android:max="100"
                         android:progress="0" />
 					
@@ -254,9 +254,9 @@
                         android:id="@+id/layoutGlobalPointButtons"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/barPlayerPenaltyPoints"
                         android:gravity="center"
-                        android:orientation="horizontal" 
-                        android:layout_below="@id/barPlayerPenaltyPoints">
+                        android:orientation="horizontal">
                         
                         <Button
                             android:id="@+id/btnMinusGlobalPenaltyPoints"
@@ -270,13 +270,13 @@
                             android:id="@+id/txtGlobalPenaltyPoints"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="50dp"
-                            android:inputType="number"
                             android:clickable="false"
-                            android:state_enabled="false"
                             android:focusable="false"
-                            android:focusableInTouchMode="false" />
+                            android:focusableInTouchMode="false"
+                            android:gravity="center"
+                            android:inputType="number"
+                            android:minWidth="50dp"
+                            android:state_enabled="false"/>
 
                         <Button
                             android:id="@+id/btnPlusGlobalPenaltyPoints"
@@ -290,9 +290,9 @@
                         android:id="@+id/layoutPlayerPointButtons"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/layoutGlobalPointButtons"
                         android:gravity="center"
-                        android:orientation="horizontal" 
-                        android:layout_below="@id/layoutGlobalPointButtons">
+                        android:orientation="horizontal">
 
 						<TextView
 	                        android:layout_width="wrap_content"
@@ -311,13 +311,13 @@
                             android:id="@+id/txtPlayerPenaltyPoints"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="50dp"
-                            android:inputType="number"
                             android:clickable="false"
-                            android:state_enabled="false"
                             android:focusable="false"
-                            android:focusableInTouchMode="false" />
+                            android:focusableInTouchMode="false"
+                            android:gravity="center"
+                            android:inputType="number"
+                            android:minWidth="50dp"
+                            android:state_enabled="false"/>
 
 						<TextView
 	                        android:layout_width="wrap_content"

@@ -203,13 +203,11 @@ public class MainDashboardActivity extends AppCompatActivity {
 		DashboardOption playerStatisticsOption = new DashboardOption(R.drawable.icon_community, R.string.lblPlayers, R.string.lblPlayersDetails, R.id.player_statistics_item);
 		DashboardOption marketOption = new DashboardOption(R.drawable.icon_market, R.string.lblGooglePlay, R.string.lblGooglePlayDetails, R.id.google_play_item);
 		DashboardOption goFullOption = new DashboardOption(R.drawable.icon, R.string.lblFullVersion, R.string.lblFullVersionDetails, R.id.full_version_item);
-		DashboardOption myAccountOption = new DashboardOption(R.drawable.icon_community, R.string.lblMyAccount, R.string.lblMyAccountDetails, R.id.my_account_item);
 
 		List<DashboardOption> options = newArrayList();
 		options.add(newGameOption);
 		options.add(historyOption);
 		options.add(playerStatisticsOption);
-		options.add(myAccountOption);
 		options.add(marketOption);
 
 		if (AppContext.getApplication().isAppLimited()) {

@@ -3,85 +3,85 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:title="Preferences"
-    android:key="key_root">
+    android:key="key_root"
+    android:title="Preferences">
     <PreferenceCategory android:title="@string/lblComputationPrefs">
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="25"
             android:key="prisePoints"
             android:numeric="integer"
             android:title="@string/lblPrisePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="1"
             android:key="priseRate"
             android:numeric="integer"
             android:title="@string/lblPriseRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="50"
             android:key="gardePoints"
             android:numeric="integer"
             android:title="@string/lblGardePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="2"
             android:key="gardeRate"
             android:numeric="integer"
             android:title="@string/lblGardeRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="100"
             android:key="gardeSansPoints"
             android:numeric="integer"
             android:title="@string/lblGardeSansPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="4"
             android:key="gardeSansRate"
             android:numeric="integer"
             android:title="@string/lblGardeSansRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="150"
             android:key="gardeContrePoints"
             android:numeric="integer"
             android:title="@string/lblGardeContrePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="6"
             android:key="gardeContreRate"
             android:numeric="integer"
             android:title="@string/lblGardeContreRate"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="10"
             android:key="miseryPoints"
             android:numeric="integer"
             android:title="@string/lblMiseryPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="20"
             android:key="poigneePoints"
             android:numeric="integer"
             android:title="@string/lblPoigneePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="30"
             android:key="doublePoigneePoints"
             android:numeric="integer"
             android:title="@string/lblDoublePoigneePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="40"
             android:key="triplePoigneePoints"
             android:numeric="integer"
             android:title="@string/lblTriplePoigneePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="10"
             android:key="kidAtTheEndPoints"
             android:numeric="integer"
             android:title="@string/lblKidAtTheEndPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="400"
             android:key="announcedAndSucceededChelemPoints"
             android:numeric="integer"
             android:title="@string/lblAnnouncedAndSucceededChelemPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="-200"
             android:key="announcedAndFailedChelemPoints"
             android:numeric="signed"
             android:title="@string/lblAnnouncedAndFailedChelemPoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="200"
             android:key="notAnnouncedButSucceededChelemPoints"
             android:numeric="integer"
@@ -98,13 +98,13 @@
             android:dependency="isPriseAuthorized"
             android:key="isPetiteAuthorized"
             android:title="@string/lblIsPetiteAuthorized"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="10"
             android:dependency="isPetiteAuthorized"
             android:key="petitePoints"
             android:numeric="integer"
             android:title="@string/lblPetitePoints"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="1"
             android:dependency="isPetiteAuthorized"
             android:key="petiteRate"
@@ -114,7 +114,7 @@
             android:defaultValue="false"
             android:key="areBelgianGamesAllowed"
             android:title="@string/lblIsBelgianAuthorized"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="100"
             android:dependency="areBelgianGamesAllowed"
             android:key="belgianStepPoints"
@@ -150,12 +150,12 @@
 
     <!-- TODO: Comment before publishing -->
     <PreferenceCategory android:title="@string/lblDevPrefs">
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="5"
             android:key="gameSetCount"
             android:numeric="integer"
             android:title="Nombre de parties"/>
-        <org.nla.tarotdroid.lib.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
             android:defaultValue="15"
             android:key="maxGameCount"
             android:numeric="integer"
