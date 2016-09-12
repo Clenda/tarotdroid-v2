@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,8 +35,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import android.view.MenuItem.OnMenuItemClickListener;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -398,9 +397,6 @@ public class MainDashboardActivity extends AppCompatActivity {
 		} else if (tagValue == R.id.full_version_item) {
 			intent = new Intent(Intent.ACTION_VIEW);
 			intent.setData(Uri.parse(this.getString(R.string.urlGooglePlayFullApp)));
-			this.startActivity(intent);
-		} else if (tagValue == R.id.my_account_item) {
-			intent = new Intent(this, SigninActivity.class);
 			this.startActivity(intent);
 		}
 	}

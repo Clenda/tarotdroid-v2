@@ -724,11 +724,6 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 					} else {
 						Toast.makeText(GameSetHistoryActivity.this, getString(R.string.titleInternetConnexionNecessary), Toast.LENGTH_LONG).show();
 					}
-				} else if (item.itemType == Item.ItemTypes.publishOnTwitter) {
-					Toast.makeText(GameSetHistoryActivity.this, "TODO: Publish on twitter", Toast.LENGTH_LONG).show();
-
-					Intent intent = new Intent(GameSetHistoryActivity.this, TwitterConnectActivity.class);
-					startActivity(intent);
 				} else if (item.itemType == Item.ItemTypes.remove) {
 					RemoveGameSetDialogClickListener removeGameSetDialogClickListener = new RemoveGameSetDialogClickListener(gameSet);
 					AlertDialog.Builder builder = new AlertDialog.Builder(GameSetHistoryActivity.this);

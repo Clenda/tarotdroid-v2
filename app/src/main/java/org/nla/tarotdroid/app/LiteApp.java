@@ -26,7 +26,6 @@ import org.nla.tarotdroid.R;
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
  */
 @ReportsCrashes(
-		formKey="",
 		mailTo = "tarotdroid@gmail.com",
 		customReportContent = { ReportField.APP_VERSION_CODE, ReportField.APP_VERSION_NAME, ReportField.BRAND, ReportField.PHONE_MODEL, ReportField.ANDROID_VERSION, ReportField.SHARED_PREFERENCES, ReportField.CUSTOM_DATA, ReportField.STACK_TRACE, ReportField.LOGCAT },
 		mode = ReportingInteractionMode.DIALOG,
