@@ -8,6 +8,7 @@ import android.view.View;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.app.AppContext;
 
+// TODO Check https://github.com/madlymad/PreferenceApp
 public class MainPreferencesFragment extends PreferenceFragmentCompat {
 
     public static final String FRAGMENT_TAG = "main_preference_fragment";
