@@ -17,13 +17,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphUser;
-import com.facebook.widget.FriendPickerFragment;
 import com.google.common.base.Throwables;
 
 import org.nla.tarotdroid.R;
@@ -39,7 +32,6 @@ import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.ResultCodes;
-import org.nla.tarotdroid.ui.controls.FacebookThumbnailItem;
 import org.nla.tarotdroid.ui.controls.IconContextMenu;
 import org.nla.tarotdroid.ui.controls.TextItem;
 import org.nla.tarotdroid.ui.controls.ThumbnailItem;
@@ -48,106 +40,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-
 public class PlayerStatisticsActivity extends AppCompatActivity {
 	
 	private static final List<String> READ_PERMISSIONS = Arrays.asList("email");
-	
-	private enum ActionTypes {
-		setMyImageAsPlayerPicture,
-		setFriendImageAsPlayerPicture
-	}
-	
 	private ActionTypes actionType;
 	private Player player;
 	private IconContextMenu pictureContextMenu;
 	private PlayerStatisticsAdapter adapter;
 	private boolean pictureChanged;
-	private UiLifecycleHelper uiHelper;
 	private ListView listView;
-    
-    /**
-     *	Set my image as a player picture.
-     */
-    private void setMyImageAsPlayerPicture() {
-	    Request request = Request.newMeRequest(Session.getActiveSession(), new Request.GraphUserCallback() {
 
-	    	@Override
-	        public void onCompleted(GraphUser user, Response response) {
-                if (user != null) {
-					try {
-						PlayerStatisticsActivity.this.player.setFacebookId(user.getId());
-						PlayerStatisticsActivity.this.player.setPictureUri(null);
-						
-						AppContext.getApplication().getDalService().updatePlayer(PlayerStatisticsActivity.this.player);
-						PlayerStatisticsActivity.this.pictureChanged = true;
-						PlayerStatisticsActivity.this.refresh();
-					}
-					catch (DalException e) {
-						UIHelper.showSimpleRichTextDialog(
-								PlayerStatisticsActivity.this,
-								Throwables.getStackTraceAsString(e),
-								PlayerStatisticsActivity.this.getString( R.string.lblUnexpectedError, e.getMessage())
-						);
-						AuditHelper.auditError(ErrorTypes.unexpectedError, e);
-					}
-                }
-	        }
-	    });
-	    request.executeAsync();
-    }
-	
-    /**
-     *	Set friend's image as a player picture.
-     */
-    private void setFriendImageAsPlayerPicture() {
-        Intent intent = new Intent();
-        intent.setClass(PlayerStatisticsActivity.this, PlayerPickerActivity.class);
-        
-        intent.putExtra(FriendPickerFragment.MULTI_SELECT_BUNDLE_KEY, false);
-        intent.putExtra(FriendPickerFragment.SHOW_TITLE_BAR_BUNDLE_KEY, true);
-        intent.putExtra(FriendPickerFragment.SHOW_PICTURES_BUNDLE_KEY, true);
-        
-        this.startActivityForResult(intent, R.id.select_picture_from_facebook_action_code);
-    }
-	
-    private Session.StatusCallback facebookSessionStatusCallback = new Session.StatusCallback() {
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-            onSessionStateChange(session, state, exception);
-        }
-    };
-    
-    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-    	if (session.isOpened() && this.hasReadPermission()) {
-    		if (actionType == ActionTypes.setFriendImageAsPlayerPicture) {
-    			this.setFriendImageAsPlayerPicture();
-    			this.actionType = null;
-    		}
-    	
-    		else if (actionType == ActionTypes.setMyImageAsPlayerPicture) {
-    			this.setMyImageAsPlayerPicture();
-    			this.actionType = null;
-    		}
-    	}
-    }
-    
-    private boolean hasReadPermission() {
-        Session session = Session.getActiveSession();
-        return session != null && session.getPermissions().containsAll(READ_PERMISSIONS);
-    }
-	
 	@Override
     public void onCreate(final Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.activity_player_statistics);
 			listView = (ListView)findViewById(R.id.listView);
-			
-			// facebook session creation
-	        this.uiHelper = new UiLifecycleHelper(this, facebookSessionStatusCallback);
-	        this.uiHelper.onCreate(savedInstanceState);
-			
+
 			this.auditEvent();
 			this.pictureChanged = false;
 
@@ -162,9 +71,9 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 			this.player = AppContext.getApplication().getDalService().getPlayerByName((this.getIntent().getExtras().getString("player")));
 			//this.player = (Player)this.getIntent().getExtras().get("player");
 			this.setTitle(String.format(getResources().getString(R.string.lblPlayerStatisticsActivityTitle), this.player.getName()));
-			
-			this.refresh();	
-		}
+
+            this.refresh();
+        }
 		catch (final Exception e) {
 			AuditHelper.auditError(ErrorTypes.playerStatisticsActivityError, e, this);
 		}
@@ -179,45 +88,6 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 		AuditHelper.auditSession(this);
 	}
 	
-    /* (non-Javadoc)
-     * @see android.app.Activity#onResume()
-     */
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    	this.uiHelper.onResume();
-    }
-    
-    /* (non-Javadoc)
-     * @see com.actionbarsherlock.app.SherlockListActivity#onPause()
-     */
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	this.uiHelper.onPause();
-    }
-    
-    /* (non-Javadoc)
-     * @see com.actionbarsherlock.app.SherlockListActivity#onDestroy()
-     */
-    @Override
-    protected void onDestroy() {
-    	super.onDestroy();
-    	this.uiHelper.onDestroy();
-    }
-	
-    /* (non-Javadoc)
-     * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
-     */
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        this.uiHelper.onSaveInstanceState(outState);
-    }
-	
-	/**
-	 *	Traces creation event. 
-	 */
 	private void auditEvent() {
 		AuditHelper.auditEvent(AuditHelper.EventTypes.displayPlayerStatisticsPage);
 	}
@@ -227,14 +97,12 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 	 */
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data); 
-	    this.uiHelper.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == R.id.select_picture_from_contact_action_code && resultCode == RESULT_OK) {
 			try {
 				this.player.setPictureUri(data.getData().toString());
-				this.player.setFacebookId(null);
-				
+
 				AppContext.getApplication().getDalService().updatePlayer(this.player);
 				this.pictureChanged = true;
 				this.refresh();
@@ -248,128 +116,49 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 				AuditHelper.auditError(ErrorTypes.unexpectedError, e);
 			}
 		}
-		
-		if (requestCode == R.id.select_picture_from_facebook_action_code && resultCode == RESULT_OK) {
-			GraphUser selectedUser = AppContext.getApplication().getSelectedUser();
-			if (selectedUser != null) {
-				try {
-					this.player.setFacebookId(selectedUser.getId());
-					this.player.setPictureUri(null);
-					
-					AppContext.getApplication().getDalService().updatePlayer(this.player);
-					this.pictureChanged = true;
-					this.refresh();
-				}
-				catch (DalException e) {
-					UIHelper.showSimpleRichTextDialog(
-							this,
-							Throwables.getStackTraceAsString(e),
-							this.getString( R.string.lblUnexpectedError, e.getMessage())
-					);
-					AuditHelper.auditError(ErrorTypes.unexpectedError, e);
-				}
-			}
-		}
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreateDialog(int)
-	 */
-	@Override
+    @Override
 	protected Dialog onCreateDialog(int id) {
 	    if (id == R.id.select_picture_context_menu) {
 	        return this.pictureContextMenu.createMenu(this.getString(R.string.lblSelectPictureMenuTitle));
 	    }
 	    return super.onCreateDialog(id);
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.actionbarsherlock.app.SherlockListActivity#onCreateOptionsMenu(android.view.Menu)
-	 */
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
-		SubMenu menuPicture = menu.addSubMenu(this.getString(R.string.lblPictureItem));
+
+        SubMenu menuPicture = menu.addSubMenu(this.getString(R.string.lblPictureItem));
 		MenuItem miPicture = menuPicture.getItem();
 		miPicture.setIcon(R.drawable.icon_add_picture);
 		miPicture.setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT|MenuItem.SHOW_AS_ACTION_ALWAYS);
-		
-		MenuItem miFromFacebook = menuPicture.add(this.getString(R.string.lblPictureFromFriendsFacebookItem));
-		miFromFacebook.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		miFromFacebook.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-			
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				
-				// get facebook session
-				Session session = Session.getActiveSession();
-				if (session == null  || session.isClosed()) {
-					session = new Session(PlayerStatisticsActivity.this);
-					Session.setActiveSession(session);
-				}
-				
-				// assign my image as player picture
-				if (!session.isOpened()) {
-					actionType = ActionTypes.setFriendImageAsPlayerPicture;
-					session.openForRead(new Session.OpenRequest(PlayerStatisticsActivity.this).setPermissions(READ_PERMISSIONS));
-				}
-				else {
-					setFriendImageAsPlayerPicture();
-				}
-                return false;
-			}
-		});
-		
-		MenuItem miMeFacebook = menuPicture.add(this.getString(R.string.lblPictureFromMeFacebookItem));
-		miMeFacebook.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		miMeFacebook.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-			
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
 
-				// get facebook session
-				Session session = Session.getActiveSession();
-				if (session == null  || session.isClosed()) {
-					session = new Session(PlayerStatisticsActivity.this);
-					Session.setActiveSession(session);
-				}
-				
-				// assign my image as player picture
-				if (!session.isOpened()) {
-					actionType = ActionTypes.setMyImageAsPlayerPicture;
-					session.openForRead(new Session.OpenRequest(PlayerStatisticsActivity.this).setPermissions(READ_PERMISSIONS));
-				}
-				else {
-					setMyImageAsPlayerPicture();
-				}
-                return false;
-			}
-		});
-		
-		MenuItem miFromContacts = menuPicture.add(this.getString(R.string.lblPictureFromContactsItem));
+
+        MenuItem miFromContacts = menuPicture.add(this.getString(R.string.lblPictureFromContactsItem));
 		miFromContacts.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		miFromContacts.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-			
-			@TargetApi(Build.VERSION_CODES.ECLAIR)
+
+            @TargetApi(Build.VERSION_CODES.ECLAIR)
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
             	Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                // TODO Fix crash http://stackoverflow.com/questions/25529865/java-lang-illegalargumentexception-can-only-use-lower-16-bits-for-requestcode
                 PlayerStatisticsActivity.this.startActivityForResult(intent, R.id.select_picture_from_contact_action_code);
 				return false;
 			}
 		});
-		
-		MenuItem miNoPicture = menuPicture.add(this.getString(R.string.lblPictureNoPictureItem));
+
+        MenuItem miNoPicture = menuPicture.add(this.getString(R.string.lblPictureNoPictureItem));
 		miNoPicture.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		miNoPicture.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-			
-			@Override
+
+            @Override
 			public boolean onMenuItemClick(MenuItem item) {
 				try {
-					PlayerStatisticsActivity.this.player.setFacebookId(null);
 					PlayerStatisticsActivity.this.player.setPictureUri(null);
-					
-					AppContext.getApplication().getDalService().updatePlayer(PlayerStatisticsActivity.this.player);
+
+                    AppContext.getApplication().getDalService().updatePlayer(PlayerStatisticsActivity.this.player);
 					PlayerStatisticsActivity.this.pictureChanged = true;
 					PlayerStatisticsActivity.this.refresh();
 				}
@@ -385,13 +174,7 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
                 return false;
 			}
 		});
-		
-//		SubMenu menuOptions = menu.addSubMenu(this.getString(R.string.lblOptions));
-//		MenuItem miPicture = menuPicture.getItem();
-//		miPicture.setIcon(R.drawable.icon_add_picture);
-//		miPicture.setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT|MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-		
 		return true;
 	}
 	
@@ -413,8 +196,13 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 		}
 		this.finish();
 	}
-	
-	private class PlayerStatisticsAdapter extends BaseAdapter {
+
+    private enum ActionTypes {
+        setMyImageAsPlayerPicture,
+        setFriendImageAsPlayerPicture
+    }
+
+    private class PlayerStatisticsAdapter extends BaseAdapter {
 		
 		private View playerItem;
 		private TextItem playedGameSetCountItem;
@@ -523,20 +311,9 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 		}
 
 		public void setPlayerPicture() {
-			
-			// facebook pic was set
-			if (player.getFacebookId() != null) {
-				this.playerItem = new FacebookThumbnailItem(
-					context,
-					player.getFacebookId(),
-					player.getName(),
-					context.getString(R.string.lblPlayerStatsCreateOn, player.getCreationTs().toLocaleString())
-				);
-			}
-			
-			// contact pic was set
-			else if (player.getPictureUri() != null) {
-				this.playerItem = new ThumbnailItem(
+
+            if (player.getPictureUri() != null) {
+                this.playerItem = new ThumbnailItem(
 						context,
 						Uri.parse(player.getPictureUri()),
 						R.drawable.icon_android,

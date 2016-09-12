@@ -100,11 +100,6 @@ public class GameSet extends PersistableBusinessObject implements Iterable<BaseG
 	 */
     @CloudField(cloudify=false)
 	private String miscProperties;
-    
-    /**
-     * Indicates if and when gameset was posted to Facebook.
-     */
-    private Date facebookPostTs;
 	
 	/**
 	 * Default constructor.
@@ -170,6 +165,14 @@ public class GameSet extends PersistableBusinessObject implements Iterable<BaseG
     }
 	
 	/**
+	 * Returns the list of players in the game.
+	 * @return the list of players in the game.
+	 */
+	public PlayerList getPlayers() {
+		return this.players;
+	}
+
+	/**
 	 * Sets the list of players.
 	 * @param players the list of players.
 	 */
@@ -186,11 +189,11 @@ public class GameSet extends PersistableBusinessObject implements Iterable<BaseG
 	}
 
 	/**
-	 * Returns the list of players in the game. 
-	 * @return the list of players in the game.
+	 * Returns highest game index.
+	 * @return highest game index.
 	 */
-	public PlayerList getPlayers() {
-		return this.players;
+	private int getHighestGameIndex() {
+		return this.games.size();
 	}
 
 	/**
@@ -201,14 +204,6 @@ public class GameSet extends PersistableBusinessObject implements Iterable<BaseG
 		for (BaseGame game : this.games) {
 			game.setHighestGameIndex(highestGameIndex);
 		}
-	}
-	
-	/**
-	 * Returns highest game index.
-	 * @return highest game index.
-	 */
-	private int getHighestGameIndex() {
-		return this.games.size();
 	}
 	
 	/**
@@ -237,39 +232,6 @@ public class GameSet extends PersistableBusinessObject implements Iterable<BaseG
 	 */
 	public void setGameStyleType(final GameStyleType gameStyleType) {
 		this.gameStyleType = gameStyleType;
-	}
-	
-//	/**
-//	 * @param miscPropoerties
-//	 */
-//	public void setMiscProperties(final String miscProperties) {
-//		if (miscProperties == null) {
-//			this.miscProperties = "0|";
-//		}
-//		else {
-//			this.miscProperties = miscProperties;
-//		}
-//	}
-//
-//	/**
-//	 * @return the miscProperties
-//	 */
-//	public String getMiscProperties() {
-//		return this.miscProperties;
-//	}
-
-	/**
-	 * @return the facebookPostTs
-	 */
-	public Date getFacebookPostTs() {
-		return this.facebookPostTs;
-	}
-
-	/**
-	 * @param facebookPostTs the facebookPostTs to set
-	 */
-	public void setFacebookPostTs(Date facebookPostTs) {
-		this.facebookPostTs = facebookPostTs;
 	}
 
 	/**
@@ -318,12 +280,12 @@ public class GameSet extends PersistableBusinessObject implements Iterable<BaseG
 			this.setHighestGameIndex(this.getHighestGameIndex());
 			
 		    if (removedGame instanceof StandardTarot5Game) {
-		        this.standard5Games.remove((StandardTarot5Game)removedGame);
-		        this.std5GameCount -= 1;
+				this.standard5Games.remove(removedGame);
+				this.std5GameCount -= 1;
 	        }
 	        if (removedGame instanceof StandardBaseGame) {
-	            this.standardGames.remove((StandardBaseGame)removedGame);
-	            this.stdGameCount -= 1;
+				this.standardGames.remove(removedGame);
+				this.stdGameCount -= 1;
 	        }
 
 			this.setChanged();
@@ -362,12 +324,12 @@ public class GameSet extends PersistableBusinessObject implements Iterable<BaseG
 					this.setHighestGameIndex(this.getHighestGameIndex());
 					
 				    if (removedGame instanceof StandardTarot5Game) {
-				        this.standard5Games.remove((StandardTarot5Game)removedGame);
-				        this.std5GameCount -= 1;
+						this.standard5Games.remove(removedGame);
+						this.std5GameCount -= 1;
 			        }
 			        if (removedGame instanceof StandardBaseGame) {
-			            this.standardGames.remove((StandardBaseGame)removedGame);
-			            this.stdGameCount -= 1;
+						this.standardGames.remove(removedGame);
+						this.stdGameCount -= 1;
 			        }
 			        toReturn.add(removedGame);
 				}

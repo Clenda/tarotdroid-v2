@@ -87,7 +87,6 @@ public class GameSetDatabaseAdapter extends BaseAdapter {
 		ContentValues updatedGameSetValues = new ContentValues();
 		updatedGameSetValues.put(DatabaseV5Constants.COL_GAMESET_SYNC_TIMESTAMP, gameSet.getSyncTimestamp().getTime());
 		updatedGameSetValues.put(DatabaseV5Constants.COL_GAMESET_SYNC_ACCOUNT, gameSet.getSyncAccount());
-		updatedGameSetValues.put(DatabaseV5Constants.COL_GAMESET_FACEBOOK_TIMESTAMP, gameSet.getFacebookPostTs() != null ? gameSet.getFacebookPostTs().getTime() : 0);
 		this.database.update(DatabaseV5Constants.TABLE_GAMESET, updatedGameSetValues, DatabaseV5Constants.COL_GAMESET_ID + "=?", new String[]{ String.valueOf(gameSet.getId()) });
 		
 		return;
@@ -170,7 +169,6 @@ public class GameSetDatabaseAdapter extends BaseAdapter {
 		long syncTimestamp = dataSource.getLong(dataSource.getColumnIndex(DatabaseV5Constants.COL_GAMESET_SYNC_TIMESTAMP));
 		gameSet.setSyncTimestamp(syncTimestamp != 0 ? new Date(syncTimestamp) : null);
 		long facebookTimestamp = dataSource.getLong(dataSource.getColumnIndex(DatabaseV5Constants.COL_GAMESET_FACEBOOK_TIMESTAMP));
-		gameSet.setFacebookPostTs(facebookTimestamp != 0 ? new Date(facebookTimestamp) : null);
 
 		return gameSet;
 	}

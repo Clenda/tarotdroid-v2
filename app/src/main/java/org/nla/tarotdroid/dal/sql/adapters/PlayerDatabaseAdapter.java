@@ -348,7 +348,6 @@ public class PlayerDatabaseAdapter extends BaseAdapter {
 				DatabaseV5Constants.COL_PLAYER_TIMESTAMP))));
 		player.setPictureUri(dataSource.getString(dataSource.getColumnIndex(DatabaseV5Constants.COL_PLAYER_PICTURE_URI)));
 		player.setEmail(dataSource.getString(dataSource.getColumnIndex(DatabaseV5Constants.COL_PLAYER_EMAIL)));
-		player.setFacebookId(dataSource.getString(dataSource.getColumnIndex(DatabaseV5Constants.COL_PLAYER_FACEBOOK_ID)));
 		player.setSyncAccount(dataSource.getString(dataSource.getColumnIndex(DatabaseV5Constants.COL_PLAYER_SYNC_ACCOUNT)));
 		long syncTimestamp = dataSource.getLong(dataSource.getColumnIndex(DatabaseV5Constants.COL_PLAYER_SYNC_TIMESTAMP));
 		player.setSyncTimestamp(syncTimestamp != 0 ? new Date(syncTimestamp) : null);
@@ -369,7 +368,6 @@ public class PlayerDatabaseAdapter extends BaseAdapter {
 		}
 		values.put(DatabaseV5Constants.COL_PLAYER_PICTURE_URI, player.getPictureUri());
 		values.put(DatabaseV5Constants.COL_PLAYER_EMAIL, player.getEmail());
-		values.put(DatabaseV5Constants.COL_PLAYER_FACEBOOK_ID, player.getFacebookId());
 		values.put(DatabaseV5Constants.COL_PLAYER_SYNC_TIMESTAMP, 0);
 
 		if (player.getId() != Long.MIN_VALUE) {
@@ -432,6 +430,78 @@ public class PlayerDatabaseAdapter extends BaseAdapter {
 	}
 		
 	/**
+	 * Persists the game/players of specified game set.
+	 * @param gameSet
+	 */
+	public void storeGameSetPlayers(final GameSet gameSet) {
+		if (gameSet == null) {
+			throw new IllegalArgumentException("gameSet is null");
+		}
+		if (!gameSet.isPersisted()) {
+			throw new IllegalArgumentException("gameSet hasn't been persisted");
+		}
+		for (Player player : gameSet.getPlayers()) {
+			GameSetPlayers gameSetPlayersEntity = new GameSetPlayers();
+			gameSetPlayersEntity.setGameSetId(gameSet.getId());
+			gameSetPlayersEntity.setPlayerId(player.getId());
+			ContentValues initialValues = this.createGameSetPlayersContentValues(
+					gameSetPlayersEntity);
+			this.database.insertOrThrow(DatabaseV5Constants.TABLE_GAMESET_PLAYERS,
+										null,
+										initialValues);
+
+			Player actualPlayerToCache = this.playersByUuidInRepository.get(player.getUuid());
+			if (actualPlayerToCache == null) {
+				actualPlayerToCache = this.playersByIdInRepository.get(player.getId());
+			}
+
+			this.cachePlayerInGameSetsPlayersList(gameSet.getId(), actualPlayerToCache);
+		}
+	}
+
+	/**
+	 * Persists the game/players of specified game.
+	 *
+	 * @param game
+	 */
+	public void storeGamePlayers(final BaseGame game) {
+		if (game == null) {
+			throw new IllegalArgumentException("game is null");
+		}
+		if (!game.isPersisted()) {
+			throw new IllegalArgumentException("game hasn't been persisted");
+		}
+
+		for (Player player : game.getPlayers()) {
+			GamePlayers gamePlayersEntity = new GamePlayers();
+			gamePlayersEntity.setGameId(game.getId());
+			gamePlayersEntity.setPlayerId(player.getId());
+			ContentValues initialValues = this.createGamePlayersContentValues(gamePlayersEntity);
+			this.database.insertOrThrow(DatabaseV5Constants.TABLE_GAME_PLAYERS,
+										null,
+										initialValues);
+
+			Player actualPlayerToCache = this.playersByUuidInRepository.get(player.getUuid());
+			if (actualPlayerToCache == null) {
+				actualPlayerToCache = this.playersByIdInRepository.get(player.getId());
+			}
+
+			this.cachePlayerInGamesPlayersList(game.getId(), actualPlayerToCache);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nla.tarotdroid.dal.sql.adapters.BaseAdapter#clear()
+	 */
+	@Override
+	public void clear() {
+		this.playersByUuidInRepository.clear();
+		this.playersByIdInRepository.clear();
+		this.gamesPlayerListsInRepository.clear();
+		this.gameSetsPlayerListsInRepository.clear();
+	}
+
+	/**
 	 * Convenient class to retrieve/insert links between Game and Player tables.
 	 */
 	private class GamePlayers {
@@ -440,7 +510,7 @@ public class PlayerDatabaseAdapter extends BaseAdapter {
 		 * The game id.
 		 */
 		private long gameId;
-		
+
 		/**
 		 * The player id.
 		 */
@@ -472,19 +542,19 @@ public class PlayerDatabaseAdapter extends BaseAdapter {
 		 */
 		public void setPlayerId(final long playerId) {
 			this.playerId = playerId;
-		}	
+		}
 	}
 	
 	/**
 	 * Convenient class to retrieve/insert links between GameSet and Player tables.
-	 */	
+	 */
 	private class GameSetPlayers {
 
 		/**
 		 * The game set id.
 		 */
 		private long gameSetId;
-		
+
 		/**
 		 * The player id.
 		 */
@@ -517,71 +587,5 @@ public class PlayerDatabaseAdapter extends BaseAdapter {
 		public void setPlayerId(final long playerId) {
 			this.playerId = playerId;
 		}
-	}
-	
-	/**
-	 * Persists the game/players of specified game set.
-	 * @param gameSet
-	 */
-	public void storeGameSetPlayers(final GameSet gameSet) {
-		if(gameSet == null) {
-			throw new IllegalArgumentException("gameSet is null");
-		}
-		if(!gameSet.isPersisted()) {
-			throw new IllegalArgumentException("gameSet hasn't been persisted");
-		}
-		for(Player player : gameSet.getPlayers()) {
-			GameSetPlayers gameSetPlayersEntity = new GameSetPlayers();
-			gameSetPlayersEntity.setGameSetId(gameSet.getId());
-			gameSetPlayersEntity.setPlayerId(player.getId());
-			ContentValues initialValues = this.createGameSetPlayersContentValues(gameSetPlayersEntity);
-			this.database.insertOrThrow(DatabaseV5Constants.TABLE_GAMESET_PLAYERS, null, initialValues);
-			
-			Player actualPlayerToCache = this.playersByUuidInRepository.get(player.getUuid());
-			if (actualPlayerToCache == null) {
-				actualPlayerToCache = this.playersByIdInRepository.get(player.getId());
-			}
-			
-			this.cachePlayerInGameSetsPlayersList(gameSet.getId(), actualPlayerToCache);
-		}
-	}
-
-	/**
-	 * Persists the game/players of specified game.
-	 * @param game
-	 */
-	public void storeGamePlayers(final BaseGame game) {
-		if(game == null) {
-			throw new IllegalArgumentException("game is null");
-		}
-		if(!game.isPersisted()) {
-			throw new IllegalArgumentException("game hasn't been persisted");
-		}
-		
-		for(Player player : game.getPlayers()) {
-			GamePlayers gamePlayersEntity = new GamePlayers();
-			gamePlayersEntity.setGameId(game.getId());
-			gamePlayersEntity.setPlayerId(player.getId());
-			ContentValues initialValues = this.createGamePlayersContentValues(gamePlayersEntity);
-			this.database.insertOrThrow(DatabaseV5Constants.TABLE_GAME_PLAYERS, null, initialValues);
-			
-			Player actualPlayerToCache = this.playersByUuidInRepository.get(player.getUuid());
-			if (actualPlayerToCache == null) {
-				actualPlayerToCache = this.playersByIdInRepository.get(player.getId());
-			}
-			
-			this.cachePlayerInGamesPlayersList(game.getId(), actualPlayerToCache);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.nla.tarotdroid.dal.sql.adapters.BaseAdapter#clear()
-	 */
-	@Override
-	public void clear() {
-		this.playersByUuidInRepository.clear();
-		this.playersByIdInRepository.clear();
-		this.gamesPlayerListsInRepository.clear();
-		this.gameSetsPlayerListsInRepository.clear();
 	}
 }

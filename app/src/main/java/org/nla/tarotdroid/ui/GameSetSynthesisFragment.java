@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,17 +33,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import android.support.v4.app.Fragment;
-import com.facebook.widget.ProfilePictureView;
-
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.MapPlayersScores;
-import org.nla.tarotdroid.biz.PersistableBusinessObject;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
-import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.UIHelper;
@@ -66,77 +63,21 @@ public class GameSetSynthesisFragment extends Fragment {
      */
     private Map<Integer, LinearLayout> statsRows;
     
-	/**
-     * Player stats layout.
-     */
     private LinearLayout playerStatsLayout;
     
-//	/**
-//	 * The current game set.
-//	 */
-//	private GameSet gameSet;
-	
-    /**
-     * Creates a new instance of GameSetSynthesisFragment.
-     * @param gameSetId
-     * @return
-     */
 	public static GameSetSynthesisFragment newInstance(/*GameSet gameSet*/) {
-//		checkArgument(gameSet != null, "gameSet is null");
 		GameSetSynthesisFragment fragment = new GameSetSynthesisFragment();
-		
-//		Bundle args = new Bundle();
-//		if (!gameSet.isPersisted()) {
-//			//args.putString(ActivityParams.PARAM_GAMESET_SERIALIZED, UIHelper.serializeGameSet(gameSet));
-//			args.putSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED, gameSet);
-//		}
-//		else {
-//			args.putLong(ActivityParams.PARAM_GAMESET_ID, gameSet.getId());
-//		}
-//		fragment.setArguments(args);
-		
 		return fragment;
 	}
 	
-	/**
-	 * Returns the game set on which activity has to work.
-	 * @return
-	 */
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().gameSet;
 	}
 	
-//	/**
-//	 * Sets the internal game set.
-//	 * @param gameSet
-//	 */
-//	public void setGameSet(GameSet gameSet) {
-//		this.gameSet = gameSet;
-//	}
-	
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = null;
 		try {
-			// check params
-//    		checkArgument(this.getArguments().containsKey(ActivityParams.PARAM_GAMESET_ID), "Game set id must be provided");
-//    		this.gameSet = AppContext.getApplication().getDalService().getGameSetById(this.getArguments().getLong(ActivityParams.PARAM_GAMESET_ID));
-//			Bundle args = this.getArguments();
-//			if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-//				this.gameSet = AppContext.getApplication().getDalService().getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
-//			}
-//			else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-//				//this.gameSet = UIHelper.deserializeGameSet(args.getString(ActivityParams.PARAM_GAMESET_SERIALIZED));
-//				this.gameSet = (GameSet)args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
-//			}
-//			else {
-//				throw new IllegalArgumentException("Game set id or serialized game set must be provided");
-//			}
-
-
 			GameStyleType gameStyleType = this.getGameSet().getGameStyleType();
 			
 			if (gameStyleType == GameStyleType.Tarot5) {
@@ -211,18 +152,12 @@ public class GameSetSynthesisFragment extends Fragment {
         return view;
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onResume()
-	 */
 	@Override
 	public void onResume() {
 		super.onResume();
 		this.refreshPlayerStatsRows();
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onSaveInstanceState(android.os.Bundle)
-	 */
 	@Override
     public void onSaveInstanceState(Bundle outState) {
     	// HACK found on http://code.google.com/p/android/issues/detail?id=19917 to prevent error "Unable to pause activity" (described on web site) 
@@ -230,9 +165,6 @@ public class GameSetSynthesisFragment extends Fragment {
     	super.onSaveInstanceState(outState);
     }
 
-	/**
-     * Refreshes the stats rows on the synthesis view.
-     */
     protected void refreshPlayerStatsRows() {
         // sort players
         List<Player> sortedPlayers = this.getGameSet().getPlayers().getPlayers();
@@ -266,59 +198,15 @@ public class GameSetSynthesisFragment extends Fragment {
             TextView statSuccessfulGamesCount = (TextView)statRow.findViewById(R.id.statSuccessfulGamesCount);
             TextView statMinScore = (TextView)statRow.findViewById(R.id.statMinScore);
             TextView statMaxScore = (TextView)statRow.findViewById(R.id.statMaxScore);
-            
-            
-//    		Bitmap playerImage = null;
-//    		if (player.getPictureUri() != null && !player.getPictureUri().equals("")) {
-//    			playerImage = UIHelper.getPlayerImage(this.getActivity(), player);
-//    		}
-//    		
-//            
-//            // assign values to widgets
-//            if (player.getFacebookId() != null) {
-//    			// player facebook image
-//    			ProfilePictureView pictureView = new ProfilePictureView(this.getActivity());
-//    			pictureView.setProfileId(player.getFacebookId());
-//    			pictureView.setPresetSize(ProfilePictureView.SMALL);
-//    			//pictureView.setOnClickListener(playerClickListener);
-//    			pictureView.setLayoutParams(UIConstants.PLAYERS_LAYOUT_PARAMS);
-//    			statRow.removeViewAt(0);
-//            	statRow.addView(pictureView, 0);
-//            }
-//            else {
-//            	// WARNING: The properties below reference the style ScoreTextStyle, but we can't set a style at runtime.
-//            	TextView playerName = new TextView(this.getActivity());
-//            	playerName.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1));
-//            	playerName.setGravity(Gravity.CENTER);
-//            	playerName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-//            	playerName.setEllipsize(TruncateAt.END);
-//            	playerName.setSingleLine();
-//            	playerName.setTextColor(Color.WHITE);
-//            	playerName.setTypeface(null, Typeface.BOLD);
-//            	playerName.setText(player.getName());
-//            	//playerName.setBackgroundResource(R.drawable.border_player_white);
-//            	statRow.removeViewAt(0);
-//            	statRow.addView(playerName, 0);
-//            }
-            
-            OnClickListener playerClickListener = new PlayerClickListener(player);
-            
-    		// facebook picture
-    		if (player.getFacebookId() != null) {
-    			ProfilePictureView pictureView = new ProfilePictureView(this.getActivity());
-    			pictureView.setProfileId(player.getFacebookId());
-    			pictureView.setPresetSize(ProfilePictureView.SMALL);
-    			pictureView.setLayoutParams(UIConstants.PLAYERS_LAYOUT_PARAMS);
 
-	    		pictureView.setOnClickListener(playerClickListener);
-	    		//this.addView(pictureView);
-            	statRow.removeViewAt(0);
-            	statRow.addView(pictureView, 0);
-    		}
-    		
-    		// contact picture
-    		else if (player.getPictureUri() != null && player.getPictureUri().toString().contains("content://com.android.contacts/contacts")) {
-    			Bitmap playerImage = UIHelper.getContactPicture(this.getActivity(), Uri.parse(player.getPictureUri()).getLastPathSegment());
+
+			OnClickListener playerClickListener = new PlayerClickListener(player);
+
+			if (player.getPictureUri() != null && player.getPictureUri()
+														.toString()
+														.contains(
+																"content://com.android.contacts/contacts")) {
+				Bitmap playerImage = UIHelper.getContactPicture(this.getActivity(), Uri.parse(player.getPictureUri()).getLastPathSegment());
 	    		ImageView imgPlayer = new ImageView(this.getActivity());
 	    		imgPlayer.setImageBitmap(playerImage);
 	    		imgPlayer.setLayoutParams(UIConstants.PLAYERS_LAYOUT_PARAMS);

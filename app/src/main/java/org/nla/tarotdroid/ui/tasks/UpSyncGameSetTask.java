@@ -3,8 +3,6 @@ package org.nla.tarotdroid.ui.tasks;
 import android.app.Activity;
 import android.app.ProgressDialog;
 
-import com.facebook.Session;
-import com.facebook.model.GraphUser;
 import com.google.gson.reflect.TypeToken;
 
 import org.nla.tarotdroid.app.AppContext;
@@ -66,15 +64,14 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 	@Override
 	protected Void doInBackground(GameSet... params) {
 		try {
-			GraphUser user = AppContext.getApplication().getLoggedFacebookUser();
-			Object facebookEmailProperty = user.getProperty("email");
-			String facebookEmail = facebookEmailProperty.toString();
+            // TODO Remplace l'authent' par autre chose...
+            String facebookEmail = "facebookEmailProperty.toString();";
 
-            if (!accountExists(facebookEmail, user)) {
-                createAccount(facebookEmail, user);
+            if (!accountExists("facebookEmail", "user")) {
+                createAccount("facebookEmail", "user");
             }
-            upSyncGameSetPlayers(params[0], facebookEmail, user);
-            upSyncGameSet(params[0], facebookEmail, user);
+            upSyncGameSetPlayers(params[0], "facebookEmail", "user");
+            upSyncGameSet(params[0], "facebookEmail", "user");
 
 		} catch (Exception e) {
 			this.backgroundException = e;
@@ -82,23 +79,23 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 		return null;
 	}
 
-    private boolean accountExists(String facebookEmail, GraphUser user) throws IOException {
+    private boolean accountExists(String facebookEmail, String user) throws IOException {
         Request request = new Request.Builder()
                 .url("http://" + AppContext.getApplication().getCloudDns() + "/rest/accounts")
                 .addHeader("Accept-Language", "fr-FR")
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
                                                 facebookEmail,
-                                                user.getId(),
+                                                user,
                                                 "facebook",
-                                                Session.getActiveSession().getAccessToken()))
+                                                "Session.getActiveSession().getAccessToken()"))
                 .get()
                 .build();
         Response response = httpClient.newCall(request).execute();
         return response.isSuccessful();
     }
 
-    private void createAccount(String facebookEmail, GraphUser user) throws Exception {
+    private void createAccount(String facebookEmail, String user) throws Exception {
         RestAccount newRestAccount = new RestAccount();
         newRestAccount.setName(facebookEmail);
 
@@ -110,9 +107,9 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
                                                 facebookEmail,
-                                                user.getId(),
+                                                user,
                                                 "facebook",
-                                                Session.getActiveSession().getAccessToken()))
+                                                "Session.getActiveSession().getAccessToken()"))
                 .post(createAccountRequestBody)
                 .build();
         Response createAccountResponse = httpClient.newCall(createAccountRequest).execute();
@@ -126,7 +123,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
     private void upSyncGameSetPlayers(
             GameSet gameSetToUpload,
             String facebookEmail,
-            GraphUser user
+            String user
     ) throws Exception {
         List<RestPlayer> playersToUploadRest = PlayerConverter.convertToRest(gameSetToUpload.getPlayers()
                                                                                             .getPlayers());
@@ -140,9 +137,9 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
                     .addHeader("Cookie",
                                MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
                                                     facebookEmail,
-                                                    user.getId(),
+                                                    "user",
                                                     "facebook",
-                                                    Session.getActiveSession().getAccessToken()))
+                                                    "Session.getActiveSession().getAccessToken()"))
                     .post(requestBody)
                     .build();
             Response response = httpClient.newCall(request).execute();
@@ -193,7 +190,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
     private void upSyncGameSet(
             GameSet gameSetToUpload,
             String facebookEmail,
-            GraphUser user
+            String user
     ) throws Exception {
         List<RestGameSet> gameSetsToUploadRest = GameSetConverter.convertToRest(Arrays.asList(
                 gameSetToUpload));
@@ -205,9 +202,9 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
                                                 facebookEmail,
-                                                user.getId(),
+                                                user,
                                                 "facebook",
-                                                Session.getActiveSession().getAccessToken()))
+                                                "Session.getActiveSession().getAccessToken()"))
                 .post(requestBody)
                 .build();
 

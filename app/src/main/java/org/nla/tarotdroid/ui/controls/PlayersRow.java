@@ -1,19 +1,3 @@
-/*
- 	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui.controls;
 
 import android.content.Context;
@@ -30,37 +14,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.widget.ProfilePictureView;
-
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PersistableBusinessObject;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.PlayerList;
-import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.PlayerStatisticsActivity;
 import org.nla.tarotdroid.ui.TabGameSetActivity;
 import org.nla.tarotdroid.ui.constants.RequestCodes;
 import org.nla.tarotdroid.ui.constants.UIConstants;
 
-/**
- * Player row.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
 public class PlayersRow extends LinearLayout {
 	
-	/**
-	 * The next dealer.
-	 */
 	private PersistableBusinessObject nextDealer;
 		
-	/**
-	 * Constructs a new PlayersRow.
-	 * @param context
-	 * @param attrs
-	 * @param players
-	 * @param nextDealer
-	 */
 	public PlayersRow(final Context context, final AttributeSet attrs, final PersistableBusinessObject nextDealer) {
 		super(context, attrs);
 		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
@@ -72,35 +40,18 @@ public class PlayersRow extends LinearLayout {
 		this.initializeViews();
 	}
 
-	/**
-	 * Constructs a new PlayersRow.
-	 * @param context
-	 * @param players
-	 * @param nextDealer
-	 */
 	public PlayersRow(final Context context, final PersistableBusinessObject nextDealer) {
 		this(context, null, nextDealer);
 	}
 	
-	/**
-	 * Returns the game set on which activity has to work.
-	 * @return
-	 */
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().getGameSet();
 	}
 
-	/**
-	 * Returns the players.
-	 * @return the players.
-	 */
 	public PlayerList getPlayers() {
 		return this.getGameSet().getPlayers();
 	}
 	
-    /**
-     * Initializes graphical views.
-     */
 	protected void initializeViews() {
 		// "Players" label
 		TextView lblPlayers = new TextView(this.getContext());
@@ -120,27 +71,13 @@ public class PlayersRow extends LinearLayout {
     	for (Player player : this.getGameSet().getPlayers()) {
     		
     		OnClickListener playerClickListener = new PlayerClickListener(player);
-    		
-    		// facebook picture
-    		if (player.getFacebookId() != null) {
-    			   			
-    			ProfilePictureView pictureView = null;
-    			pictureView = new ProfilePictureView(this.getContext());
-    			pictureView.setProfileId(player.getFacebookId());
-    			pictureView.setPresetSize(ProfilePictureView.SMALL);
-    			pictureView.setLayoutParams(UIConstants.PLAYERS_LAYOUT_PARAMS);
 
-	    		if (this.nextDealer == player) {
-	    			pictureView.setBackgroundResource(R.drawable.border_next_player);
-	    		}
-    			
-	    		pictureView.setOnClickListener(playerClickListener);
-	    		this.addView(pictureView);
-    		}
-    		
     		// contact picture
-    		else if (player.getPictureUri() != null && player.getPictureUri().toString().contains("content://com.android.contacts/contacts")) {
-    			Bitmap playerImage = null;
+			if (player.getPictureUri() != null && player.getPictureUri()
+														.toString()
+														.contains(
+																"content://com.android.contacts/contacts")) {
+				Bitmap playerImage = null;
 				try {
 					playerImage = UIHelper.getContactPicture(this.getContext(), Uri.parse(player.getPictureUri()).getLastPathSegment());
 				}
@@ -205,13 +142,9 @@ public class PlayersRow extends LinearLayout {
     	}
 	}
 	
-	/**
-	 * Internal player click listener.
-	 */
 	private class PlayerClickListener implements OnClickListener {
 
 		private Player player;
-		
 		protected PlayerClickListener(Player player) {
 			this.player = player;
 		}

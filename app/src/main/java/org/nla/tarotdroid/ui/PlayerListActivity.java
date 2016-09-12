@@ -14,13 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.ui.constants.RequestCodes;
 import org.nla.tarotdroid.ui.constants.ResultCodes;
-import org.nla.tarotdroid.ui.controls.FacebookThumbnailItem;
 import org.nla.tarotdroid.ui.controls.ThumbnailItem;
 import org.nla.tarotdroid.ui.tasks.IAsyncCallback;
 
@@ -30,71 +29,11 @@ import java.util.List;
 
 public class PlayerListActivity extends AppCompatActivity {
 
-	private ListView listView;
-
-	private class PlayerAdapter extends ArrayAdapter<Player> {
-
-		public PlayerAdapter(Context context, List<Player> players) {
-			super(context, R.layout.thumbnail_item, players);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			Player player = this.getItem(position);
-
-			View item = null;
-
-			// TODO Improve using convertView
-
-			// facebook pic was set
-			if (player.getFacebookId() != null) {
-				item = new FacebookThumbnailItem(this.getContext(), player.getFacebookId(), player.getName(), this.getContext().getString(R.string.lblPlayerStatsCreateOn,
-						player.getCreationTs().toLocaleString()));
-			}
-
-			// contact pic was set
-			else if (player.getPictureUri() != null) {
-				item = new ThumbnailItem(this.getContext(), Uri.parse(player.getPictureUri()), R.drawable.icon_android, player.getName(), this.getContext().getString(R.string.lblPlayerStatsCreateOn,
-																																									  player.getCreationTs().toLocaleString()));
-			}
-
-			// no pic
-			else {
-				item = new ThumbnailItem(this.getContext(), R.drawable.icon_android, player.getName(), this.getContext().getString(R.string.lblPlayerStatsCreateOn,
-						player.getCreationTs().toLocaleString()));
-			}
-			//
-			//
-			//
-			// if (player.getFacebookId() != null) {
-			// item = new FacebookThumbnailItem(
-			// this.getContext(),
-			// player.getFacebookId(),
-			// player.getName(),
-			// this.getContext().getString(R.string.lblPlayerStatsCreateOn,
-			// player.getCreationTs().toLocaleString())
-			// );
-			//
-			// }
-			// else {
-			// item = new ThumbnailItem(
-			// this.getContext(),
-			// R.drawable.icon_android,
-			// player.getName(),
-			// this.getContext().getString(R.string.lblPlayerStatsCreateOn,
-			// player.getCreationTs().toLocaleString())
-			// );
-			// }
-
-			return item;
-		}
-	}
-
 	private final Comparator<Player> playerNameComparator = new Comparator<Player>() {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@Override
@@ -109,6 +48,7 @@ public class PlayerListActivity extends AppCompatActivity {
 			return player1.getName().toLowerCase().compareTo(player2.getName().toLowerCase());
 		}
 	};
+	private ListView listView;
 
 	private void auditEvent() {
 		AuditHelper.auditEvent(AuditHelper.EventTypes.displayPlayerListPage);
@@ -189,6 +129,43 @@ public class PlayerListActivity extends AppCompatActivity {
 			Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
 			AuditHelper.auditError(AuditHelper.ErrorTypes.unexpectedError, e);
 
+		}
+	}
+
+	private class PlayerAdapter extends ArrayAdapter<Player> {
+
+		public PlayerAdapter(Context context, List<Player> players) {
+			super(context, R.layout.thumbnail_item, players);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			Player player = this.getItem(position);
+
+			View item = null;
+
+			// TODO Improve using convertView
+
+			if (player.getPictureUri() != null) {
+				item = new ThumbnailItem(this.getContext(),
+										 Uri.parse(player.getPictureUri()),
+										 R.drawable.icon_android,
+										 player.getName(),
+										 this.getContext()
+											 .getString(R.string.lblPlayerStatsCreateOn,
+														player.getCreationTs().toLocaleString()));
+			}
+
+			// no pic
+			else {
+				item = new ThumbnailItem(this.getContext(),
+										 R.drawable.icon_android,
+										 player.getName(),
+										 this.getContext()
+											 .getString(R.string.lblPlayerStatsCreateOn,
+														player.getCreationTs().toLocaleString()));
+			}
+			return item;
 		}
 	}
 }

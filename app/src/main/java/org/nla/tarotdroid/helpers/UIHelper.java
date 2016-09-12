@@ -23,9 +23,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,7 +33,6 @@ import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,49 +43,23 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.enums.BetType;
 import org.nla.tarotdroid.biz.enums.KingType;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.ui.constants.PreferenceConstants;
 
-import java.security.MessageDigest;
 import java.text.DateFormat;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-/**
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- *
- */
 public final class UIHelper {
 
-	/**
-	 * Number of days before the user will be prompted for rating the app.
-	 */
     private final static int DAYS_UNTIL_PROMPT = 3;
-    
-    /**
-     * Number of launches before the user will be prompted for rating the app. 
-     */
     private final static int LAUNCHES_UNTIL_PROMPT = 7;
-    
-    /**
-     * Gson instance used to serialize/deserialize objects.
-     */
     private static final Gson gson = new Gson();
-	
-	/**
-	 * Default constructor.
-	 */
-	private UIHelper() {
-	}
-	
-	/**
-	 * "Yes"/"No" dialog box click listener.
-	 */
 	private static DialogInterface.OnClickListener richTextDialogClickListener = new DialogInterface.OnClickListener() {
 	    @Override
 	    public void onClick(final DialogInterface dialog, final int which) {
@@ -101,12 +71,10 @@ public final class UIHelper {
 	        }
 	    }
 	};
+
+	private UIHelper() {
+	}
 	
-	/**
-	 * Sets "keep screen on" or "off" 
-	 * @param activity
-	 * @param keepScreenOn
-	 */
 	public static void setKeepScreenOn(final Activity activity, final boolean keepScreenOn) {
 		if (keepScreenOn) {
 			activity.getWindow().addFlags(
@@ -118,11 +86,6 @@ public final class UIHelper {
 		}
 	}
 	
-	/**
-	 * Shows a dialog with a rich text and a yes button.
-	 * @param activity
-	 * @param richText
-	 */
 	public static void showSimpleRichTextDialog(final Context context, final String richText, final String title) {
         LayoutInflater factory = LayoutInflater.from(context);
         final View alertDialogView = factory.inflate(R.layout.alert_dialog, null);
@@ -137,10 +100,6 @@ public final class UIHelper {
 		builder.show();
 	}
 	
-	/**
-	 * Displays a nice message and stops the current activity.
-	 * @param activity
-	 */
 	public static void closeSmoothlyIfExceptionHappen(final Activity activity) {
 		checkArgument(activity != null, "activity is null");
 		UIHelper.showSimpleRichTextDialog(
@@ -151,10 +110,6 @@ public final class UIHelper {
 		activity.finish();
 	}
 	
-	/**
-	 * Shows a message telling the user he can modify or update a game.
-	 * @param context
-	 */
 	public static void showModifyOrDeleteGameMessage(final Context context) {
 		checkArgument(context != null, "context is null");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -173,28 +128,6 @@ public final class UIHelper {
         }
 	}
 
-	/**
-	 * Shows a message telling the user he can associate a facebook picture to a user.
-	 * @param context
-	 */
-	public static void showAssociateFacebookPictureToUserMessage(final Context context) {
-		checkArgument(context != null, "context is null");
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        
-		// display message if first time
-		if (!prefs.getBoolean(PreferenceConstants.PrefAssociateFacebookPictureToUserMessageAlreadyShown, false)) { 
-			UIHelper.showSimpleRichTextDialog(
-				context, 
-				context.getString(R.string.msgYouCanAssociateAPictureToAPlayer),
-				context.getString(R.string.titleYouCanAssociateAPictureToAPlayer)
-			);
-			
-			SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(PreferenceConstants.PrefAssociateFacebookPictureToUserMessageAlreadyShown, true);
-            editor.commit();
-        }
-	}
-	
 	/**
 	 * Decides whether to show the "please rate my app dialog" 
 	 * Code found here http://www.androidsnippets.com/prompt-engaged-users-to-rate-your-app-in-the-android-market-appirater
@@ -506,29 +439,6 @@ public final class UIHelper {
 		}
 	}
 
-	/**
-	 * 
-	 * @param activity
-	 * @return
-	 */
-	public static String getFacebookHashKey(Activity activity) {
-		checkArgument(activity != null, "activity is null");
-		String toReturn = null;
-		try {
-		    PackageInfo info = activity.getPackageManager().getPackageInfo(AppContext.getApplication().getAppPackage(), PackageManager.GET_SIGNATURES);
-		    for (Signature signature : info.signatures) {
-		        MessageDigest md = MessageDigest.getInstance("SHA");
-		        md.update(signature.toByteArray());
-		        toReturn = Base64.encodeToString(md.digest(), Base64.DEFAULT);
-		    }
-		}
-		catch (Exception e) {
-			toReturn = e.toString();
-		}
-		
-		return toReturn;
-	}
-	
     /**
      * Returns the photo associated to a contact, if it has one.  
      * @param context The context.

@@ -22,7 +22,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':libFacebookSDK-release')
     compile project(':libviewpageindicator-release')
     compile project(':libaFileChooser-release')
 

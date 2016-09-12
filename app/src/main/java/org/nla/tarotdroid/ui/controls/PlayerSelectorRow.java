@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui.controls;
 
 import android.app.Activity;
@@ -35,11 +19,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.widget.ProfilePictureView;
-
-import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.UIConstants;
 
@@ -49,55 +31,19 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-/**
- * Player selector row widget.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
 public class PlayerSelectorRow extends LinearLayout {
 
-	/**
-	 * The player selector index. 
-	 */
 	private int playerIndex;
-	
-	/**
-	 * The player index text view.
-	 */
 	private TextView txtPlayerIndex;
-	
-	/**
-	 * The layout for displaying the texts.
-	 */
 	private LinearLayout textLayout;
-	
-	/**
-	 * The player name text view.
-	 */
 	private PlayerSelectorAutoCompleteTextView txtPlayerName;
-	
-//	/**
-//	 * The associated activity.
-//	 */
-//	private Activity activity;
-	
-	/**
-	 * A buffer aimed to store a clicked player name.
-	 */
 	private String tempClickedName;
 	
-	/**
-	 * Constructor using activity and player index.
-	 * @param context
-	 * @param playerIndex
-	 */
 	public PlayerSelectorRow(Activity context, int playerIndex) {
 		super(context);
-//		this.activity = context;
 		this.playerIndex = playerIndex;
 		this.tempClickedName = "";
 
-
-		
 		this.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 		this.setOrientation(HORIZONTAL);
 		
@@ -126,14 +72,8 @@ public class PlayerSelectorRow extends LinearLayout {
 		this.initializeViews();
 	}
 	
-	/**
-	 * Constructor using activity and attribute set.
-	 * @param context
-	 * @param attrs
-	 */
 	public PlayerSelectorRow(Context context, AttributeSet attrs) {
 		super(context, attrs);
-//		this.activity = (Activity)context;
 		this.playerIndex = 0;
 		this.tempClickedName = "";
 		
@@ -164,9 +104,6 @@ public class PlayerSelectorRow extends LinearLayout {
 		this.initializeViews();
 	}
 
-	/**
-	 * Initializes the internal views.
-	 */
 	private void initializeViews() {
 		this.txtPlayerIndex.setText(this.getContext().getString(R.string.lblPlayerNumber, String.valueOf(this.playerIndex + 1)));
 		this.txtPlayerName.setAdapter(this.buildAdapter());
@@ -184,15 +121,10 @@ public class PlayerSelectorRow extends LinearLayout {
 		});
 	}
 	
-	/**
-	 * Builds the internal adapter using 
-	 * @return
-	 */
 	private PlayerAdapter buildAdapter() {
 		List<HashMap<String,String>> friendList = new ArrayList<HashMap<String,String>>();
 		for (Player player : AppContext.getApplication().getDalService().getAllPlayers()) {
             HashMap<String, String> hm = new HashMap<String,String>();
-            hm.put(UIConstants.PLAYER_FACEBOOK_ID, player.getFacebookId());
             hm.put(UIConstants.PLAYER_PICTURE_URI, player.getPictureUri());
             hm.put(UIConstants.PLAYER_NAME, player.getName());
             friendList.add(hm);
@@ -201,63 +133,29 @@ public class PlayerSelectorRow extends LinearLayout {
 		return new PlayerAdapter(this.getContext(), friendList);
 	}
 
-	/**
-	 * @return the playerIndex
-	 */
 	public int getPlayerIndex() {
 		return this.playerIndex;
 	}
 
-	/**
-	 * @param playerIndex the playerIndex to set
-	 */
 	public void setPlayerIndex(int playerIndex) {
 		this.playerIndex = playerIndex;
 	}
 
-	/**
-	 * @return the playerName
-	 */
 	public String getPlayerName() {
 		return this.txtPlayerName.getText().toString();
 	}
 
-	/**
-	 * @param playerName the playerName to set
-	 */
 	public void setPlayerName(String playerName) {
 		this.txtPlayerName.setText(playerName);
 	}
 	
-	/**
-	 * Player adapter for autocomplete text view.
-	 */
     private class PlayerAdapter extends BaseAdapter implements Filterable {
     	
-    	/**
-    	 * The filter.
-    	 */
     	private AlphabeticalPlayerNameFilter alphabeticalPlayerNameFilter;
-    	
-    	/**
-    	 * The list of filtered friends.
-    	 */
-    	private List<HashMap<String,String>> filteredFriendList;
-    	
-    	/**
-    	 * The list of actual friends.
-    	 */
-    	private List<HashMap<String,String>> originalFriendList;
-    	
-    	/**
-    	 * The context.
-    	 */
+		private List<HashMap<String, String>> filteredFriendList;
+		private List<HashMap<String,String>> originalFriendList;
     	private Context context;
     	
-    	/**
-    	 * Constructor.
-    	 * @param friendList
-    	 */
     	protected PlayerAdapter(Context context, List<HashMap<String,String>> friendList) {
     		this.context = context;
     		this.originalFriendList = newArrayList(friendList);
@@ -265,46 +163,34 @@ public class PlayerSelectorRow extends LinearLayout {
     		this.alphabeticalPlayerNameFilter = new AlphabeticalPlayerNameFilter();
     	}
     	
-		/* (non-Javadoc)
-		 * @see android.widget.Adapter#getCount()
-		 */
 		@Override
 		public int getCount() {
 			return this.filteredFriendList.size();
 		}
 
-		/* (non-Javadoc)
-		 * @see android.widget.Adapter#getItem(int)
-		 */
 		@Override
 		public Object getItem(int position) {
 			return this.filteredFriendList.get(position);
 		}
 
-		/* (non-Javadoc)
-		 * @see android.widget.Adapter#getItemId(int)
-		 */
 		@Override
 		public long getItemId(int position) {
 			return position;
 		}
 
-		/* (non-Javadoc)
-		 * @see android.widget.Adapter#getView(int, android.view.View, android.view.ViewGroup)
-		 */
 		@SuppressWarnings("unchecked")
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
 		   // TODO Improve for perf issues
-			
+
 //		   View view = convertView;
 //		   if (view == null) {
 //			   LayoutInflater layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //			   view = layoutInflater.inflate(R.layout.autocomplete_layout_pic, parent, false);
 //		   }
-		   
-		   HashMap<String,String> playerMap = (HashMap<String,String>)this.getItem(position);
+
+			HashMap<String,String> playerMap = (HashMap<String,String>)this.getItem(position);
 		   
 		   View view = null;
 		   LayoutInflater layoutInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -327,26 +213,9 @@ public class PlayerSelectorRow extends LinearLayout {
 				   ImageView playerPicture = (ImageView)view.findViewById(R.id.playerPicture);
 				   playerPicture.setImageBitmap(contactBitmap);
 			   }
-			   // problem => set default facebook profile picture as player image
-			   else {
-//				   view = layoutInflater.inflate(R.layout.autocomplete_layout_pic, parent, false);
-//				   ImageView playerPicture = (ImageView)view.findViewById(R.id.playerPicture);
-//				   playerPicture.setImageResource(R.drawable.icon_android);
+		   }
 
-				   
-				   view = layoutInflater.inflate(R.layout.autocomplete_layout_facebookpic, parent, false);
-				   ProfilePictureView playerFacebookPicture = (ProfilePictureView)view.findViewById(R.id.playerFacebookPicture);
-				   playerFacebookPicture.setProfileId(null);
-			   }
-		   }
-		   else {
-			   view = layoutInflater.inflate(R.layout.autocomplete_layout_facebookpic, parent, false);
-			   
-			   ProfilePictureView playerFacebookPicture = (ProfilePictureView)view.findViewById(R.id.playerFacebookPicture);
-			   playerFacebookPicture.setProfileId(playerMap.get(UIConstants.PLAYER_FACEBOOK_ID));
-		   }
-		   
-		   TextView textView = (TextView)view.findViewById(R.id.username);
+			TextView textView = (TextView)view.findViewById(R.id.username);
 		   textView.setText(playerMap.get(UIConstants.PLAYER_NAME));
 
 		   
@@ -354,23 +223,13 @@ public class PlayerSelectorRow extends LinearLayout {
 			
 		}
 
-		/* (non-Javadoc)
-		 * @see android.widget.Filterable#getFilter()
-		 */
 		@Override
 		public Filter getFilter() {
 			return this.alphabeticalPlayerNameFilter;
 		}
 		
-		/**
-		 * Alphabetical filter on player adapter.
-		 * @author Nico
-		 */
 		private class AlphabeticalPlayerNameFilter extends Filter {
 			
-		    /* (non-Javadoc)
-		     * @see android.widget.Filter#performFiltering(java.lang.CharSequence)
-		     */
 		    @Override
 		    protected FilterResults performFiltering(CharSequence filterString) {
 		        FilterResults results = new FilterResults();
@@ -393,9 +252,6 @@ public class PlayerSelectorRow extends LinearLayout {
 		        return results;
 		    }
 
-		    /* (non-Javadoc)
-		     * @see android.widget.Filter#publishResults(java.lang.CharSequence, android.widget.Filter.FilterResults)
-		     */
 		    @SuppressWarnings("unchecked")
 			@Override
 		    protected void publishResults(CharSequence constraint, FilterResults results) {

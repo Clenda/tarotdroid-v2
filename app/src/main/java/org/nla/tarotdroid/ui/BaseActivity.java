@@ -9,11 +9,11 @@ import android.support.v7.widget.Toolbar;
 import org.nla.tarotdroid.R;
 
 import butterknife.ButterKnife;
-import butterknife.BindView;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    @Nullable @BindView(R.id.toolbar) protected Toolbar toolbar;
+    //    @Nullable @BindView(R.id.toolbar) protected Toolbar toolbar;
+    protected Toolbar toolbar;
 
     private boolean restarting;
 

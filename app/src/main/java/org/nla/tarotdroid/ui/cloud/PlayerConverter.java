@@ -34,7 +34,6 @@ public class PlayerConverter {
 				toReturn.setUuid(restPlayer.getUuid());
 				toReturn.setCreationTs(new Date(restPlayer.getCreationTs()));
 				toReturn.setName(restPlayer.getName());
-				toReturn.setFacebookId(restPlayer.getFacebookId());
 			}
 
 			return toReturn;
@@ -49,7 +48,6 @@ public class PlayerConverter {
 			toReturn.setCreationTs(new Date(restPlayer.getCreationTs()));
 			toReturn.setName(restPlayer.getName());
 			//toReturn.setEmail(restPlayer.getEmail());
-			toReturn.setFacebookId(restPlayer.getFacebookId());
 			//toReturn.setPictureUri(restPlayer.getPictureUri());
 
 			return toReturn;

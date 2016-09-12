@@ -17,7 +17,6 @@
 package org.nla.tarotdroid.ui;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,10 +25,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
 
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.app.AppContext;
@@ -60,13 +55,7 @@ public class PlayerSelectorActivity extends AppCompatActivity {
 	private int rowCount;
 	private List<PlayerSelectorRow> playerSelectorRows;
 	private PlayerSelectorRow optionalPlayerSelectorRow;
-	private UiLifecycleHelper uiHelper;
 	private GameSet gameSet;
-    private Session.StatusCallback facebookSessionStatusCallback = new Session.StatusCallback() {
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,11 +66,7 @@ public class PlayerSelectorActivity extends AppCompatActivity {
 			// create game set stub
 			this.gameSet = new GameSet();
 			this.gameSet.setGameSetParameters(AppContext.getApplication().initializeGameSetParameters());
-			
-			// facebook lifecycle objects
-	        this.uiHelper = new UiLifecycleHelper(this, facebookSessionStatusCallback);
-	        this.uiHelper.onCreate(savedInstanceState);
-			
+
 			this.identifyGameSetType();
 			this.auditEvent();
 			
@@ -102,47 +87,13 @@ public class PlayerSelectorActivity extends AppCompatActivity {
 			this.layoutCompulsoryPlayers = (LinearLayout)this.findViewById(R.id.layoutCompulsoryPlayers);
 			this.optionalPlayerSelectorRow = (PlayerSelectorRow)this.findViewById(R.id.optionalPlayerSelectorRow);
 			this.optionalPlayerSelectorRow.setPlayerIndex(10);
-			
-			// facebook session creation
-			Session session = Session.getActiveSession();
-			if (session == null) {
-			    if (savedInstanceState != null) {
-			        session = Session.restoreSession(this, null, null, savedInstanceState);
-			    }
-			    if (session == null || session.isClosed()) {
-			        session = new Session(this);
-			    }
-			    Session.setActiveSession(session);
-			}
-			if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
-			    session.openForRead(new Session.OpenRequest(this));
-			}
-			
 			this.initializeViews();
 		}
         catch (Exception e) {
         	AuditHelper.auditError(AuditHelper.ErrorTypes.playerSelectorActivityError, e, this);
 		}
     }
-    
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    	this.uiHelper.onResume();
-    }
-    
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	this.uiHelper.onPause();
-    }
-    
-    @Override
-    protected void onDestroy() {
-    	super.onDestroy();
-    	this.uiHelper.onDestroy();
-    }
-    
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     	super.onSaveInstanceState(outState);
@@ -155,8 +106,7 @@ public class PlayerSelectorActivity extends AppCompatActivity {
     	if (this.optionalPlayerSelectorRow.getPlayerName() != null && !this.optionalPlayerSelectorRow.getPlayerName().equals("")) {
     		outState.putString(OPTIONAL_PLAYER_NAME, this.optionalPlayerSelectorRow.getPlayerName());
     	}
-    	this.uiHelper.onSaveInstanceState(outState);
-    };
+    }
     
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -184,12 +134,6 @@ public class PlayerSelectorActivity extends AppCompatActivity {
     protected void onStop() {
     	super.onStop();
     }
-    
-	@Override
-	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    this.uiHelper.onActivityResult(requestCode, resultCode, data);
-	}
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

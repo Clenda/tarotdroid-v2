@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.nla.tarotdroid.app;
 
 import android.content.SharedPreferences;
@@ -26,8 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDexApplication;
 
-import com.facebook.model.GraphPlace;
-import com.facebook.model.GraphUser;
 import com.google.gson.Gson;
 
 import org.nla.tarotdroid.R;
@@ -44,7 +26,6 @@ import org.nla.tarotdroid.model.TarotDroidUser;
 import org.nla.tarotdroid.ui.constants.PreferenceConstants;
 import org.nla.tarotdroid.ui.tasks.LoadDalTask;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -94,17 +75,7 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
      * The last time the app was launched.
      */
     private long lastLaunchTimestamp;
-    
-    /**
-     * The selected facebook user.
-     */
-    private GraphUser selectedUser;
-    
-    /**
-     * The logged account.
-     */
-    private GraphUser graphUser;
-    
+
     /**
      * The logged in user.
      */
@@ -114,8 +85,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
      * The notifications ids for game sets being published.
      */
     private Map<String, Integer> notificationIds;
-	private List<GraphUser> selectedUsers;
-	private GraphPlace selectedPlace;
 
     /* (non-Javadoc)
      * @see android.app.Application#onCreate()
@@ -184,19 +153,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		}
 	}
 	
-	@Override
-	public GraphUser getLoggedFacebookUser() {
-		return this.graphUser;
-	}
-    
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#setLoggedAccount(android.accounts.Account)
-	 */
-	@Override
-	public void setLoggedFacebookUser(GraphUser graphUser) {
-		this.graphUser = graphUser;
-	}
-    
 	/**
 	 * Sets the last time the app was launched.
 	 */
@@ -437,43 +393,13 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 	}
 
 	/* (non-Javadoc)
-	 * @see ITarotDroidApp#getSelectedUser()
-	 */
-	public GraphUser getSelectedUser() {
-		return this.selectedUser;
-	}
-	
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#setSelectedUser(com.facebook.model.GraphUser)
-	 */
-	public void setSelectedUser(GraphUser user) {
-		this.selectedUser = user;
-	}
-
-	/* (non-Javadoc)
 	 * @see ITarotDroidApp#getNotificationIds()
 	 */
 	@Override
 	public Map<String, Integer> getNotificationIds() {
 		return this.notificationIds;
 	}
-	
-	public List<GraphUser> getSelectedUsers() {
-		return this.selectedUsers;
-	}
-	
-	public void setSelectedUsers(List<GraphUser> users) {
-		this.selectedUsers = users;
-	}
 
-	public GraphPlace getSelectedPlace() {
-	    return selectedPlace;
-	}
-
-	public void setSelectedPlace(GraphPlace place) {
-	    this.selectedPlace = place;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.nla.tarotdroid.dal.IDalService#getSQLiteDatabase()
 	 */

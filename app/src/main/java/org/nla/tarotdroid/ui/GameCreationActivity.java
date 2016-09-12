@@ -36,6 +36,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.BelgianBaseGame;
 import org.nla.tarotdroid.biz.BelgianTarot3Game;
@@ -57,8 +59,6 @@ import org.nla.tarotdroid.biz.StandardTarot5Game;
 import org.nla.tarotdroid.biz.Team;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.dal.DalException;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.ActivityParams;
@@ -2145,7 +2145,6 @@ public class GameCreationActivity extends AppCompatActivity
 					else {
 						AppContext.getApplication().getDalService().saveGame(game, GameCreationActivity.this.getGameSet());
 					}
-					GameCreationActivity.this.getGameSet().setFacebookPostTs(null);
 				}
 			}
 			catch (DalException e) {

@@ -31,7 +31,22 @@ public class Player extends PersistableBusinessObject implements Serializable {
      */
 	@CloudField(cloudify=false)
     private static final long serialVersionUID = -296470676847901802L;
-
+	/**
+	 * The name of the player.
+	 */
+	private String name;
+	/**
+	 * Creation timestamp.
+	 */
+	private Date creationTs;
+	/**
+	 * Picture uri.
+	 */
+	private transient String pictureUri;
+	/**
+	 * Email.
+	 */
+	private String email;
 	
     /**
 	 * Creates a Player.
@@ -53,31 +68,6 @@ public class Player extends PersistableBusinessObject implements Serializable {
 		this.creationTs = new Date(System.currentTimeMillis());
 	}
 
-	/**
-	 * The name of the player.
-	 */
-	private String name;
-	
-	/**
-	 * Creation timestamp.
-	 */
-	private Date creationTs;
-	
-	/**
-	 * Picture uri.
-	 */
-	private transient String pictureUri;
-	
-	/**
-	 * Email.
-	 */
-	private String email;
-	
-	/**
-	 * Facebook id.
-	 */
-	private String facebookId;
-	
 	/**
 	 * Returns the name of the player.
 	 * @return the name of the player.
@@ -138,20 +128,6 @@ public class Player extends PersistableBusinessObject implements Serializable {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
-	}
-	
-	/**
-	 * @return the facebookId
-	 */
-	public String getFacebookId() {
-		return this.facebookId == null || this.facebookId.equals("") ? null : this.facebookId ;
-	}
-
-	/**
-	 * @param facebookId the facebookId to set
-	 */
-	public void setFacebookId(String facebookId) {
-		this.facebookId = facebookId;
 	}
 
 	/* (non-Javadoc)
