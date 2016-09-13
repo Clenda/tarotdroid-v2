@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,9 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
-
-import com.viewpagerindicator.TitlePageIndicator;
-import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
 
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.app.AppContext;
@@ -34,7 +32,6 @@ import org.nla.tarotdroid.ui.constants.ActivityParams;
 import org.nla.tarotdroid.ui.constants.RequestCodes;
 import org.nla.tarotdroid.ui.constants.ResultCodes;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -43,14 +40,8 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public class TabGameSetActivity extends AppCompatActivity {
 
-    private static final List<String> PUBLISH_PERMISSIONS = Arrays.asList("publish_actions");
-    private static final List<String> READ_PERMISSIONS = Arrays.asList("email");
-    private static final int REAUTH_ACTIVITY_CODE = 100;
     private static TabGameSetActivity instance;
 
-    /**
-     * "Yes / No" leaving dialog box listener.
-     */
     private final DialogInterface.OnClickListener leavingDialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(final DialogInterface dialog, final int which) {
@@ -70,9 +61,10 @@ public class TabGameSetActivity extends AppCompatActivity {
     protected ProgressDialog progressDialog;
     private GameSetGamesFragment gameSetGamesFragment;
     private GameSetSynthesisFragment gameSetSynthesisFragment;
-    private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
-    private String shortenedUrl;
+	private ViewPager viewPager;
+	private TabLayout tabLayout;
+	private PagerAdapter pagerAdapter;
+	private String shortenedUrl;
     private int startPage;
 
     public static TabGameSetActivity getInstance() {
@@ -168,28 +160,22 @@ public class TabGameSetActivity extends AppCompatActivity {
     }
 
     private void initialisePaging() {
-        this.gameSetGamesFragment = GameSetGamesFragment.newInstance(/*
-																	 * this.gameSet
-																	 */);
-		this.gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance(/*
-																			 * this.
-																			 * gameSet
-																			 */);
+		viewPager = (ViewPager) super.findViewById(R.id.pager);
+		setupViewPager();
+		tabLayout = (TabLayout) findViewById(R.id.tabs);
+		tabLayout.setupWithViewPager(viewPager);
+	}
 
+	private void setupViewPager() {
 		List<Fragment> fragments = newArrayList();
+		this.gameSetGamesFragment = GameSetGamesFragment.newInstance();
+		this.gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
 		fragments.add(this.gameSetGamesFragment);
 		fragments.add(this.gameSetSynthesisFragment);
-
-		this.mPagerAdapter = new TabGameSetPagerAdapter(super.getSupportFragmentManager(), fragments);
-		this.mPager = (ViewPager) super.findViewById(R.id.pager);
-		this.mPager.setAdapter(this.mPagerAdapter);
-		this.mPager.setCurrentItem(this.startPage - 1);
-
-		TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
-		indicator.setViewPager(mPager);
-		indicator.setFooterIndicatorStyle(IndicatorStyle.Triangle);
-    }
-
+		pagerAdapter = new TabGameSetPagerAdapter(super.getSupportFragmentManager(), fragments);
+		viewPager.setAdapter(this.pagerAdapter);
+		viewPager.setCurrentItem(this.startPage - 1);
+	}
 
 	private void navigateTowardsBelgianGameCreationActivity() {
 		this.navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Belgian);
@@ -245,31 +231,20 @@ public class TabGameSetActivity extends AppCompatActivity {
 			if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
 				this.gameSet = AppContext.getApplication().getDalService().getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
 			} else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-				// this.gameSet =
-				// UIHelper.deserializeGameSet(args.getString(ActivityParams.PARAM_GAMESET_SERIALIZED));
 				this.gameSet = (GameSet) args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
 			} else {
 				throw new IllegalArgumentException("Game set id or serialized game set must be provided");
 			}
 
 			// instantiate fragments
-			this.gameSetGamesFragment = GameSetGamesFragment.newInstance(/*
-																		 * this.
-																		 * gameSet
-																		 */);
-			this.gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance(/*
-																				 * this
-																				 * .
-																				 * gameSet
-																				 */);
+			this.gameSetGamesFragment = GameSetGamesFragment.newInstance();
+			this.gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
 
 			this.auditEvent();
 			instance = this;
 
-			// set keep screen on
 			UIHelper.setKeepScreenOn(this, AppContext.getApplication().getAppParams().isKeepScreenOn());
 
-			// initialize the pager
 			this.initialisePaging();
 
 			ActionBar mActionBar = getSupportActionBar();

@@ -1,1 +1,1 @@
-include ':app', ':libviewpageindicator-release', ':libaFileChooser-release'
+include ':app', ':libaFileChooser-release'

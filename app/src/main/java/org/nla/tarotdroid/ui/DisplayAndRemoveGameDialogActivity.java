@@ -52,37 +52,18 @@ public class DisplayAndRemoveGameDialogActivity extends AppCompatActivity
 	    }
 	};
 	
-	/**
-	 * Returns the game set on which activity has to work.
-	 * @return
-	 */
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().gameSet;
 	}
 	
-	/* (non-Javadoc)
-	 * @see greendroid.app.GDActivity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-//			// check params
 			Bundle args = this.getIntent().getExtras();
-//			if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-//				this.gameSet = AppContext.getApplication().getDalService().getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
-//			}
-//			else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-//				//this.gameSet = UIHelper.deserializeGameSet(args.getString(ActivityParams.PARAM_GAMESET_SERIALIZED));
-//				this.gameSet = (GameSet)args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
-//			}
-//			else {
-//				throw new IllegalArgumentException("Game set id or serialized game set must be provided");
-//			}
 			checkArgument(args.containsKey(ActivityParams.PARAM_GAME_INDEX), "Game index must be provided");
 			this.game = this.getGameSet().getGameOfIndex(args.getInt(ActivityParams.PARAM_GAME_INDEX));
  			
-			// set keep screen on 
 			UIHelper.setKeepScreenOn(this, AppContext.getApplication().getAppParams().isKeepScreenOn());
  			
 			final Item[] items = {
@@ -143,20 +124,13 @@ public class DisplayAndRemoveGameDialogActivity extends AppCompatActivity
 		}
 	}
 	
-	/**
-	 * Show the game.
-	 */
 	private void viewGame() {
 		Intent intent = new Intent(TabGameSetActivity.getInstance(), GameReadViewPagerActivity.class);
 		intent.putExtra(ActivityParams.PARAM_GAME_INDEX, this.game.getIndex());
-//		intent.putExtra(ActivityParams.PARAM_GAMESET_ID, this.getGameSet().getId());
 		TabGameSetActivity.getInstance().startActivity(intent);
 		this.finish();
 	}
 	
-	/**
-	 * Modify the game.
-	 */
 	private void modifyGame() {
 		String typeOfGame = null;
 		
