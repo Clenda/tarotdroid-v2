@@ -24,6 +24,7 @@ import com.flurry.android.FlurryAgent;
 import com.google.common.base.Throwables;
 
 import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BuildConfig;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class AuditHelper {
 	 * Set the time span of a session to 10 minutes (roughly the max time users need to play a game). 
 	 */
 	static {
-		if (!AppContext.getApplication().isAppInDebugMode()) {
+		if (!BuildConfig.IS_IN_DEBUG_MODE) {
 			FlurryAgent.setContinueSessionMillis(180000);
 		}
 	}
@@ -73,7 +74,7 @@ public class AuditHelper {
 	 */
 	public static void auditSession(final Context context) {
 		FlurryAgent.onStartSession(context,
-								   AppContext.getApplication().isAppInDebugMode()
+								   BuildConfig.IS_IN_DEBUG_MODE
 										   ? "JA7HZLWC2VU8V1AGBVQL"
 										   : AppContext.getApplication().getFlurryApplicationId());
 	}

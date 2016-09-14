@@ -82,8 +82,8 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 	}
 	
 	public String getCloudDns() {
-		if (this.isAppInDebugMode()) {
-			return this.getString(R.string.dnsTarotDroidDevCloud);
+        if (BuildConfig.IS_IN_DEBUG_MODE) {
+            return this.getString(R.string.dnsTarotDroidDevCloud);
 		}
 		else {
 			return this.getString(R.string.dnsTarotDroidCloud);
@@ -91,8 +91,8 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 	}
 
     public String getFacebookCloudUrl() {
-        if (this.isAppInDebugMode()) {
-			return this.getString(R.string.urlTarotDroidFacebookDevCloud);
+        if (BuildConfig.IS_IN_DEBUG_MODE) {
+            return this.getString(R.string.urlTarotDroidFacebookDevCloud);
 		}
 		else {
 			return this.getString(R.string.urlTarotDroidFacebookCloud);
@@ -100,8 +100,8 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 	}
 
 	public String getFacebookAppUrl() {
-		if (this.isAppInDebugMode()) {
-			return this.getString(R.string.urlTarotDroidFacebookDevApp);
+        if (BuildConfig.IS_IN_DEBUG_MODE) {
+            return this.getString(R.string.urlTarotDroidFacebookDevApp);
 		}
 		else {
 			return this.getString(R.string.urlTarotDroidFacebookApp);
@@ -167,11 +167,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
     	if (prefTarotDroidUser != null) {
     		this.tarotDroidUser = new Gson().fromJson(prefTarotDroidUser, TarotDroidUser.class);
     	}
-    }
-
-    @Override
-    public boolean isAppInDebugMode() {
-    	return this.appInDebugMode;
     }
 
     @Override

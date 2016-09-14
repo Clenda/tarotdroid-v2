@@ -68,15 +68,6 @@ public class LiteApp extends BaseApp {
 		return "XXX";
 	}
 
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#isAppLimited()
-     */
-    @Override
-    public boolean isAppLimited() {    	
-    	//return !this.getPackageName().toLowerCase().contains("full");
-    	return true;
-    }
-
 	/* (non-Javadoc)
 	 * @see ITarotDroidApp#getGooglePlayUrl()
 	 */

@@ -5,7 +5,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.View;
 
-import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 
 // TODO Check https://github.com/madlymad/PreferenceApp
@@ -26,7 +26,7 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String rootKey) {
-        if ((AppContext.getApplication().isAppInDebugMode())) {
+        if (BuildConfig.IS_IN_DEBUG_MODE) {
             setPreferencesFromResource(R.xml.main_dashboard_preferences_debug, rootKey);
         }
         else {

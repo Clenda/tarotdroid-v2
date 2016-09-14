@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BaseApp;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.GameSetParameters;
@@ -59,8 +60,10 @@ public class PlayerSelectorActivity extends BaseActivity {
             identifyGameSetType();
 
             // display warning message if more than 5 games are already stored and and app is not limited
-			boolean gameSetNotToBeStored = AppContext.getApplication().isAppLimited() && AppContext.getApplication().getDalService().getGameSetCount() >= 5;   
-			if (gameSetNotToBeStored) {
+            boolean gameSetNotToBeStored = !BuildConfig.IS_FULL && AppContext.getApplication()
+                                                                             .getDalService()
+                                                                             .getGameSetCount() >= 5;
+            if (gameSetNotToBeStored) {
 				
 				UIHelper.showSimpleRichTextDialog(
                         this,

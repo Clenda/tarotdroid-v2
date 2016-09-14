@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.dal.DalException;
@@ -309,8 +310,8 @@ public class GameSetHistoryActivity extends BaseActivity {
 
 					// prevent user from downloading if game set count > 5 and
 					// limited version
-					if (AppContext.getApplication().isAppLimited() && gameSetCount >= 5) {
-						Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getString(R.string.msgLimitedVersionInformation), Toast.LENGTH_SHORT).show();
+                    if (!BuildConfig.IS_FULL && gameSetCount >= 5) {
+                        Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getString(R.string.msgLimitedVersionInformation), Toast.LENGTH_SHORT).show();
 					}
 
 					// ok for download
@@ -416,7 +417,7 @@ public class GameSetHistoryActivity extends BaseActivity {
     protected void onListItemClick(AdapterView<?> parent, int position) {
         final GameSet gameSet = (GameSet) listView.getAdapter().getItem(position);
 
-		final Item[] items = AppContext.getApplication().isAppLimited() ? limitedItems : allItems;
+        final Item[] items = !BuildConfig.IS_FULL ? limitedItems : allItems;
 
 		ListAdapter adapter = new ArrayAdapter<Item>(this, android.R.layout.select_dialog_item, android.R.id.text1, items) {
 			@Override
@@ -477,7 +478,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 					}
 				} else if (item.itemType == Item.ItemTypes.exportToExcel) {
 					try {
-						if (!AppContext.getApplication().isAppLimited()) {
+                        if (BuildConfig.IS_FULL) {
 
 							ExportToExcelTask task = new ExportToExcelTask(GameSetHistoryActivity.this, progressDialog);
 							task.setCallback(excelExportCallback);

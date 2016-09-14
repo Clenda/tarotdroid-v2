@@ -24,6 +24,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.ui.TabGameSetActivity;
@@ -90,9 +91,11 @@ public class StartNewGameSetTask extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected final Void doInBackground(final Void... voids) {
 		// store new game set in Dal only in some cases : app is not limited, or app is limited but there are less than 5 game sets already stored
-		boolean gameSetToBeStored = !AppContext.getApplication().isAppLimited();
+		boolean gameSetToBeStored = BuildConfig.IS_FULL;
 		try {
-			gameSetToBeStored = gameSetToBeStored || (AppContext.getApplication().isAppLimited() && AppContext.getApplication().getDalService().getGameSetCount() < 5);   
+			gameSetToBeStored = gameSetToBeStored || (!BuildConfig.IS_FULL && AppContext.getApplication()
+																						.getDalService()
+																						.getGameSetCount() < 5);
 			if (gameSetToBeStored) {
 				AppContext.getApplication().getDalService().saveGameSet(this.gameSet);
 			}

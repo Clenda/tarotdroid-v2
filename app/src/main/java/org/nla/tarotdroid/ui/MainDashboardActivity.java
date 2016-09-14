@@ -21,6 +21,7 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BaseApp;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
@@ -96,8 +97,8 @@ public class MainDashboardActivity extends BaseActivity {
 			}
 		});
 
-		if (AppContext.getApplication().isAppInDebugMode()) {
-			MenuItem miMockData = menu.add(R.string.lblMockItem);
+        if (BuildConfig.IS_IN_DEBUG_MODE) {
+            MenuItem miMockData = menu.add(R.string.lblMockItem);
 			miMockData.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 			miMockData.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 				@Override
@@ -152,8 +153,8 @@ public class MainDashboardActivity extends BaseActivity {
 			}
 		});
 
-		if (AppContext.getApplication().isAppInDebugMode()) {
-			MenuItem miMockData = subMenuMore.add(R.string.lblMockItem);
+        if (BuildConfig.IS_IN_DEBUG_MODE) {
+            MenuItem miMockData = subMenuMore.add(R.string.lblMockItem);
 			miMockData.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 			miMockData.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 				@Override
@@ -191,8 +192,8 @@ public class MainDashboardActivity extends BaseActivity {
 		options.add(playerStatisticsOption);
 		options.add(marketOption);
 
-		if (AppContext.getApplication().isAppLimited()) {
-			options.add(goFullOption);
+        if (!BuildConfig.IS_FULL) {
+            options.add(goFullOption);
 		}
 
         listOptions.setAdapter(new DashboardOptionAdapter(this, options));
@@ -289,8 +290,10 @@ public class MainDashboardActivity extends BaseActivity {
 		miAbout.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				int idMsgAbout = AppContext.getApplication().isAppLimited() ? R.string.msgAboutLimited : R.string.msgAbout;
-				UIHelper.showSimpleRichTextDialog(MainDashboardActivity.this, MainDashboardActivity.this.getText(idMsgAbout).toString(),
+                int idMsgAbout = !BuildConfig.IS_FULL
+                        ? R.string.msgAboutLimited
+                        : R.string.msgAbout;
+                UIHelper.showSimpleRichTextDialog(MainDashboardActivity.this, MainDashboardActivity.this.getText(idMsgAbout).toString(),
 						MainDashboardActivity.this.getString(R.string.titleAbout, AppContext.getApplication().getAppVersion()));
 				return true;
 			}

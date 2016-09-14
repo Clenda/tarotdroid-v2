@@ -47,8 +47,6 @@ public interface ITarotDroidApp {
 	 void setDalService(IDalService dalService);
 	AppParams getAppParams();
 	BluetoothHelper getBluetoothHelper();
-	boolean isAppInDebugMode();
-	boolean isAppLimited();
 	long getLastLaunchTimestamp();
 	LoadDalTask getLoadDalTask();
 	GameSetParameters initializeGameSetParameters();
