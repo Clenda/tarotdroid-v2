@@ -3,9 +3,9 @@ package org.nla.tarotdroid.ui.tasks;
 import android.app.Activity;
 import android.app.ProgressDialog;
 
-import org.nla.tarotdroid.biz.GameSet;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.ExcelHelper;
@@ -21,21 +21,18 @@ public class ExportToExcelTask extends BaseAsyncTask<GameSet, String, String, St
 	 * The context.
 	 */
 	private final Activity activity;
-
-	/**
-	 * Flag indicating whether an error occured in the background.
-	 */
-	private boolean backroundErrorHappened;
-
 	/**
 	 * Indicates whether task was canceled;
 	 */
 	private final boolean isCanceled;
-
 	/**
 	 * Progress dialog to display messages.
 	 */
 	private final ProgressDialog progressDialog;
+	/**
+	 * Flag indicating whether an error occured in the background.
+	 */
+	private boolean backroundErrorHappened;
 
 	/**
 	 * Constructor.

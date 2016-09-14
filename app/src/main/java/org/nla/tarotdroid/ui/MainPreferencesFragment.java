@@ -5,8 +5,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.View;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 
 // TODO Check https://github.com/madlymad/PreferenceApp
 public class MainPreferencesFragment extends PreferenceFragmentCompat {

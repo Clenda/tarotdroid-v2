@@ -18,9 +18,9 @@ import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
 
+import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.AppParams;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
-import org.nla.tarotdroid.app.AppParams;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;

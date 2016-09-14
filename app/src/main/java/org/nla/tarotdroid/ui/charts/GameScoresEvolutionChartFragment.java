@@ -28,8 +28,8 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.ui.constants.FragmentParameters;
 
 import java.util.HashMap;
@@ -43,22 +43,23 @@ import java.util.Map;
 public class GameScoresEvolutionChartFragment extends ChartFragment {
 	
 	/**
+     * Map of player count and corresponding PointStyle arrays.
+     */
+    private static final Map<Integer, PointStyle[]> MAP_PLAYERCOUNT_POINTSTYLES = new HashMap<Integer, PointStyle[]>();
+
+	static {
+		GameScoresEvolutionChartFragment.MAP_PLAYERCOUNT_POINTSTYLES.put(3, new PointStyle[]{PointStyle.POINT, PointStyle.POINT, PointStyle.POINT});
+        GameScoresEvolutionChartFragment.MAP_PLAYERCOUNT_POINTSTYLES.put(4, new PointStyle[]{PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT});
+        GameScoresEvolutionChartFragment.MAP_PLAYERCOUNT_POINTSTYLES.put(5, new PointStyle[]{PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT});
+        GameScoresEvolutionChartFragment.MAP_PLAYERCOUNT_POINTSTYLES.put(6, new PointStyle[]{PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT});
+    }
+
+	/**
 	 * Default constructor.
 	 */
 	public GameScoresEvolutionChartFragment() {
 	}
 
-	/**
-     * Map of player count and corresponding PointStyle arrays.
-     */
-    private static final Map<Integer, PointStyle[]> MAP_PLAYERCOUNT_POINTSTYLES = new HashMap<Integer, PointStyle[]>();
-    static { 
-        GameScoresEvolutionChartFragment.MAP_PLAYERCOUNT_POINTSTYLES.put(3, new PointStyle[]{PointStyle.POINT, PointStyle.POINT, PointStyle.POINT});
-        GameScoresEvolutionChartFragment.MAP_PLAYERCOUNT_POINTSTYLES.put(4, new PointStyle[]{PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT});
-        GameScoresEvolutionChartFragment.MAP_PLAYERCOUNT_POINTSTYLES.put(5, new PointStyle[]{PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT});
-        GameScoresEvolutionChartFragment.MAP_PLAYERCOUNT_POINTSTYLES.put(6, new PointStyle[]{PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT, PointStyle.POINT});
-    }
-    
 	/**
 	 * Creates a GameScoresEvolutionChartFragment.
 	 */

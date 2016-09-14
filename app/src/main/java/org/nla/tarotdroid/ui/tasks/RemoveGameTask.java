@@ -6,10 +6,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.ui.constants.ResultCodes;
 
 import java.util.List;

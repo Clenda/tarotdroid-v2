@@ -20,11 +20,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.StandardBaseGame;
 import org.nla.tarotdroid.biz.StandardTarot5Game;
-import org.nla.tarotdroid.app.AppContext;
 
 /**
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr

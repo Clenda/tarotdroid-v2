@@ -14,13 +14,12 @@
  	You should have received a copy of the GNU General Public License
  	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.nla.tarotdroid.app;
+package org.nla.tarotdroid;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
-import org.nla.tarotdroid.R;
 
 /**
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr

@@ -19,8 +19,9 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
+import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.controls.ThumbnailItem;
@@ -256,7 +257,7 @@ public class MainDashboardActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-        // TODO implement Dagger...
+        BaseApp.get(this).getComponent().inject(this);
     }
 
     @Override

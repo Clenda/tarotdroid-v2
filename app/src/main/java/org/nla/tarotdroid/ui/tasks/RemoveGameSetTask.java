@@ -21,9 +21,9 @@ import android.app.ProgressDialog;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.biz.GameSet;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.GameSet;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -36,16 +36,14 @@ public class RemoveGameSetTask extends BaseAsyncTask<Void, Void, Void, Object> {
 	 * The context.
 	 */
 	private final Activity activity;
-
-	/**
-	 * A progress dialog shown during the game creation and storage.
-	 */
-	private ProgressDialog dialog;
-
 	/**
 	 * GameSet to remove.
 	 */
 	private final GameSet gameSet;
+	/**
+	 * A progress dialog shown during the game creation and storage.
+	 */
+	private ProgressDialog dialog;
 
 	/**
 	 * Constructor.

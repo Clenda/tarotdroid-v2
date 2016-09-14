@@ -21,8 +21,8 @@ import android.app.ProgressDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

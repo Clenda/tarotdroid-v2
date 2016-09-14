@@ -10,8 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;

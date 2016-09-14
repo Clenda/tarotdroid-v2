@@ -9,9 +9,11 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.GameSet;
+import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.PlayerList;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
@@ -26,6 +28,8 @@ import org.nla.tarotdroid.ui.tasks.StartNewGameSetTask;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 
 public class PlayerSelectorActivity extends BaseActivity {
@@ -36,6 +40,7 @@ public class PlayerSelectorActivity extends BaseActivity {
 
     @BindView(R.id.layoutCompulsoryPlayers) protected LinearLayout layoutCompulsoryPlayers;
     @BindView(R.id.optionalPlayerSelectorRow) protected PlayerSelectorRow optionalPlayerSelectorRow;
+    @Inject GameSetParameters gameSetParameters;
     private ProgressDialog progressDialog;
     private GameStyleType gameStyleType;
     private int rowCount;
@@ -48,7 +53,8 @@ public class PlayerSelectorActivity extends BaseActivity {
     	try {
 			// create game set stub
             gameSet = new GameSet();
-            gameSet.setGameSetParameters(AppContext.getApplication().initializeGameSetParameters());
+//            gameSet.setGameSetParameters(AppContext.getApplication().initializeGameSetParameters());
+            gameSet.setGameSetParameters(gameSetParameters);
 
             identifyGameSetType();
 
@@ -78,6 +84,7 @@ public class PlayerSelectorActivity extends BaseActivity {
 
     @Override
     protected void inject() {
+        BaseApp.get(this).getComponent().inject(this);
     }
 
     @Override

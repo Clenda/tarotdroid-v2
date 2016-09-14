@@ -23,9 +23,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.biz.GameSet;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.ui.TabGameSetActivity;
 import org.nla.tarotdroid.ui.constants.ActivityParams;
 
@@ -37,15 +37,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class StartNewGameSetTask extends AsyncTask<Void, Void, Void> {
 
 	/**
-	 * The activity.
-	 */
-	private Activity activity;
-
-	/**
 	 * A progress dialog shown during the game creation and storage.
 	 */
 	private final ProgressDialog dialog;
-
+	/**
+	 * The activity.
+	 */
+	private Activity activity;
 	/**
 	 * Flag indicating whether an error occured in the background. 
 	 */

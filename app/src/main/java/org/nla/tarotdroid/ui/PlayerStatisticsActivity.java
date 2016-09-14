@@ -19,8 +19,8 @@ import android.widget.ListView;
 
 import com.google.common.base.Throwables;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.computers.IPlayerStatisticsComputer;
 import org.nla.tarotdroid.biz.computers.PlayerStatisticsComputerFactory;

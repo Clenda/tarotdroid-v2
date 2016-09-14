@@ -14,7 +14,7 @@
  	You should have received a copy of the GNU General Public License
  	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.nla.tarotdroid.app;
+package org.nla.tarotdroid;
 
 import android.content.ContentResolver;
 import android.content.res.Resources;

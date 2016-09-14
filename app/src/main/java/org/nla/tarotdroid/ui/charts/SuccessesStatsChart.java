@@ -21,11 +21,11 @@ import android.content.Intent;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
+import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.Result;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.ResultType;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 
 import java.util.Map;

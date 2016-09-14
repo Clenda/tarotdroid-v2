@@ -3,7 +3,7 @@ package org.nla.tarotdroid.ui.cloud;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.clientmodel.RestPlayer;
 import org.nla.tarotdroid.dal.DalException;

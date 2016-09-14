@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.dal.IDalService;
 import org.nla.tarotdroid.dal.sql.SqliteDalService;
-import org.nla.tarotdroid.app.AppContext;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

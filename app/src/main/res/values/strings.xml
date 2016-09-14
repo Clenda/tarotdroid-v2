@@ -2,7 +2,7 @@
 <resources>
     <!-- General info -->
     <string name="google_map_api_key_debug">0IgVgWFseCoAyOOEFSXlrEhfjQE99UGBY_sh2CA</string>
-    <string name="app_name">TarotDroid Lite</string>
+    <!--string name="app_name">TarotDroid Lite</string-->
     <string name="app_id">507047192642711</string>
 
     <!-- Misc activity strings -->

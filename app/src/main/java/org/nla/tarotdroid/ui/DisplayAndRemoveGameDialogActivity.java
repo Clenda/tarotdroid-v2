@@ -12,8 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.BelgianBaseGame;
 import org.nla.tarotdroid.biz.GameSet;

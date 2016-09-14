@@ -3,7 +3,7 @@ package org.nla.tarotdroid.ui.tasks;
 import android.app.Activity;
 import android.os.Environment;
 
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.DatabaseHelper;
 
@@ -23,21 +23,18 @@ public class ImportDatabaseTask extends BaseAsyncTask<Void, String, String, Stri
 	 * The context.
 	 */
 	private final Activity activity;
-
-	/**
-	 * Flag indicating whether an error occured in the background.
-	 */
-	private boolean backroundErrorHappened;
-
 	/**
 	 * Path of the file to import.
 	 */
 	private final String importFilePath;
-
 	/**
 	 * Indicates whether task was canceled;
 	 */
 	private final boolean isCanceled;
+	/**
+	 * Flag indicating whether an error occured in the background.
+	 */
+	private boolean backroundErrorHappened;
 
 	/**
 	 * Constructor using a context and a dal service container.

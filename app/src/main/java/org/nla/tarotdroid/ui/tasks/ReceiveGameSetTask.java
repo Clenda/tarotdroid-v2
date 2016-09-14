@@ -24,9 +24,9 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.biz.GameSet;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.UIHelper;
@@ -45,16 +45,14 @@ public class ReceiveGameSetTask extends BaseAsyncTask<Void, String, Integer, Obj
 	 * The context.
 	 */
 	private final Activity activity;
-
-	/**
-	 * A progress dialog shown during the game creation and storage.
-	 */
-	private ProgressDialog dialog;
-
 	/**
 	 * The bluetooth server socket.
 	 */
 	private final BluetoothServerSocket serverSocket;
+	/**
+	 * A progress dialog shown during the game creation and storage.
+	 */
+	private ProgressDialog dialog;
 
 	/**
 	 * Constructor.

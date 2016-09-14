@@ -23,7 +23,7 @@ import android.util.Log;
 import com.flurry.android.FlurryAgent;
 import com.google.common.base.Throwables;
 
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.AppContext;
 
 import java.util.List;
 import java.util.Map;
@@ -51,20 +51,169 @@ public class AuditHelper {
 			FlurryAgent.setContinueSessionMillis(180000);
 		}
 	}
-	
+
+	/**
+	 * Prevent from constructing the object.
+	 */
+	private AuditHelper() {
+	}
+
+	/**
+	 * Tracks a user event.
+	 * @param userEventTypes
+	 */
+	public static void trackUserEvent(final UserEventTypes userEventTypes) {
+		checkArgument(userEventTypes != null, "userEventTypes is null");
+		userEvents.add(userEventTypes);
+	}
+
+	/**
+	 * Starts a tracking session.
+	 * @param context
+	 */
+	public static void auditSession(final Context context) {
+		FlurryAgent.onStartSession(context,
+								   AppContext.getApplication().isAppInDebugMode()
+										   ? "JA7HZLWC2VU8V1AGBVQL"
+										   : AppContext.getApplication().getFlurryApplicationId());
+	}
+
+	/**
+	 * Finishes a tracking session.
+	 * @param context
+	 */
+	public static void stopSession(final Context context) {
+		FlurryAgent.onEndSession(context);
+	}
+
+	/**
+	 * Sends an audit event.
+	 * @param eventType
+	 */
+	public static void auditEvent(final EventTypes eventType) {
+		auditEvent(eventType, null);
+	}
+
+	/**
+	 * Sends an audit event.
+	 * @param eventType
+	 * @param parameters
+	 */
+	public static void auditEvent(
+			final EventTypes eventType,
+			final Map<ParameterTypes, Object> parameters
+	) {
+		try {
+			Map<String, String> toSend = newHashMap();
+			toSend.put(ParameterTypes.version.toString(),
+					   AppContext.getApplication().getAppVersion());
+
+			if (parameters != null) {
+				for (Map.Entry<ParameterTypes, Object> entry : parameters.entrySet()) {
+					try {
+						toSend.put(new String(entry.getKey().toString()),
+								   entry.getValue().toString());
+					} catch (Exception e) {
+					}
+				}
+			}
+			FlurryAgent.logEvent(eventType.toString(), toSend, true);
+		} catch (Exception ex) {
+			Log.v(AppContext.getApplication().getAppLogTag(), "AuditHelper.auditEvent()", ex);
+		}
+	}
+
+	/**
+	 * Sends an error audit trail and displays the message on the activity if possible.
+	 * @param errorType
+	 * @param exception
+	 * @param activity
+	 */
+	public static void auditError(
+			final ErrorTypes errorType,
+			final Throwable exception,
+			final Activity activity
+	) {
+		if (activity != null) {
+			UIHelper.showSimpleRichTextDialog(activity, exception.toString(), "Unexpected error");
+		}
+
+		String exceptionAsString = exception == null
+				? null
+				: Throwables.getStackTraceAsString(exception);
+		auditError(errorType, exceptionAsString);
+	}
+
+	/**
+	 * Sends an error audit trail and displays the message on the activity if possible.
+	 * @param errorType
+	 * @param exception
+	 * @param activity
+	 */
+	public static void auditErrorAsString(
+			final ErrorTypes errorType,
+			final String exceptionAsString,
+			final Activity activity
+	) {
+		if (activity != null) {
+			UIHelper.showSimpleRichTextDialog(activity, exceptionAsString, "Unexpected error");
+		}
+		auditError(errorType, exceptionAsString);
+	}
+
+	/**
+	 * Sends an error audit trail.
+	 * @param errorType
+	 * @param exception
+	 */
+	public static void auditError(final ErrorTypes errorType, final Throwable exception) {
+		String exceptionAsString = exception == null
+				? null
+				: Throwables.getStackTraceAsString(exception);
+		auditError(errorType, exceptionAsString);
+	}
+
+	/**
+	 * Sends an error audit trail.
+	 * @param errorType
+	 * @param exceptionAsString
+	 */
+	public static void auditError(final ErrorTypes errorType, final String exceptionAsString) {
+		try {
+			ErrorTypes errorTypeToAudit = errorType;
+			if (errorTypeToAudit == null) {
+				errorTypeToAudit = ErrorTypes.unexpectedError;
+			}
+
+			if (exceptionAsString != null) {
+				FlurryAgent.onError(errorTypeToAudit.toString(),
+									android.os.Build.MODEL + "|" + android.os.Build.VERSION.SDK_INT,
+									exceptionAsString);
+			} else {
+				FlurryAgent.onError(errorTypeToAudit.toString(),
+									android.os.Build.MODEL + "|" + android.os.Build.VERSION.SDK_INT,
+									"NULL_EXCEPTION");
+			}
+		}
+		catch (Exception ex) {
+			Log.v(AppContext.getApplication().getAppLogTag(), "AuditHelper.auditError()", ex);
+		}
+	}
+
+
 	/**
 	 * Enumeration of all user events.
 	 */
-	public enum UserEventTypes {		
+	public enum UserEventTypes {
 		clickedNewGameSet,
 		clickedGameSetHistory
-	};
-	
+	}
+
 	/**
 	 * Enumeration of all available auditable events.
 	 */
 	public enum EventTypes {
-		
+
 		// main features
 		displayMainDashboardPage,
 		displayNewGameSetDashboardPage,
@@ -72,28 +221,28 @@ public class AuditHelper {
 		displayPlayerListPage,
 		displayCommunityPage,
 		displayMainPreferencePage,
-		
+
 		// bluetooth
 		actionBluetoothDiscoverDevices,
 		actionBluetoothSetDiscoverable,
 		actionBluetoothReceiveGameSet,
 		actionBluetoothSendGameSet,
-		
+
 		// game set
 		displayGameSetCreationPage,
 		displayTabGameSetPreferencePage,
 		displayTabGameSetPageWithNewGameSetAction,
 		displayTabGameSetPageWithExistingGameSetAction,
-		
+
 		// game creation
 		displayGameCreationV2Page,
 		displayGameCreationV1Page,
 		displayGameReadV1Page,
 		displayGameReadV2Page,
-		
+
 		// player statistics
 		displayPlayerStatisticsPage,
-		
+
 		// game set statistics
 		displayGameSetStatisticsPage,
 		displayGameSetStatisticsScoresEvolutionChart,
@@ -108,7 +257,7 @@ public class AuditHelper {
 		tabGameSetActivity_onCreateOptionsMenu_GameSetParametersIsNull,
 		tabGameSetActivity_auditEvent_GameSetIsNull
 	}
-	
+
 	/**
 	 * Enumeration of all available auditable event's parameters.
 	 */
@@ -118,7 +267,7 @@ public class AuditHelper {
 		playerCount,
 		version
 	}
-	
+
 	/**
 	 * Enumeration of all available known error.
 	 */
@@ -126,7 +275,7 @@ public class AuditHelper {
 		activityCreationError,
 		unexpectedError,
 		dalInitializationError,
-		globalUncaughtError, 
+		globalUncaughtError,
 		bluetoothReceiveError,
 		bluetoothSendError,
 		notificationError,
@@ -154,138 +303,10 @@ public class AuditHelper {
 		postGameSetOnFacebookAppError,
 		persistGameTaskError,
 		playerSelectorActivityError,
-		updateGameSetError, 
+		updateGameSetError,
 		exportDatabaseError,
 		importDatabaseError,
 		exportExcelError,
 		facebookHasNoPublishPermission
-	}
-	
-	/**
-	 * Prevent from constructing the object.
-	 */
-	private AuditHelper() {
-	}
-	
-	/**
-	 * Tracks a user event.
-	 * @param userEventTypes
-	 */
-	public static void trackUserEvent(final UserEventTypes userEventTypes) {
-		checkArgument(userEventTypes != null, "userEventTypes is null");
-		userEvents.add(userEventTypes);
-	}
-	
-	/**
-	 * Starts a tracking session.
-	 * @param context
-	 */
-	public static void auditSession(final Context context) {
-		FlurryAgent.onStartSession(context, AppContext.getApplication().isAppInDebugMode() ? "JA7HZLWC2VU8V1AGBVQL" : AppContext.getApplication().getFlurryApplicationId());
-	}
-	
-	/**
-	 * Finishes a tracking session.
-	 * @param context
-	 */
-	public static void stopSession(final Context context) {
-		FlurryAgent.onEndSession(context);
-	}
-	
-	/**
-	 * Sends an audit event.
-	 * @param eventType
-	 */
-	public static void auditEvent(final EventTypes eventType) {
-		auditEvent(eventType, null);
-	}
-	
-	/**
-	 * Sends an audit event.
-	 * @param eventType
-	 * @param parameters
-	 */
-	public static void auditEvent(final EventTypes eventType, final Map<ParameterTypes, Object> parameters) {
-		try {
-			Map<String, String> toSend = newHashMap();
-			toSend.put(ParameterTypes.version.toString(), AppContext.getApplication().getAppVersion());
-			
-			if (parameters != null) { 
-				for(Map.Entry<ParameterTypes, Object> entry : parameters.entrySet()) {
-					try {
-						toSend.put(new String(entry.getKey().toString()), entry.getValue().toString());
-					}
-					catch (Exception e) {
-					}
-				}
-			}
-			FlurryAgent.logEvent(eventType.toString(), toSend, true);
-		}
-		catch (Exception ex) {
-			Log.v(AppContext.getApplication().getAppLogTag(), "AuditHelper.auditEvent()", ex);
-		}
-	}
-	
-
-	/**
-	 * Sends an error audit trail and displays the message on the activity if possible.
-	 * @param errorType
-	 * @param exception
-	 * @param activity
-	 */
-	public static void auditError(final ErrorTypes errorType, final Throwable exception, final Activity activity) {
-		if (activity != null) {	
-			UIHelper.showSimpleRichTextDialog(activity, exception.toString(), "Unexpected error");
-		}
-		
-		String exceptionAsString = exception == null ? null : Throwables.getStackTraceAsString(exception);
-		auditError(errorType, exceptionAsString);
-	}
-	
-	/**
-	 * Sends an error audit trail and displays the message on the activity if possible.
-	 * @param errorType
-	 * @param exception
-	 * @param activity
-	 */
-	public static void auditErrorAsString(final ErrorTypes errorType, final String exceptionAsString, final Activity activity) {
-		if (activity != null) {
-			UIHelper.showSimpleRichTextDialog(activity, exceptionAsString, "Unexpected error");
-		}
-		auditError(errorType, exceptionAsString);
-	}
-	
-	/**
-	 * Sends an error audit trail.
-	 * @param errorType
-	 * @param exception
-	 */
-	public static void auditError(final ErrorTypes errorType, final Throwable exception) {
-		String exceptionAsString = exception == null ? null : Throwables.getStackTraceAsString(exception);
-		auditError(errorType, exceptionAsString);
-	}
-	
-	/**
-	 * Sends an error audit trail.
-	 * @param errorType
-	 * @param exceptionAsString
-	 */
-	public static void auditError(final ErrorTypes errorType, final String exceptionAsString) {
-		try {
-			ErrorTypes errorTypeToAudit = errorType;
-			if (errorTypeToAudit == null) {
-				errorTypeToAudit = ErrorTypes.unexpectedError;
-			}
-
-			if (exceptionAsString != null) {
-				FlurryAgent.onError(errorTypeToAudit.toString(), android.os.Build.MODEL + "|" + android.os.Build.VERSION.SDK_INT, exceptionAsString);
-			}
-			else {
-				FlurryAgent.onError(errorTypeToAudit.toString(), android.os.Build.MODEL + "|" + android.os.Build.VERSION.SDK_INT, "NULL_EXCEPTION");
-			}
-		}
-		catch (Exception ex) {
-			Log.v(AppContext.getApplication().getAppLogTag(), "AuditHelper.auditError()", ex);
-		}
 	}
 }

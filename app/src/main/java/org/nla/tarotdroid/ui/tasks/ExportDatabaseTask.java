@@ -3,7 +3,7 @@ package org.nla.tarotdroid.ui.tasks;
 import android.app.Activity;
 import android.os.Environment;
 
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.DatabaseHelper;
 
@@ -21,26 +21,22 @@ public class ExportDatabaseTask extends BaseAsyncTask<Void, String, String[], St
 	 * The context.
 	 */
 	private final Activity activity;
-
-	/**
-	 * Potential exception that happened in the background.
-	 */
-	private Exception backgroundException;
-
-	/**
-	 * Flag indicating whether an error occured in the background.
-	 */
-	private boolean backroundErrorHappened;
-
-	/**
-	 * The potential callback to post execute.
-	 */
-	private IAsyncCallback<String[]> callback;
-
 	/**
 	 * Indicates whether task was canceled;
 	 */
 	private final boolean isCanceled;
+	/**
+	 * Potential exception that happened in the background.
+	 */
+	private Exception backgroundException;
+	/**
+	 * Flag indicating whether an error occured in the background.
+	 */
+	private boolean backroundErrorHappened;
+	/**
+	 * The potential callback to post execute.
+	 */
+	private IAsyncCallback<String[]> callback;
 
 	/**
 	 * Constructor using a context and a dal service container.

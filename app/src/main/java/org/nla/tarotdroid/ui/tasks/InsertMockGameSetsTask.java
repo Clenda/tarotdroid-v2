@@ -7,9 +7,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.RandomHelper;
 //import android.app.ProgressDialog;
 

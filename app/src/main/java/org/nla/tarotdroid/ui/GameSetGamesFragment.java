@@ -17,18 +17,17 @@
 package org.nla.tarotdroid.ui;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import android.support.v4.app.Fragment;
-
+import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PersistableBusinessObject;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.ui.controls.PlayersRow;

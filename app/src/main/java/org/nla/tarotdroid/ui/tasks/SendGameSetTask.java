@@ -25,9 +25,9 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.biz.GameSet;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
 
@@ -56,26 +56,22 @@ public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object
 	 * The bluetooth device.
 	 */
 	private final BluetoothDevice bluetoothDevice;
-
-	/**
-	 * A progress dialog shown during the game creation and storage.
-	 */
-	private ProgressDialog dialog;
-
 	/**
 	 * The game set to transfer.
 	 */
 	private final GameSet gameSet;
-
 	/**
 	 * The outputstream.
 	 */
 	private final OutputStream outStream;
-
 	/**
 	 * The bluetooth socket.
 	 */
 	private final BluetoothSocket socket;
+	/**
+	 * A progress dialog shown during the game creation and storage.
+	 */
+	private ProgressDialog dialog;
 
 	/**
 	 * Constructor.

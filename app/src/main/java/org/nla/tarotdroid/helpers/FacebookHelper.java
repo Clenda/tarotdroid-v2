@@ -26,11 +26,11 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.common.base.Joiner;
 
+import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.helpers.UrlHelper;
-import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.ui.NotificationActivity;
 
 import java.util.Random;

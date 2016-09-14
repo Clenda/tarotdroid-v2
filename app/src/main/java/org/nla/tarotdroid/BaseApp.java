@@ -1,5 +1,6 @@
-package org.nla.tarotdroid.app;
+package org.nla.tarotdroid;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
@@ -12,7 +13,6 @@ import android.support.multidex.MultiDexApplication;
 
 import com.google.gson.Gson;
 
-import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.Bet;
 import org.nla.tarotdroid.biz.Chelem;
 import org.nla.tarotdroid.biz.GameSetParameters;
@@ -36,59 +36,22 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public abstract class BaseApp extends MultiDexApplication implements ITarotDroidApp {
 	
-    /**
-     * The DAL Service.
-     */
     private IDalService dalService;
-    
-    /**
-     * The application params.
-     */
     private AppParams appParams;
-    
-    /**
-     * The bluetooth helper.
-     */
-    private BluetoothHelper bluetoothHelper;    
-    
-    /**
-     * Flag indicating whether the app is in debug mode.
-     */
+    private BluetoothHelper bluetoothHelper;
     private boolean appInDebugMode;
-    
-    /**
-     * The version name.
-     */
     private String versionName;
-    
-    /**
-     * The package name.
-     */
     private String packageName;
-    
-    /**
-     * The task aimed to instantiate the dal and load elements from it. 
-     */
     private LoadDalTask loadDalTask;
-    
-    /**
-     * The last time the app was launched.
-     */
     private long lastLaunchTimestamp;
-
-    /**
-     * The logged in user.
-     */
     private TarotDroidUser tarotDroidUser;
-    
-    /**
-     * The notifications ids for game sets being published.
-     */
     private Map<String, Integer> notificationIds;
+    private ApplicationComponent component;
 
-    /* (non-Javadoc)
-     * @see android.app.Application#onCreate()
-     */
+    public static BaseApp get(final Context context) {
+        return (BaseApp) context.getApplicationContext();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -99,27 +62,25 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
         this.initializeUser();
         this.setLastLaunchTimestamp();
         this.notificationIds = newHashMap();
+
+        component = ApplicationComponent.Initializer.init(this);
+        component.inject(this);
+    }
+
+    public ApplicationComponent getComponent() {
+        return component;
     }
 	
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#getUuid()
-	 */
 	@Override
 	public UUID getUuid() {
 		return UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	}
 	
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#getServiceName()
-	 */
 	@Override
 	public String getServiceName() {
 		return "TarotDroidService";
 	}
 	
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#getCloudDns()
-	 */
 	public String getCloudDns() {
 		if (this.isAppInDebugMode()) {
 			return this.getString(R.string.dnsTarotDroidDevCloud);
@@ -128,12 +89,9 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 			return this.getString(R.string.dnsTarotDroidCloud);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#getFacebookCloudUrl()
-	 */
-	public String getFacebookCloudUrl() {
-		if (this.isAppInDebugMode()) {
+
+    public String getFacebookCloudUrl() {
+        if (this.isAppInDebugMode()) {
 			return this.getString(R.string.urlTarotDroidFacebookDevCloud);
 		}
 		else {
@@ -141,9 +99,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#getFacebookAppUrl()
-	 */
 	public String getFacebookAppUrl() {
 		if (this.isAppInDebugMode()) {
 			return this.getString(R.string.urlTarotDroidFacebookDevApp);
@@ -153,9 +108,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		}
 	}
 	
-	/**
-	 * Sets the last time the app was launched.
-	 */
     private void setLastLaunchTimestamp() {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
     	this.lastLaunchTimestamp = preferences.getLong(PreferenceConstants.PrefDateLastLaunch, 0);
@@ -165,17 +117,11 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
         editor.commit();
     }
     
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#getLastLaunchTimestamp()
-     */
     @Override
     public long getLastLaunchTimestamp() {
         return this.lastLaunchTimestamp;
     }
     
-    /**
-     * Retrieves misc info from the manifest file.
-     */
     private void retrieveInfosFromManifest() {
     	try {
 			PackageManager manager = this.getPackageManager();
@@ -191,9 +137,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		}
 	}
     
-    /**
-     * Initializes localized strings related to business objects.
-     */
     private void initializeBiznessStrings() {
     	Bet.PETITE.setLabel(this.getString(R.string.petiteDescription));
 		Bet.PRISE.setLabel(this.getString(R.string.priseDescription));
@@ -218,9 +161,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		Result.FAILURE.setLabel(this.getString(R.string.lblFailures));
     }
 
-    /**
-     * Initializes logged in user.
-     */
     private void initializeUser() {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
     	String prefTarotDroidUser = preferences.getString(PreferenceConstants.PrefTarotDroidUser, null);
@@ -229,57 +169,36 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
     	}
     }
 
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#isAppInDebugMode()
-     */
     @Override
     public boolean isAppInDebugMode() {
     	return this.appInDebugMode;
     }
 
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#getAppVersion()
-     */
     @Override
     public String getAppVersion() {
     	return this.versionName;
     }
     
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#getAppPackage()
-     */
     @Override
     public String getAppPackage() {
     	return this.packageName;
     }
     
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#getDalService()
-     */
     @Override
     public IDalService getDalService() {
     	return this.dalService;
     }
     
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#setDalService(org.nla.tarotdroid.dal.IDalService)
-     */
     @Override
     public void setDalService(final IDalService dalService) {
     	this.dalService = dalService;
     }
 
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#getLoadDalTask()
-     */
     @Override
     public LoadDalTask getLoadDalTask() {
     	return this.loadDalTask;
     }
     
-    /**
-	 * @return the appParams
-	 */
     public AppParams getAppParams() {
 		if (this.appParams == null) {
 			this.initializeAppParams();
@@ -287,9 +206,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
     	return this.appParams;
 	}
 
-	/* (non-Javadoc)
-     * @see ITarotDroidApp#getBluetoothHelper()
-     */
     @Override
     public BluetoothHelper getBluetoothHelper() {
     	if (this.bluetoothHelper == null) {
@@ -298,17 +214,11 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
     	return this.bluetoothHelper;
     }
     
-    /**
-     * Loads the DAL.
-     */
     private void initializeDalService() {
 		this.loadDalTask = new LoadDalTask(this);
 		this.loadDalTask.execute();
     }
 
-    /* (non-Javadoc)
-     * @see ITarotDroidApp#initializeGameSetParameters()
-     */
     @Override
 	public GameSetParameters initializeGameSetParameters() {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -341,9 +251,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		return gameSetParameters;
 	}
 	
-    /**
-     * Initializes the application params.
-     */
     private void initializeAppParams() {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
     	this.appParams = new AppParams();
@@ -369,16 +276,10 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		this.appParams.setDevMaxGameCount(preferences.getInt(PreferenceConstants.PrefDevMaxGameCount, 15));
     }
     
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#getTarotDroidUser()
-	 */
 	public TarotDroidUser getTarotDroidUser() {
 		return this.tarotDroidUser;
 	}
 
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#setTarotDroidUser(TarotDroidUser)
-	 */
 	public void setTarotDroidUser(TarotDroidUser tarotDroidUser) {
 		this.tarotDroidUser = tarotDroidUser;
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -392,17 +293,11 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		editor.commit();
 	}
 
-	/* (non-Javadoc)
-	 * @see ITarotDroidApp#getNotificationIds()
-	 */
 	@Override
 	public Map<String, Integer> getNotificationIds() {
 		return this.notificationIds;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.nla.tarotdroid.dal.IDalService#getSQLiteDatabase()
-	 */
 	@Override
 	public SQLiteDatabase getSQLiteDatabase() {
 		return SqliteDalService.getSqliteDatabase(this);

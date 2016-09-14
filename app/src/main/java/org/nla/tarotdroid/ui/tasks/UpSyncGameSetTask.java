@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 
 import com.google.gson.reflect.TypeToken;
 
-import org.nla.tarotdroid.app.AppContext;
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.clientmodel.RestAccount;

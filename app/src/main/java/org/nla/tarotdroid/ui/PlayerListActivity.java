@@ -14,8 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.ui.constants.RequestCodes;
