@@ -1,26 +1,9 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui;
 
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -40,72 +23,76 @@ import org.nla.tarotdroid.ui.constants.PreferenceConstants;
 import org.nla.tarotdroid.ui.controls.PlayerSelectorRow;
 import org.nla.tarotdroid.ui.tasks.StartNewGameSetTask;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
+import butterknife.BindView;
 
-public class PlayerSelectorActivity extends AppCompatActivity {
+public class PlayerSelectorActivity extends BaseActivity {
   
 	private static final String PLAYER_ROW_COUNT = "player_row_count";
 	private static final String PLAYER_NAME = "player_name";
 	private static final String OPTIONAL_PLAYER_NAME = "optional_player_name";
-	private LinearLayout layoutCompulsoryPlayers;
-	private ProgressDialog progressDialog;
-	private GameStyleType gameStyleType;
-	private int rowCount;
-	private List<PlayerSelectorRow> playerSelectorRows;
-	private PlayerSelectorRow optionalPlayerSelectorRow;
-	private GameSet gameSet;
+
+    @BindView(R.id.layoutCompulsoryPlayers) protected LinearLayout layoutCompulsoryPlayers;
+    @BindView(R.id.optionalPlayerSelectorRow) protected PlayerSelectorRow optionalPlayerSelectorRow;
+    private ProgressDialog progressDialog;
+    private GameStyleType gameStyleType;
+    private int rowCount;
+    private List<PlayerSelectorRow> playerSelectorRows;
+    private GameSet gameSet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	try {
-			this.setContentView(R.layout.player_selector);
-			
 			// create game set stub
-			this.gameSet = new GameSet();
-			this.gameSet.setGameSetParameters(AppContext.getApplication().initializeGameSetParameters());
+            gameSet = new GameSet();
+            gameSet.setGameSetParameters(AppContext.getApplication().initializeGameSetParameters());
 
-			this.identifyGameSetType();
-			this.auditEvent();
-			
-			// display warning message if more than 5 games are already stored and and app is not limited 
+            identifyGameSetType();
+
+            // display warning message if more than 5 games are already stored and and app is not limited
 			boolean gameSetNotToBeStored = AppContext.getApplication().isAppLimited() && AppContext.getApplication().getDalService().getGameSetCount() >= 5;   
 			if (gameSetNotToBeStored) {
 				
 				UIHelper.showSimpleRichTextDialog(
                         this,
-                        this.getText(R.string.msgGameSetNotStored).toString(),
-                        this.getString(R.string.titleGameSetNotStored)
+                        getText(R.string.msgGameSetNotStored).toString(),
+                        getString(R.string.titleGameSetNotStored)
                 );
-			}			
-			
-			this.rowCount = 0;
-			this.playerSelectorRows = newArrayList();
-			this.progressDialog = new ProgressDialog(this);
-			this.layoutCompulsoryPlayers = (LinearLayout)this.findViewById(R.id.layoutCompulsoryPlayers);
-			this.optionalPlayerSelectorRow = (PlayerSelectorRow)this.findViewById(R.id.optionalPlayerSelectorRow);
-			this.optionalPlayerSelectorRow.setPlayerIndex(10);
-			this.initializeViews();
-		}
+			}
+
+            rowCount = 0;
+            playerSelectorRows = new ArrayList<>();
+            progressDialog = new ProgressDialog(this);
+            layoutCompulsoryPlayers = (LinearLayout) findViewById(R.id.layoutCompulsoryPlayers);
+            optionalPlayerSelectorRow = (PlayerSelectorRow) findViewById(R.id.optionalPlayerSelectorRow);
+            optionalPlayerSelectorRow.setPlayerIndex(10);
+            initializeViews();
+        }
         catch (Exception e) {
         	AuditHelper.auditError(AuditHelper.ErrorTypes.playerSelectorActivityError, e, this);
 		}
     }
 
     @Override
+    protected void inject() {
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
     	super.onSaveInstanceState(outState);
-    	outState.putInt(PLAYER_ROW_COUNT, this.rowCount);
-    	for (int i = 0; i < this.rowCount; ++i) {
-    		PlayerSelectorRow playerSelectorRow = playerSelectorRows.get(i);
+        outState.putInt(PLAYER_ROW_COUNT, rowCount);
+        for (int i = 0; i < rowCount; ++i) {
+            PlayerSelectorRow playerSelectorRow = playerSelectorRows.get(i);
 			outState.putString(i + PLAYER_NAME, playerSelectorRow.getPlayerName());
     	}
-    	
-    	if (this.optionalPlayerSelectorRow.getPlayerName() != null && !this.optionalPlayerSelectorRow.getPlayerName().equals("")) {
-    		outState.putString(OPTIONAL_PLAYER_NAME, this.optionalPlayerSelectorRow.getPlayerName());
-    	}
+
+        if (optionalPlayerSelectorRow.getPlayerName() != null && !optionalPlayerSelectorRow.getPlayerName()
+                                                                                           .equals("")) {
+            outState.putString(OPTIONAL_PLAYER_NAME, optionalPlayerSelectorRow.getPlayerName());
+        }
     }
     
     @Override
@@ -114,30 +101,19 @@ public class PlayerSelectorActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
         	int formerRowCount = savedInstanceState.getInt(PLAYER_ROW_COUNT);
         	for (int i = 0; i < formerRowCount; ++i) {
-        		PlayerSelectorRow playerSelectorRow = this.playerSelectorRows.get(i);
-    			playerSelectorRow.setPlayerName(savedInstanceState.getString(i + PLAYER_NAME));
+                PlayerSelectorRow playerSelectorRow = playerSelectorRows.get(i);
+                playerSelectorRow.setPlayerName(savedInstanceState.getString(i + PLAYER_NAME));
     		}
         }
         
     	if (savedInstanceState.containsKey(OPTIONAL_PLAYER_NAME)) {
-    		this.optionalPlayerSelectorRow.setPlayerName(savedInstanceState.getString(OPTIONAL_PLAYER_NAME));
-    	}
+            optionalPlayerSelectorRow.setPlayerName(savedInstanceState.getString(
+                    OPTIONAL_PLAYER_NAME));
+        }
     }
-    
-    @Override
-    protected void onStart() {
-    	super.onStart();
-    	AuditHelper.auditSession(this);
-    }
-    
-    @Override
-    protected void onStop() {
-    	super.onStop();
-    }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	
 		MenuItem miStartGameSet = menu.add(R.string.lblStartItem);
 		miStartGameSet.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		miStartGameSet.setIcon(R.drawable.ic_compose);
@@ -171,66 +147,74 @@ public class PlayerSelectorActivity extends AppCompatActivity {
 		
 		return super.onCreateOptionsMenu(menu);
     }
-    
-	private void auditEvent() {
-		AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetCreationPage);
+
+    @Override
+    protected void auditEvent() {
+        AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetCreationPage);
 	}
-	
-	private void identifyGameSetType() {
-		if (this.getIntent().getExtras() != null && !this.getIntent().getExtras().containsKey(ActivityParams.PARAM_TYPE_OF_GAMESET)) {
-			throw new IllegalArgumentException("type of gameset must be provided");
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.player_selector;
+    }
+
+    private void identifyGameSetType() {
+        if (getIntent().getExtras() != null && !getIntent().getExtras()
+                                                           .containsKey(ActivityParams.PARAM_TYPE_OF_GAMESET)) {
+            throw new IllegalArgumentException("type of gameset must be provided");
 		}
-		
-		this.gameStyleType = GameStyleType.valueOf(this.getIntent().getExtras().getString(ActivityParams.PARAM_TYPE_OF_GAMESET));
-	}
+
+        gameStyleType = GameStyleType.valueOf(getIntent().getExtras()
+                                                         .getString(ActivityParams.PARAM_TYPE_OF_GAMESET));
+    }
 	
 	private void addCompulsoryPlayerRow() {
-		PlayerSelectorRow playerSelectorRow = new PlayerSelectorRow(this, this.rowCount);
-		this.layoutCompulsoryPlayers.addView(playerSelectorRow);
-		this.playerSelectorRows.add(playerSelectorRow);
-		this.rowCount += 1;
-	}
+        PlayerSelectorRow playerSelectorRow = new PlayerSelectorRow(this, rowCount);
+        layoutCompulsoryPlayers.addView(playerSelectorRow);
+        playerSelectorRows.add(playerSelectorRow);
+        rowCount += 1;
+    }
 	
 	private void initializeViews() {
-    	switch(this.gameStyleType) {
-			case Tarot3:
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				break;
+        switch (gameStyleType) {
+            case Tarot3:
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                break;
 			case Tarot4:
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				break;
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                break;
 			case Tarot5:
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				this.addCompulsoryPlayerRow();
-				break;
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                addCompulsoryPlayerRow();
+                break;
     	}
 	}
 	
     protected void setPlayersAndGameStyleType() {
     	
     	// sets the players
-    	switch(this.gameStyleType) {
-			case Tarot3:
-				this.setPlayers3();
-				break;
+        switch (gameStyleType) {
+            case Tarot3:
+                setPlayers3();
+                break;
 			case Tarot4:
-				this.setPlayers4();
-				break;
+                setPlayers4();
+                break;
 			case Tarot5:
-				this.setPlayers5();
-				break;
+                setPlayers5();
+                break;
     	}
 
 		// sets the game style type
-		this.gameSet.setGameStyleType(this.gameStyleType);
+        gameSet.setGameStyleType(gameStyleType);
     }
     
     private Player getPlayerByName(String playerName) {
@@ -250,56 +234,56 @@ public class PlayerSelectorActivity extends AppCompatActivity {
     
     private void setPlayers3() {
     	// get the player names
-    	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
-    	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
-    	String player3Name = this.playerSelectorRows.get(2).getPlayerName();
-    	String player4Name = this.optionalPlayerSelectorRow.getPlayerName();
+        String player1Name = playerSelectorRows.get(0).getPlayerName();
+        String player2Name = playerSelectorRows.get(1).getPlayerName();
+        String player3Name = playerSelectorRows.get(2).getPlayerName();
+        String player4Name = optionalPlayerSelectorRow.getPlayerName();
 
 		// create the player list
 		PlayerList playerList = new PlayerList();
 
 		// add first 3 players
-		Player player1 = this.getPlayerByName(player1Name);
-		Player player2 = this.getPlayerByName(player2Name);
-		Player player3 = this.getPlayerByName(player3Name);
-		playerList.add(player1);
+        Player player1 = getPlayerByName(player1Name);
+        Player player2 = getPlayerByName(player2Name);
+        Player player3 = getPlayerByName(player3Name);
+        playerList.add(player1);
 		playerList.add(player2);
 		playerList.add(player3);
 		
 		// add potential 4th player
 		if (player4Name != null && player4Name.length() != 0) {
-			Player player4 = this.getPlayerByName(player4Name);
-			playerList.add(player4);
+            Player player4 = getPlayerByName(player4Name);
+            playerList.add(player4);
 		}
 		
 		// store player names in preferences
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
-		SharedPreferences.Editor editor = preferences.edit();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = preferences.edit();
 		editor.putString(PreferenceConstants.PrefPlayer1Name, player1Name);
 		editor.putString(PreferenceConstants.PrefPlayer2Name, player2Name);
 		editor.putString(PreferenceConstants.PrefPlayer3Name, player3Name);
 		editor.commit();
 		
 		// set players in game set
-		this.gameSet.setPlayers(playerList);
+        gameSet.setPlayers(playerList);
     }
 
     private void setPlayers4() {
     	// get the player names
-    	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
-    	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
-    	String player3Name = this.playerSelectorRows.get(2).getPlayerName();
-    	String player4Name = this.playerSelectorRows.get(3).getPlayerName();
-    	String player5Name = this.optionalPlayerSelectorRow.getPlayerName();
-    	
-		// create the player list
+        String player1Name = playerSelectorRows.get(0).getPlayerName();
+        String player2Name = playerSelectorRows.get(1).getPlayerName();
+        String player3Name = playerSelectorRows.get(2).getPlayerName();
+        String player4Name = playerSelectorRows.get(3).getPlayerName();
+        String player5Name = optionalPlayerSelectorRow.getPlayerName();
+
+        // create the player list
 		PlayerList playerList = new PlayerList();
 
 		// add first 4 players
-		Player player1 = this.getPlayerByName(player1Name);
-		Player player2 = this.getPlayerByName(player2Name);
-		Player player3 = this.getPlayerByName(player3Name);
-		Player player4 = this.getPlayerByName(player4Name);
+        Player player1 = getPlayerByName(player1Name);
+        Player player2 = getPlayerByName(player2Name);
+        Player player3 = getPlayerByName(player3Name);
+        Player player4 = getPlayerByName(player4Name);
 
 		playerList.add(player1);
 		playerList.add(player2);
@@ -308,13 +292,13 @@ public class PlayerSelectorActivity extends AppCompatActivity {
 		
 		// add potential 5th player
 		if (player5Name != null && player5Name.length() != 0) {
-			Player player5 = this.getPlayerByName(player5Name);
-			playerList.add(player5);
+            Player player5 = getPlayerByName(player5Name);
+            playerList.add(player5);
 		}
 		
 		// store player names in preferences
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
-		SharedPreferences.Editor editor = preferences.edit();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = preferences.edit();
 		editor.putString(PreferenceConstants.PrefPlayer1Name, player1Name);
 		editor.putString(PreferenceConstants.PrefPlayer2Name, player2Name);
 		editor.putString(PreferenceConstants.PrefPlayer3Name, player3Name);
@@ -322,28 +306,28 @@ public class PlayerSelectorActivity extends AppCompatActivity {
 		editor.commit();
 		
 		// set players in game set
-		this.gameSet.setPlayers(playerList);
+        gameSet.setPlayers(playerList);
     }
     
     private void setPlayers5() {
     	// get the player names
-    	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
-    	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
-    	String player3Name = this.playerSelectorRows.get(2).getPlayerName();
-    	String player4Name = this.playerSelectorRows.get(3).getPlayerName();
-    	String player5Name = this.playerSelectorRows.get(4).getPlayerName();
-    	String player6Name = this.optionalPlayerSelectorRow.getPlayerName();
-    	
-		// create the player list
+        String player1Name = playerSelectorRows.get(0).getPlayerName();
+        String player2Name = playerSelectorRows.get(1).getPlayerName();
+        String player3Name = playerSelectorRows.get(2).getPlayerName();
+        String player4Name = playerSelectorRows.get(3).getPlayerName();
+        String player5Name = playerSelectorRows.get(4).getPlayerName();
+        String player6Name = optionalPlayerSelectorRow.getPlayerName();
+
+        // create the player list
 		PlayerList playerList = new PlayerList();
 
 		// add first 5 players
-		Player player1 = this.getPlayerByName(player1Name);
-		Player player2 = this.getPlayerByName(player2Name);
-		Player player3 = this.getPlayerByName(player3Name);
-		Player player4 = this.getPlayerByName(player4Name);
-		Player player5 = this.getPlayerByName(player5Name);
-		playerList.add(player1);
+        Player player1 = getPlayerByName(player1Name);
+        Player player2 = getPlayerByName(player2Name);
+        Player player3 = getPlayerByName(player3Name);
+        Player player4 = getPlayerByName(player4Name);
+        Player player5 = getPlayerByName(player5Name);
+        playerList.add(player1);
 		playerList.add(player2);
 		playerList.add(player3);
 		playerList.add(player4);
@@ -351,13 +335,13 @@ public class PlayerSelectorActivity extends AppCompatActivity {
 		
 		// add potential 6th player
 		if (player6Name != null && player6Name.length() != 0) {
-			Player player6 = this.getPlayerByName(player6Name);
-			playerList.add(player6);
+            Player player6 = getPlayerByName(player6Name);
+            playerList.add(player6);
 		}
 		
 		// store player names in preferences
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
-		SharedPreferences.Editor editor = preferences.edit();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = preferences.edit();
 		editor.putString(PreferenceConstants.PrefPlayer1Name, player1Name);
 		editor.putString(PreferenceConstants.PrefPlayer2Name, player2Name);
 		editor.putString(PreferenceConstants.PrefPlayer3Name, player3Name);
@@ -366,28 +350,28 @@ public class PlayerSelectorActivity extends AppCompatActivity {
 		editor.commit();
 		
 		// set players in game set
-		this.gameSet.setPlayers(playerList);
+        gameSet.setPlayers(playerList);
     }
     
     private boolean isFormValid() {
-    	switch(this.gameStyleType) {
-    		case Tarot3:
-    			return this.isForm3Valid();
-    		case Tarot4:
-    			return this.isForm4Valid();
-    		case Tarot5:
-    			return this.isForm5Valid();
-    		default:
+        switch (gameStyleType) {
+            case Tarot3:
+                return isForm3Valid();
+            case Tarot4:
+                return isForm4Valid();
+            case Tarot5:
+                return isForm5Valid();
+            default:
     			return true;
     	}
     }
     
     protected boolean isForm3Valid() {
-    	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
-    	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
-    	String player3Name = this.playerSelectorRows.get(2).getPlayerName();
-    	
-    	return
+        String player1Name = playerSelectorRows.get(0).getPlayerName();
+        String player2Name = playerSelectorRows.get(1).getPlayerName();
+        String player3Name = playerSelectorRows.get(2).getPlayerName();
+
+        return
     		!player1Name.trim().equals("")
     		&& !player2Name.trim().equals("")
     		&& !player3Name.trim().equals("")
@@ -397,12 +381,12 @@ public class PlayerSelectorActivity extends AppCompatActivity {
     }
 
     protected boolean isForm4Valid() {
-    	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
-    	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
-    	String player3Name = this.playerSelectorRows.get(2).getPlayerName();
-    	String player4Name = this.playerSelectorRows.get(3).getPlayerName();
-    	
-    	return 
+        String player1Name = playerSelectorRows.get(0).getPlayerName();
+        String player2Name = playerSelectorRows.get(1).getPlayerName();
+        String player3Name = playerSelectorRows.get(2).getPlayerName();
+        String player4Name = playerSelectorRows.get(3).getPlayerName();
+
+        return
     		!player1Name.trim().equals("")
     		&& !player2Name.trim().equals("")
     		&& !player3Name.trim().equals("")
@@ -416,11 +400,11 @@ public class PlayerSelectorActivity extends AppCompatActivity {
     }
 
     protected boolean isForm5Valid() {
-    	String player1Name = this.playerSelectorRows.get(0).getPlayerName();
-    	String player2Name = this.playerSelectorRows.get(1).getPlayerName();
-    	String player3Name = this.playerSelectorRows.get(2).getPlayerName();
-    	String player4Name = this.playerSelectorRows.get(3).getPlayerName();
-    	String player5Name = this.playerSelectorRows.get(4).getPlayerName();
+        String player1Name = playerSelectorRows.get(0).getPlayerName();
+        String player2Name = playerSelectorRows.get(1).getPlayerName();
+        String player3Name = playerSelectorRows.get(2).getPlayerName();
+        String player4Name = playerSelectorRows.get(3).getPlayerName();
+        String player5Name = playerSelectorRows.get(4).getPlayerName();
 
     	return 
         		!player1Name.trim().equals("")

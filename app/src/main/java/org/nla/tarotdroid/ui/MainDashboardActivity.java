@@ -241,7 +241,6 @@ public class MainDashboardActivity extends BaseActivity {
 	public void onCreate(final Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
-            UIHelper.trackAppLaunched(this);
             initializeViews(savedInstanceState);
         } catch (Exception e) {
 			AuditHelper.auditError(AuditHelper.ErrorTypes.mainDashBoardActivityError, e, this);
@@ -258,6 +257,11 @@ public class MainDashboardActivity extends BaseActivity {
     @Override
     protected void inject() {
         // TODO implement Dagger...
+    }
+
+    @Override
+    protected void auditEvent() {
+        UIHelper.trackAppLaunched(this);
     }
 
     @Override

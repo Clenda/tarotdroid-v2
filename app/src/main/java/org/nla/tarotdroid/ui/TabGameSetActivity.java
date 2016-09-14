@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,10 +34,12 @@ import org.nla.tarotdroid.ui.constants.ResultCodes;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class TabGameSetActivity extends AppCompatActivity {
+public class TabGameSetActivity extends BaseActivity {
 
     private static TabGameSetActivity instance;
 
@@ -59,10 +60,11 @@ public class TabGameSetActivity extends AppCompatActivity {
 
     protected GameSet gameSet;
     protected ProgressDialog progressDialog;
+    protected @BindView(R.id.tabs) TabLayout tabLayout;
+    protected @BindView(R.id.pager) ViewPager viewPager;
+
     private GameSetGamesFragment gameSetGamesFragment;
     private GameSetSynthesisFragment gameSetSynthesisFragment;
-	private ViewPager viewPager;
-	private TabLayout tabLayout;
 	private PagerAdapter pagerAdapter;
 	private String shortenedUrl;
     private int startPage;
@@ -71,8 +73,9 @@ public class TabGameSetActivity extends AppCompatActivity {
         return instance;
     }
 
-	private void auditEvent() {
-		if (this.gameSet == null) {
+    @Override
+    protected void auditEvent() {
+        if (this.gameSet == null) {
 			AuditHelper.auditEvent(AuditHelper.EventTypes.tabGameSetActivity_auditEvent_GameSetIsNull);
 
 			UIHelper.showSimpleRichTextDialog(this, this.getString(R.string.msgUnmanagedErrorGameSetLost), this.getString(R.string.titleUnmanagedErrorGameSetLost));
@@ -160,9 +163,7 @@ public class TabGameSetActivity extends AppCompatActivity {
     }
 
     private void initialisePaging() {
-		viewPager = (ViewPager) super.findViewById(R.id.pager);
 		setupViewPager();
-		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 	}
 
@@ -224,7 +225,6 @@ public class TabGameSetActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-			this.setContentView(R.layout.simple_titles);
 
 			// check params
 			Bundle args = this.getIntent().getExtras();
@@ -237,15 +237,13 @@ public class TabGameSetActivity extends AppCompatActivity {
 			}
 
 			// instantiate fragments
-			this.gameSetGamesFragment = GameSetGamesFragment.newInstance();
-			this.gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
+            gameSetGamesFragment = GameSetGamesFragment.newInstance();
+            gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
 
-			this.auditEvent();
-			instance = this;
+            auditEvent();
+            instance = this;
 
-			UIHelper.setKeepScreenOn(this, AppContext.getApplication().getAppParams().isKeepScreenOn());
-
-			this.initialisePaging();
+            initialisePaging();
 
 			ActionBar mActionBar = getSupportActionBar();
 			mActionBar.setHomeButtonEnabled(true);
@@ -255,7 +253,17 @@ public class TabGameSetActivity extends AppCompatActivity {
 		} catch (Exception e) {
 			AuditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this);
 		}
-	}
+    }
+
+    @Override
+    protected void inject() {
+
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.simple_titles;
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

@@ -3,11 +3,14 @@ package org.nla.tarotdroid.ui;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.app.AppContext;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.UIHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,10 +25,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
-        ButterKnife.setDebug(true);
         ButterKnife.bind(this);
         setupToolbar();
-        getWindow().setTitle(getString(R.string.app_name));
+        setKeepScreenOn();
+        auditEvent();
+        if (shouldDisplayTitle()) {
+            getWindow().setTitle(getString(getTitleResId()));
+        }
         inject();
     }
 
@@ -45,10 +51,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         return true;
     }
 
+    protected void setKeepScreenOn() {
+        UIHelper.setKeepScreenOn(this, AppContext.getApplication().getAppParams().isKeepScreenOn());
+    }
+
     protected abstract void inject();
+
+    protected abstract void auditEvent();
 
     @LayoutRes
     protected abstract int getLayoutResId();
+
+    @StringRes
+    protected int getTitleResId() {
+        return R.string.app_name;
+    }
 
     @Override
     protected void onStart() {
