@@ -192,12 +192,13 @@ public class PlayerSelectorRow extends LinearLayout {
 
 			HashMap<String,String> playerMap = (HashMap<String,String>)this.getItem(position);
 		   
-		   View view = null;
-		   LayoutInflater layoutInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		   
-		   String playerPictureUri = playerMap.get(UIConstants.PLAYER_PICTURE_URI);
-		   if (playerPictureUri != null && playerPictureUri.length() != 0) {
-			   
+		    View view = null;
+		    LayoutInflater layoutInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			view = layoutInflater.inflate(R.layout.autocomplete_layout_pic, parent, false);
+
+			String playerPictureUri = playerMap.get(UIConstants.PLAYER_PICTURE_URI);
+			if (playerPictureUri != null && playerPictureUri.length() != 0) {
+
 			   Bitmap contactBitmap = null;
 			   try {
 				   String contactId = Uri.parse(playerMap.get(UIConstants.PLAYER_PICTURE_URI)).getLastPathSegment();
@@ -206,10 +207,9 @@ public class PlayerSelectorRow extends LinearLayout {
 			   catch(Exception e) {
 				   contactBitmap = null;
 			   }
-			   
-			   // no problem when retrieving image => set it as player image 
+
+			   // no problem when retrieving image => set it as player image
 			   if (contactBitmap != null) {
-				   view = layoutInflater.inflate(R.layout.autocomplete_layout_pic, parent, false);
 				   ImageView playerPicture = (ImageView)view.findViewById(R.id.playerPicture);
 				   playerPicture.setImageBitmap(contactBitmap);
 			   }
