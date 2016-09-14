@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -21,8 +20,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -56,8 +53,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnItemClick;
+
 @TargetApi(Build.VERSION_CODES.CUPCAKE)
-public class GameSetHistoryActivity extends AppCompatActivity {
+public class GameSetHistoryActivity extends BaseActivity {
 
     private static final Item[] allItems = {
             new Item(AppContext.getApplication().getResources().getString(R.string.lblEditGameSet), android.R.drawable.ic_menu_edit, Item.ItemTypes.edit),
@@ -66,11 +66,6 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblExcelExport), R.drawable.ic_excel, Item.ItemTypes.exportToExcel), };
 	private static final Comparator<GameSet> gameSetCreationDateDescendingComparator = new Comparator<GameSet>() {
 
-		/*
-         * (non-Javadoc)
-		 *
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(final GameSet arg0, final GameSet arg1) {
 			return (arg1.getCreationTs().compareTo(arg0.getCreationTs()));
@@ -82,8 +77,15 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 			new Item(AppContext.getApplication().getResources().getString(R.string.lblBluetoothSend), R.drawable.stat_sys_data_bluetooth, Item.ItemTypes.transferOverBluetooth) };
 	private static final String PENDING_REAUTH_KEY = "pendingReauthRequest";
 
-    @SuppressWarnings("rawtypes")
-    private AsyncTask currentRunningTask;
+    @BindView(R.id.listView) protected ListView listView;
+    private final IAsyncCallback<Object> refreshCallback = new IAsyncCallback<Object>() {
+
+        @Override
+        public void execute(Object isNull, Exception e) {
+            // TODO Check if exception must not be handled
+            GameSetHistoryActivity.this.refresh();
+        }
+    };
     private boolean pendingReauthRequest;
     private ProgressDialog progressDialog;
     private final DialogInterface.OnClickListener removeAllGameSetsDialogClickListener = new DialogInterface.OnClickListener() {
@@ -104,20 +106,10 @@ public class GameSetHistoryActivity extends AppCompatActivity {
             }
         }
     };
-    private ListView listView;
-    private final IAsyncCallback<Object> refreshCallback = new IAsyncCallback<Object>() {
-
-        @Override
-        public void execute(Object isNull, Exception e) {
-            // TODO Check if exception must not be handled
-            GameSetHistoryActivity.this.refresh();
-        }
-    };
     private BluetoothHelper bluetoothHelper;
     private ReceiveGameSetTask receiveGameSetTask;
     private SendGameSetTask sendGameSetTask;
     private String tempExcelFilePath;
-
 	private final DialogInterface.OnClickListener exportExcelByEmailDialogClickListener = new DialogInterface.OnClickListener() {
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
@@ -155,18 +147,25 @@ public class GameSetHistoryActivity extends AppCompatActivity {
             onGameSetExportedToExcelFile(filePath);
         }
     };
+
     /**
      * Temporary GameSet. Use with care, this is pretty much a global variable
      * (it's used between differents inner classes).
      */
     private GameSet tempGameSet;
 
-	private void auditEvent() {
-		AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetHistoryPage);
+    @Override
+    protected void auditEvent() {
+        AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetHistoryPage);
 	}
 
-	private boolean isBluetoothActivated() {
-		boolean isActivated = GameSetHistoryActivity.this.bluetoothHelper.isBluetoothEnabled();
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_gameset_history;
+    }
+
+    private boolean isBluetoothActivated() {
+        boolean isActivated = GameSetHistoryActivity.this.bluetoothHelper.isBluetoothEnabled();
 		if (!isActivated) {
 			Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getString(R.string.msgActivateBluetooth), Toast.LENGTH_SHORT).show();
 		}
@@ -198,10 +197,7 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 	public void onCreate(final Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
-            this.setContentView(R.layout.activity_gameset_history);
-            this.listView = (ListView) findViewById(R.id.listView);
 
-			this.auditEvent();
 			// initialize progress dialog
 			this.progressDialog = new ProgressDialog(this);
 			this.progressDialog.setCanceledOnTouchOutside(false);
@@ -211,11 +207,10 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 			this.bluetoothHelper.setActivity(this);
 
 			// set excuse as background image
-            this.listView.setCacheColorHint(0);
-            this.listView.setBackgroundResource(R.drawable.img_excuse);
+            listView.setCacheColorHint(0);
+            listView.setBackgroundResource(R.drawable.img_excuse);
 
 			// set action bar properties
-            this.setTitle();
             this.registerForContextMenu(listView);
 
 			// set internal properties
@@ -251,26 +246,14 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 					task.attach(this);
                 }
             }
-
-            this.listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-				@Override
-				public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-					onListItemClick(pos);
-                    return false;
-                }
-            });
-
-            this.listView.setOnItemClickListener(new OnItemClickListener() {
-
-				@Override
-				public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-					onListItemClick(pos);
-				}
-			});
 		} catch (Exception e) {
 			AuditHelper.auditError(ErrorTypes.gameSetHistoryActivityError, e, this);
         }
+    }
+
+    @Override
+    protected void inject() {
+
     }
 
     @Override
@@ -406,8 +389,8 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		try {
-			this.bluetoothHelper.cancelDiscovery();
-		} catch (Exception e) {
+            bluetoothHelper.cancelDiscovery();
+        } catch (Exception e) {
 		}
 	}
 
@@ -418,8 +401,8 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 		}
 
 		else {
-			this.tempExcelFilePath = filePath;
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            tempExcelFilePath = filePath;
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(this.getString(R.string.titleGameSetExportedToExcelFile));
 			builder.setMessage(Html.fromHtml(this.getText(R.string.msgGameSetExportedToExcelFile).toString()));
 			builder.setPositiveButton(this.getString(R.string.btnOk), this.exportExcelByEmailDialogClickListener);
@@ -429,13 +412,9 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 		}
 	}
 
-    /**
-     * Manage click on GameSet.
-     *
-     * @param pos
-	 */
-	private void onListItemClick(final int pos) {
-        final GameSet gameSet = (GameSet) listView.getAdapter().getItem(pos);
+    @OnItemClick(R.id.listView)
+    protected void onListItemClick(AdapterView<?> parent, int position) {
+        final GameSet gameSet = (GameSet) listView.getAdapter().getItem(position);
 
 		final Item[] items = AppContext.getApplication().isAppLimited() ? limitedItems : allItems;
 
@@ -465,9 +444,7 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 
 			@Override
 			public void onClick(DialogInterface dialog, int itemIndex) {
-
 				Item item = items[itemIndex];
-
                 if (item.itemType == Item.ItemTypes.remove) {
                     RemoveGameSetDialogClickListener removeGameSetDialogClickListener = new RemoveGameSetDialogClickListener(gameSet);
 					AlertDialog.Builder builder = new AlertDialog.Builder(GameSetHistoryActivity.this);
@@ -512,18 +489,6 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 						AuditHelper.auditError(ErrorTypes.excelFileStorage, e);
 					}
 				} else if (item.itemType == Item.ItemTypes.edit) {
-					// SharedPreferences preferences =
-					// PreferenceManager.getDefaultSharedPreferences(GameSetHistoryActivity.this);
-
-					// set selected gameset as session gameset
-					// AppContext.getApplication().getBizService().setGameSet(gameSet);
-
-					// // Get non DAL stored parameters property from shared
-					// preferences
-					// UIHelper.fillNonComputationPreferences(gameSet.getGameSetParameters(),
-					// preferences);
-
-					// start tab gameset activity
 					Intent intent = new Intent(GameSetHistoryActivity.this, TabGameSetActivity.class);
 					intent.putExtra(ActivityParams.PARAM_GAMESET_ID, gameSet.getId());
 					GameSetHistoryActivity.this.startActivityForResult(intent, RequestCodes.DISPLAY_WITH_FACEBOOK);
@@ -532,7 +497,6 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
-
 	}
 
 	@Override
@@ -548,20 +512,6 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 			this.refresh();
         }
     }
-
-    @Override
-    public Object onRetainCustomNonConfigurationInstance() {
-        Object toReturn = null;
-        if (currentRunningTask == null) {
-			toReturn = null;
-		} else if (currentRunningTask instanceof UpSyncGameSetTask) {
-			UpSyncGameSetTask task = (UpSyncGameSetTask) currentRunningTask;
-			task.detach();
-			toReturn = task;
-		}
-
-		return toReturn;
-	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -588,8 +538,9 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 		}
 	}
 
-	private void setTitle() {
-		if (AppContext.getApplication().getDalService() == null || AppContext.getApplication().getDalService().getAllGameSets().size() == 0) {
+    @Override
+    protected void setTitle() {
+        if (AppContext.getApplication().getDalService() == null || AppContext.getApplication().getDalService().getAllGameSets().size() == 0) {
 			this.setTitle(this.getResources().getString(R.string.lblGameSetHistoryActivityTitleNone));
 		} else if (AppContext.getApplication().getDalService().getAllGameSets().size() == 1) {
 			this.setTitle(this.getResources().getString(R.string.lblGameSetHistoryActivityTitleSingle));
@@ -623,22 +574,9 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 
     private class BluetoothDeviceClickListener implements DialogInterface.OnClickListener {
 
-        /**
-         * The device names towards which to send the GameSet.
-         */
         private final String[] bluetoothDeviceNames;
-
-        /**
-         * The GameSet to transfer.
-         */
         private final GameSet gameSet;
 
-        /**
-         * Constructor.
-         *
-         * @param gameSet
-         * @param bluetoothDeviceNames
-         */
         public BluetoothDeviceClickListener(
                 final GameSet gameSet,
                 final String[] bluetoothDeviceNames
@@ -647,13 +585,6 @@ public class GameSetHistoryActivity extends AppCompatActivity {
             this.bluetoothDeviceNames = bluetoothDeviceNames;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * android.content.DialogInterface.OnClickListener#onClick(android.content
-         * .DialogInterface, int)
-         */
         @Override
         public void onClick(final DialogInterface dialog, final int which) {
             AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSendGameSet);
@@ -665,12 +596,6 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 
     private class GameSetAdapter extends ArrayAdapter<GameSet> {
 
-        /**
-         * Constructs a GameSetAdapter.
-         *
-         * @param context
-         * @param gameSets
-         */
         public GameSetAdapter(Context context, List<GameSet> gameSets) {
             super(context, R.layout.thumbnail_item, gameSets);
         }
@@ -689,6 +614,7 @@ public class GameSetHistoryActivity extends AppCompatActivity {
                     break;
                 case Tarot5:
                     drawableId = R.drawable.icon_5players;
+                    break;
                 case None:
                 default:
                     throw new IllegalStateException("unknown gameSet type: " + gameSet.getGameStyleType());
@@ -707,27 +633,11 @@ public class GameSetHistoryActivity extends AppCompatActivity {
 
     private class RemoveGameSetDialogClickListener implements DialogInterface.OnClickListener {
 
-        /**
-         * The GameSet to transfer.
-         */
         private final GameSet gameSet;
-
-        /**
-         * Constructor.
-         *
-         * @param gameSet
-         */
         public RemoveGameSetDialogClickListener(final GameSet gameSet) {
             this.gameSet = gameSet;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * android.content.DialogInterface.OnClickListener#onClick(android.content
-         * .DialogInterface, int)
-         */
         @Override
         public void onClick(final DialogInterface dialog, final int which) {
             switch (which) {

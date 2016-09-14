@@ -28,10 +28,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setupToolbar();
         setKeepScreenOn();
+        setTitle();
         auditEvent();
-        if (shouldDisplayTitle()) {
-            getWindow().setTitle(getString(getTitleResId()));
-        }
         inject();
     }
 
@@ -40,6 +38,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(shouldDisplayHomeAsUpEnabled());
             getSupportActionBar().setDisplayShowTitleEnabled(shouldDisplayTitle());
+        }
+    }
+
+    protected void setTitle() {
+        if (shouldDisplayTitle()) {
+            getWindow().setTitle(getString(getTitleResId()));
         }
     }
 

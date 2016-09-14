@@ -77,9 +77,8 @@ public class TabGameSetActivity extends BaseActivity {
     protected void auditEvent() {
         if (this.gameSet == null) {
 			AuditHelper.auditEvent(AuditHelper.EventTypes.tabGameSetActivity_auditEvent_GameSetIsNull);
-
 			UIHelper.showSimpleRichTextDialog(this, this.getString(R.string.msgUnmanagedErrorGameSetLost), this.getString(R.string.titleUnmanagedErrorGameSetLost));
-			this.finish();
+            finish();
 
 		} else if (this.gameSet.getGameCount() == 0) {
 			Map<ParameterTypes, Object> parameters = newHashMap();
@@ -169,9 +168,9 @@ public class TabGameSetActivity extends BaseActivity {
 
 	private void setupViewPager() {
 		List<Fragment> fragments = newArrayList();
-		this.gameSetGamesFragment = GameSetGamesFragment.newInstance();
-		this.gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
-		fragments.add(this.gameSetGamesFragment);
+        gameSetGamesFragment = GameSetGamesFragment.newInstance();
+        gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
+        fragments.add(this.gameSetGamesFragment);
 		fragments.add(this.gameSetSynthesisFragment);
 		pagerAdapter = new TabGameSetPagerAdapter(super.getSupportFragmentManager(), fragments);
 		viewPager.setAdapter(this.pagerAdapter);
@@ -179,25 +178,25 @@ public class TabGameSetActivity extends BaseActivity {
 	}
 
 	private void navigateTowardsBelgianGameCreationActivity() {
-		this.navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Belgian);
-	}
+        navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Belgian);
+    }
 
 	private void navigateTowardsGameCreationActivity(GameType gametype) {
 		Intent intent = new Intent(TabGameSetActivity.this, GameCreationActivity.class);
 		intent.putExtra(ActivityParams.PARAM_TYPE_OF_GAME, gametype.toString());
-		this.startActivityForResult(intent, RequestCodes.ADD_GAME);
-	}
+        startActivityForResult(intent, RequestCodes.ADD_GAME);
+    }
 
 	private void navigateTowardsPassedGameCreationActivity() {
-		this.navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Pass);
-	}
+        navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Pass);
+    }
 
 	private void navigateTowardsPenaltyGameCreationActivity() {
-		this.navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Penalty);
-	}
+        navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Penalty);
+    }
 
 	private void navigateTowardsStandardGameCreationActivity() {
-		this.navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Standard);
+        navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Standard);
     }
 
 	@Override
@@ -223,36 +222,33 @@ public class TabGameSetActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+        identifyGameSet();
+        super.onCreate(savedInstanceState);
 		try {
-
-			// check params
-			Bundle args = this.getIntent().getExtras();
-			if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-				this.gameSet = AppContext.getApplication().getDalService().getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
-			} else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-				this.gameSet = (GameSet) args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
-			} else {
-				throw new IllegalArgumentException("Game set id or serialized game set must be provided");
-			}
-
-			// instantiate fragments
-            gameSetGamesFragment = GameSetGamesFragment.newInstance();
-            gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
-
-            auditEvent();
             instance = this;
-
             initialisePaging();
-
 			ActionBar mActionBar = getSupportActionBar();
 			mActionBar.setHomeButtonEnabled(true);
 			mActionBar.setDisplayShowHomeEnabled(true);
-			this.progressDialog = new ProgressDialog(this);
-			this.progressDialog.setCancelable(false);
-		} catch (Exception e) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+        } catch (Exception e) {
 			AuditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this);
 		}
+    }
+
+    // TODO Improve design. Should for instance be retrieved in upper class
+    private void identifyGameSet() {
+        Bundle args = this.getIntent().getExtras();
+        if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
+            gameSet = AppContext.getApplication()
+                                .getDalService()
+                                .getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
+        } else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
+            gameSet = (GameSet) args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
+        } else {
+            throw new IllegalArgumentException("Game set id or serialized game set must be provided");
+        }
     }
 
     @Override
@@ -358,10 +354,10 @@ public class TabGameSetActivity extends BaseActivity {
 		});
 
 		if (android.os.Build.VERSION.SDK_INT > 15) {
-			this.buildMenuForNewAndroidDevices(menu);
-		} else {
-			this.buildMenuForOldAndroidDevices(menu);
-		}
+            buildMenuForNewAndroidDevices(menu);
+        } else {
+            buildMenuForOldAndroidDevices(menu);
+        }
 		return true;
 	}
 
@@ -369,16 +365,16 @@ public class TabGameSetActivity extends BaseActivity {
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (savedInstanceState.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-			this.gameSet = (GameSet) savedInstanceState.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
-		}
+            gameSet = (GameSet) savedInstanceState.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
+        }
 	}
 
 	@Override
 	protected void onResume() {
 		try {
 			super.onResume();
-			this.invalidateOptionsMenu();
-		} catch (Exception e) {
+            invalidateOptionsMenu();
+        } catch (Exception e) {
 			AuditHelper.auditError(ErrorTypes.tabGameSetActivityOnResumeError, e);
 			this.finish();
 		}
@@ -388,17 +384,6 @@ public class TabGameSetActivity extends BaseActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED, this.gameSet);
-	}
-
-	@Override
-	protected void onStart() {
-		try {
-			super.onStart();
-			AuditHelper.auditSession(this);
-		} catch (Exception e) {
-			AuditHelper.auditError(ErrorTypes.tabGameSetActivityOnStartError, e);
-			this.finish();
-		}
 	}
 
     protected class TabGameSetPagerAdapter extends FragmentPagerAdapter {
