@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.nla.tarotdroid.ui;
 
 import android.content.Context;
@@ -21,18 +5,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -52,34 +33,33 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+
 import static com.google.common.collect.Lists.newArrayList;
 
-public class MainDashboardActivity extends AppCompatActivity {
+public class MainDashboardActivity extends BaseActivity {
 
-	private static final int FILE_SELECT_CODE = 0;
-	private final IAsyncCallback<String[]> exportDatabaseCallback = new IAsyncCallback<String[]>() {
+    private static final int FILE_SELECT_CODE = 0;
+    private final IAsyncCallback<String[]> exportDatabaseCallback = new IAsyncCallback<String[]>() {
 
 		@Override
 		public void execute(String[] databaseContent, Exception e) {
-			// TODO Check exception
 			onDatabaseExported(databaseContent);
 		}
 	};
-	private final IAsyncCallback<String> importDatabaseCallback = new IAsyncCallback<String>() {
+    private final IAsyncCallback<String> importDatabaseCallback = new IAsyncCallback<String>() {
 
 		@Override
 		public void execute(String object, Exception e) {
-			// TODO Check exception
 			onDatabaseImported();
 		}
 	};
-    private ImageView imgLikeUsOnFacebook;
+    @BindView(R.id.listOptions) protected ListView listOptions;
     private InsertMockGameSetsTask insertMockGameSetsTask;
-    private ListView listOptions;
 
-	private void buildMenuForNewAndroidDevices(Menu menu) {
-
-		MenuItem miExportDB = menu.add(R.string.lblDbExportItem);
+    private void buildMenuForNewAndroidDevices(Menu menu) {
+        MenuItem miExportDB = menu.add(R.string.lblDbExportItem);
 		miExportDB.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		miExportDB.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			@Override
@@ -214,15 +194,14 @@ public class MainDashboardActivity extends AppCompatActivity {
 			options.add(goFullOption);
 		}
 
-		this.listOptions.setAdapter(new DashboardOptionAdapter(this, options));
-		this.listOptions.setOnItemClickListener(new OnItemClickListener() {
+        listOptions.setAdapter(new DashboardOptionAdapter(this, options));
+        listOptions.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 				onListItemClick(position);
 			}
 		});
-		// this.setListAdapter(new DashboardOptionAdapter(this, options));
 	}
 
 	@Override
@@ -252,9 +231,9 @@ public class MainDashboardActivity extends AppCompatActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (this.insertMockGameSetsTask != null && this.insertMockGameSetsTask.getStatus() == Status.RUNNING) {
-			this.insertMockGameSetsTask.cancel(true);
-		}
+        if (insertMockGameSetsTask != null && insertMockGameSetsTask.getStatus() == Status.RUNNING) {
+            insertMockGameSetsTask.cancel(true);
+        }
 		super.onBackPressed();
 	}
 
@@ -262,29 +241,29 @@ public class MainDashboardActivity extends AppCompatActivity {
 	public void onCreate(final Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
-			this.setContentView(R.layout.main_dashboard);
-
-			this.listOptions = (ListView) this.findViewById(R.id.listOptions);
-			this.imgLikeUsOnFacebook = (ImageView) this.findViewById(R.id.imgLikeUsOnFacebook);
-
-			this.imgLikeUsOnFacebook.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(Intent.ACTION_VIEW);
-					intent.setData(Uri.parse(MainDashboardActivity.this.getString(R.string.urlFaceBook)));
-					MainDashboardActivity.this.startActivity(intent);
-				}
-			});
-
-			// setup all the views
-			this.initializeViews(savedInstanceState);
-
-			UIHelper.trackAppLaunched(this);
-		} catch (Exception e) {
+            UIHelper.trackAppLaunched(this);
+            initializeViews(savedInstanceState);
+        } catch (Exception e) {
 			AuditHelper.auditError(AuditHelper.ErrorTypes.mainDashBoardActivityError, e, this);
 		}
 	}
+
+    @OnClick(R.id.imgLikeUsOnFacebook)
+    public void onClickOnLikeUsOnFacebook() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(MainDashboardActivity.this.getString(R.string.urlFaceBook)));
+        startActivity(intent);
+    }
+
+    @Override
+    protected void inject() {
+        // TODO implement Dagger...
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.main_dashboard;
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -399,20 +378,8 @@ public class MainDashboardActivity extends AppCompatActivity {
 		}
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		AuditHelper.auditSession(this);
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		AuditHelper.stopSession(this);
-	}
-
-	private void showFileChooser() {
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+    private void showFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.setType("*/*");
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
 

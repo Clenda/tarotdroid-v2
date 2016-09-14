@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "24.0.0"
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "org.nla.tarotdroid"
@@ -38,10 +39,11 @@ dependencies {
     compile 'com.takisoft.fix:preference-v7:23.4.0.5'
 
     // autres
-    compile 'com.google.code.gson:gson:2.3'
+    compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.guava:guava:19.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.jakewharton:butterknife:8.1.0'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'ch.acra:acra:4.9.0'
 //    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 //    compile 'org.achartengine:achartengine:1.2.0'

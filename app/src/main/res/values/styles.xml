@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.TarotDroid" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.TarotDroid" parent="@style/Theme.AppCompat.Light">
 		<!--  item name="gdActionBarBackground">@drawable/action_bar_background</item-->
 		<!--  item name="gdActionBarApplicationDrawable">@drawable/greendroid_application_logo</item-->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
