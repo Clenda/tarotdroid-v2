@@ -11,8 +11,8 @@ import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.helpers.AuditHelper;
@@ -66,7 +66,7 @@ public class GameReadViewPagerActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-        BaseApp.get(this).getComponent().inject(this);
+        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     // TODO Implement

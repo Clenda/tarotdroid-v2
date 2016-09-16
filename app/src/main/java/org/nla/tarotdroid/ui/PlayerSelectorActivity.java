@@ -10,9 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.biz.Player;
@@ -87,7 +87,7 @@ public class PlayerSelectorActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-        BaseApp.get(this).getComponent().inject(this);
+        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     @Override

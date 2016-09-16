@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import org.nla.tarotdroid.AppParams;
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PersistableBusinessObject;
@@ -50,7 +50,7 @@ public class GameSetGamesFragment extends Fragment {
 	@Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BaseApp.get(getContext()).getComponent().inject(this);
+        TarotDroidApp.get(getContext()).getComponent().inject(this);
     }
 
     @Override

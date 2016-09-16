@@ -12,8 +12,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import org.nla.tarotdroid.AppContext;
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.BelgianBaseGame;
 import org.nla.tarotdroid.biz.GameSet;
@@ -129,7 +129,7 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
 
     @Override
     protected void inject() {
-        BaseApp.get(this).getComponent().inject(this);
+        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     // TODO Implement

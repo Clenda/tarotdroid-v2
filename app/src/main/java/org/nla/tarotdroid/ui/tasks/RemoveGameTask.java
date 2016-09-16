@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
@@ -84,7 +85,7 @@ public class RemoveGameTask extends AsyncTask<BaseGame, Void, Void> {
 		catch (Exception e) {
 			this.backroundErrorHappened = true;
 			this.backgroundException = e;
-			Log.v(AppContext.getApplication().getAppLogTag(), this.getClass().toString(), e);
+			Log.v(BuildConfig.APP_LOG_TAG, this.getClass().toString(), e);
 		}
 		return null;
 	}

@@ -103,7 +103,7 @@ public class StartNewGameSetTask extends AsyncTask<Void, Void, Void> {
 		catch (Exception e) {
 			this.backroundErrorHappened = true;
 			this.backgroundException = e;
-			Log.v(AppContext.getApplication().getAppLogTag(), this.getClass().toString(), e);
+			Log.v(BuildConfig.APP_LOG_TAG, this.getClass().toString(), e);
 		}
 		return null;
 	}

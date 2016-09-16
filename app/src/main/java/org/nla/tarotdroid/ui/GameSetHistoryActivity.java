@@ -27,9 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.dal.DalException;
 import org.nla.tarotdroid.helpers.AuditHelper;
@@ -255,7 +255,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-        BaseApp.get(this).getComponent().inject(this);
+        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     @Override
@@ -323,8 +323,10 @@ public class GameSetHistoryActivity extends BaseActivity {
 							GameSetHistoryActivity.this.receiveGameSetTask.execute();
 							AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothReceiveGameSet);
 						} catch (IOException ioe) {
-							Log.v(AppContext.getApplication().getAppLogTag(), "TarotDroid Exception in " + this.getClass().toString(), ioe);
-							Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getString(R.string.msgBluetoothError, ioe), Toast.LENGTH_SHORT).show();
+                            Log.v(BuildConfig.APP_LOG_TAG,
+                                  "TarotDroid Exception in " + this.getClass().toString(),
+                                  ioe);
+                            Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getString(R.string.msgBluetoothError, ioe), Toast.LENGTH_SHORT).show();
 						}
 					}
 				}
@@ -534,8 +536,10 @@ public class GameSetHistoryActivity extends BaseActivity {
 			this.sendGameSetTask.setCallback(refreshCallback);
 			this.sendGameSetTask.execute();
 		} catch (IOException ioe) {
-			Log.v(AppContext.getApplication().getAppLogTag(), "TarotDroid Exception in " + this.getClass().toString(), ioe);
-			Toast.makeText(GameSetHistoryActivity.this, this.getResources().getString(R.string.msgBluetoothError, ioe), Toast.LENGTH_LONG).show();
+            Log.v(BuildConfig.APP_LOG_TAG,
+                  "TarotDroid Exception in " + this.getClass().toString(),
+                  ioe);
+            Toast.makeText(GameSetHistoryActivity.this, this.getResources().getString(R.string.msgBluetoothError, ioe), Toast.LENGTH_LONG).show();
 		}
 	}
 

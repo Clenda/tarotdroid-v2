@@ -26,7 +26,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
@@ -150,7 +150,9 @@ public class GameSetChartListActivity extends AppCompatActivity {
 		    this.startActivity(chart.execute(this));
 		}
 		catch (Exception e) {
-			Log.v(AppContext.getApplication().getAppLogTag(), "TarotDroid Exception in " + this.getClass().toString(), e);
+			Log.v(BuildConfig.APP_LOG_TAG,
+				  "TarotDroid Exception in " + this.getClass().toString(),
+				  e);
 			Toast.makeText(
 					this,
 					this.getString(R.string.lblErrorStatisticsComputation, e.getMessage()),

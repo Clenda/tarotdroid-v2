@@ -19,8 +19,8 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
 
 import org.nla.tarotdroid.AppContext;
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
@@ -262,7 +262,7 @@ public class TabGameSetActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-        BaseApp.get(this).getComponent().inject(this);
+        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     @Override

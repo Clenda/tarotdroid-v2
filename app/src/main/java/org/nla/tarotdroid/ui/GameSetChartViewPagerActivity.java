@@ -10,8 +10,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
@@ -60,7 +60,7 @@ public class GameSetChartViewPagerActivity extends BaseActivity {
 
 	@Override
     protected void inject() {
-        BaseApp.get(this).getComponent().inject(this);
+        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     @Override

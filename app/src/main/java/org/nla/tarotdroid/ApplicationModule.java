@@ -16,9 +16,9 @@ import dagger.Provides;
 @Module
 public class ApplicationModule {
 
-    private final BaseApp app;
+    private final TarotDroidApp app;
 
-    ApplicationModule(final BaseApp app) {
+    ApplicationModule(final TarotDroidApp app) {
         this.app = app;
     }
 

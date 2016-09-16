@@ -3,13 +3,13 @@
 buildscript {
     repositories {
         jcenter()
-//        maven {
-//            url "https://repository-achartengine.forge.cloudbees.com/snapshot/"
-//      }
+        maven { url 'https://maven.fabric.io/public' }
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.3'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 

@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+def playStoreBaseUrl = "https://play.google.com/store/apps/details?id="
 
 android {
     compileSdkVersion 23
@@ -12,7 +19,9 @@ android {
         versionCode 35
         versionName "5.0.0"
         multiDexEnabled true
+        buildConfigField "String", "APP_LOG_TAG", "\"${applicationId}\""
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -23,27 +32,39 @@ android {
     productFlavors {
         lite {
             applicationId "org.nla.tarotdroid"
+            def playStoreAppUrl = playStoreBaseUrl + applicationId
             resValue "string", "app_name", "TarotDroid"
-            buildConfigField "boolean", "IS_IN_DEBUG_MODE", "false"
+            buildConfigField "boolean", "IS_IN_DEV_MODE", "false"
             buildConfigField "boolean", "IS_FULL", "false"
+            buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
+            buildConfigField "String", "FLURRY_APP_ID", "\"JA7HZLWC2VU8V1AGBVQL\""
         }
-        liteAndDebug {
+        liteAndDevMode {
             applicationId "org.nla.tarotdroid"
+            def playStoreAppUrl = playStoreBaseUrl + applicationId
             resValue "string", "app_name", "TarotDroid"
-            buildConfigField "boolean", "IS_IN_DEBUG_MODE", "true"
+            buildConfigField "boolean", "IS_IN_DEV_MODE", "true"
             buildConfigField "boolean", "IS_FULL", "false"
+            buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
+            buildConfigField "String", "FLURRY_APP_ID", "\"JA7HZLWC2VU8V1AGBVQL\""
         }
         full {
             applicationId "org.nla.tarotdroid.full"
+            def playStoreAppUrl = playStoreBaseUrl + applicationId
             resValue "string", "app_name", "TarotDroid Full"
-            buildConfigField "boolean", "IS_IN_DEBUG_MODE", "false"
+            buildConfigField "boolean", "IS_IN_DEV_MODE", "false"
             buildConfigField "boolean", "IS_FULL", "true"
+            buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
+            buildConfigField "String", "FLURRY_APP_ID", "\"XXX\""
         }
-        fullAndDebug {
+        fullAndDevMode {
             applicationId "org.nla.tarotdroid.full"
+            def playStoreAppUrl = playStoreBaseUrl + applicationId
             resValue "string", "app_name", "TarotDroid Full"
-            buildConfigField "boolean", "IS_IN_DEBUG_MODE", "true"
+            buildConfigField "boolean", "IS_IN_DEV_MODE", "true"
             buildConfigField "boolean", "IS_FULL", "true"
+            buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
+            buildConfigField "String", "FLURRY_APP_ID", "\"XXX\""
         }
     }
 }
@@ -65,6 +86,8 @@ dependencies {
     compile 'com.takisoft.fix:preference-v7:23.4.0.5'
 
     // autres
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    apt 'com.google.dagger:dagger-compiler:2.5'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.guava:guava:19.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
@@ -72,6 +95,7 @@ dependencies {
     compile 'ch.acra:acra:4.9.0'
     compile 'com.google.dagger:dagger:2.5'
     provided 'javax.annotation:jsr250-api:1.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    apt 'com.google.dagger:dagger-compiler:2.5'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
+        transitive = true;
+    }
 }

@@ -26,7 +26,7 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String rootKey) {
-        if (BuildConfig.IS_IN_DEBUG_MODE) {
+        if (BuildConfig.IS_IN_DEV_MODE) {
             setPreferencesFromResource(R.xml.main_dashboard_preferences_debug, rootKey);
         }
         else {

@@ -21,9 +21,9 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.AppParams;
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.controls.ThumbnailItem;
@@ -102,7 +102,7 @@ public class MainDashboardActivity extends BaseActivity {
             }
         });
 
-        if (BuildConfig.IS_IN_DEBUG_MODE) {
+        if (BuildConfig.IS_IN_DEV_MODE) {
             MenuItem miMockData = menu.add(R.string.lblMockItem);
             miMockData.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             miMockData.setOnMenuItemClickListener(new OnMenuItemClickListener() {
@@ -161,7 +161,7 @@ public class MainDashboardActivity extends BaseActivity {
             }
         });
 
-        if (BuildConfig.IS_IN_DEBUG_MODE) {
+        if (BuildConfig.IS_IN_DEV_MODE) {
             MenuItem miMockData = subMenuMore.add(R.string.lblMockItem);
             miMockData.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             miMockData.setOnMenuItemClickListener(new OnMenuItemClickListener() {
@@ -285,7 +285,7 @@ public class MainDashboardActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-        BaseApp.get(this).getComponent().inject(this);
+        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     @Override
@@ -406,7 +406,7 @@ public class MainDashboardActivity extends BaseActivity {
             this.startActivity(intent);
         } else if (tagValue == R.id.google_play_item) {
             intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(AppContext.getApplication().getGooglePlayUrl()));
+            intent.setData(Uri.parse(BuildConfig.PLAYSTORE_APP_URL));
             this.startActivity(intent);
         } else if (tagValue == R.id.gmail_item) {
             intent = new Intent(Intent.ACTION_SEND);

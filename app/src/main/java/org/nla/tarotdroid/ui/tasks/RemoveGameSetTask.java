@@ -22,6 +22,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 
@@ -76,7 +77,9 @@ public class RemoveGameSetTask extends BaseAsyncTask<Void, Void, Void, Object> {
 			AppContext.getApplication().getDalService().deleteGameSet(this.gameSet);
 		} catch (Exception e) {
 			this.backgroundException = e;
-			Log.v(AppContext.getApplication().getAppLogTag(), "TarotDroid Exception in " + this.getClass().toString(), e);
+			Log.v(BuildConfig.APP_LOG_TAG,
+				  "TarotDroid Exception in " + this.getClass().toString(),
+				  e);
 		}
 		return null;
 	}

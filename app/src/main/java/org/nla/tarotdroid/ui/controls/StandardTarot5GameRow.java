@@ -5,7 +5,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import org.nla.tarotdroid.AppParams;
-import org.nla.tarotdroid.BaseApp;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.StandardBaseGame;
@@ -27,7 +27,7 @@ public class StandardTarot5GameRow extends BaseGameRow {
     ) {
         super(context, dialog, attrs, weight, gameSet);
         this.game = game;
-        BaseApp.get(context).getComponent().inject(this);
+        TarotDroidApp.get(context).getComponent().inject(this);
         initializeViews();
         setOnLongClickListener(this);
     }

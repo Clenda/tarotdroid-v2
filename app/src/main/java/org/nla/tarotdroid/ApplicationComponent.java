@@ -32,7 +32,7 @@ import dagger.Component;
 )
 public interface ApplicationComponent {
 
-    void inject(BaseApp baseApp);
+    void inject(TarotDroidApp tarotDroidApp);
 
     void inject(MainDashboardActivity mainDashboardActivity);
 
@@ -82,7 +82,7 @@ public interface ApplicationComponent {
             // static class
         }
 
-        static ApplicationComponent init(final BaseApp app) {
+        static ApplicationComponent init(final TarotDroidApp app) {
             return DaggerApplicationComponent
                     .builder()
                     .applicationModule(new ApplicationModule(app))

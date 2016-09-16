@@ -18,8 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PersistableBusinessObject;
@@ -118,7 +118,7 @@ public abstract class BaseGameActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-        BaseApp.get(this).getComponent().inject(this);
+        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     @Override

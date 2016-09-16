@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.helpers.AuditHelper;
@@ -125,7 +126,7 @@ public class PlayerListActivity extends AppCompatActivity {
 			Collections.sort(players, playerNameComparator);
 			listView.setAdapter(new PlayerAdapter(this, players));
 		} catch (final Exception e) {
-			Log.v(AppContext.getApplication().getAppLogTag(), this.getClass().toString(), e);
+			Log.v(BuildConfig.APP_LOG_TAG, this.getClass().toString(), e);
 			Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
 			AuditHelper.auditError(AuditHelper.ErrorTypes.unexpectedError, e);
 

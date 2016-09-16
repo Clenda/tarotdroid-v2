@@ -8,8 +8,8 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.TextView;
 
-import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.BelgianTarot3Game;
 import org.nla.tarotdroid.biz.BelgianTarot4Game;
@@ -27,7 +27,7 @@ public class BelgianTarotGameRow extends BaseGameRow {
 		}
         setOrientation(HORIZONTAL);
         this.game = game;
-        BaseApp.get(context).getComponent().inject(this);
+        TarotDroidApp.get(context).getComponent().inject(this);
         initializeViews();
         setOnLongClickListener(this);
     }
