@@ -26,7 +26,6 @@ import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.AuditHelper.ParameterTypes;
 import org.nla.tarotdroid.helpers.UIHelper;
-import org.nla.tarotdroid.ui.GameCreationActivity.GameType;
 import org.nla.tarotdroid.ui.constants.ActivityParams;
 import org.nla.tarotdroid.ui.constants.RequestCodes;
 import org.nla.tarotdroid.ui.constants.ResultCodes;
@@ -65,8 +64,8 @@ public class TabGameSetActivity extends BaseActivity {
 
     private GameSetGamesFragment gameSetGamesFragment;
     private GameSetSynthesisFragment gameSetSynthesisFragment;
-	private PagerAdapter pagerAdapter;
-	private String shortenedUrl;
+    private PagerAdapter pagerAdapter;
+    private String shortenedUrl;
     private int startPage;
 
     public static TabGameSetActivity getInstance() {
@@ -76,40 +75,44 @@ public class TabGameSetActivity extends BaseActivity {
     @Override
     protected void auditEvent() {
         if (this.gameSet == null) {
-			AuditHelper.auditEvent(AuditHelper.EventTypes.tabGameSetActivity_auditEvent_GameSetIsNull);
-			UIHelper.showSimpleRichTextDialog(this, this.getString(R.string.msgUnmanagedErrorGameSetLost), this.getString(R.string.titleUnmanagedErrorGameSetLost));
+            AuditHelper.auditEvent(AuditHelper.EventTypes.tabGameSetActivity_auditEvent_GameSetIsNull);
+            UIHelper.showSimpleRichTextDialog(this,
+                                              this.getString(R.string.msgUnmanagedErrorGameSetLost),
+                                              this.getString(R.string.titleUnmanagedErrorGameSetLost));
             finish();
 
-		} else if (this.gameSet.getGameCount() == 0) {
-			Map<ParameterTypes, Object> parameters = newHashMap();
-			parameters.put(ParameterTypes.gameStyleType, this.gameSet.getGameStyleType());
-			parameters.put(ParameterTypes.playerCount, this.gameSet.getPlayers().size());
-			AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithNewGameSetAction, parameters);
-		} else {
-			AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithExistingGameSetAction);
-		}
-	}
+        } else if (this.gameSet.getGameCount() == 0) {
+            Map<ParameterTypes, Object> parameters = newHashMap();
+            parameters.put(ParameterTypes.gameStyleType, this.gameSet.getGameStyleType());
+            parameters.put(ParameterTypes.playerCount, this.gameSet.getPlayers().size());
+            AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithNewGameSetAction,
+                                   parameters);
+        } else {
+            AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithExistingGameSetAction);
+        }
+    }
 
-	/**
-	 * Builds the menu for devices with version >= 4.2.
-	 */
-	private void buildMenuForNewAndroidDevices(Menu menu) {
-		MenuItem miSettings = menu.add(this.getString(R.string.lblPrefsItem));
-		miSettings.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		miSettings.setIcon(R.drawable.perm_group_system_tools);
-		miSettings.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+    /**
+     * Builds the menu for devices with version >= 4.2.
+     */
+    private void buildMenuForNewAndroidDevices(Menu menu) {
+        MenuItem miSettings = menu.add(this.getString(R.string.lblPrefsItem));
+        miSettings.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        miSettings.setIcon(R.drawable.perm_group_system_tools);
+        miSettings.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(TabGameSetActivity.this, TabGameSetPreferencesActivity.class);
+                Intent intent = new Intent(TabGameSetActivity.this,
+                                           TabGameSetPreferencesActivity.class);
                 TabGameSetActivity.this.startActivity(intent);
-				return true;
-			}
-		});
+                return true;
+            }
+        });
 
-		MenuItem miHelp = menu.add(this.getString(R.string.lblHelpItem));
-		miHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		miHelp.setIcon(R.drawable.gd_action_bar_help);
-		miHelp.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        MenuItem miHelp = menu.add(this.getString(R.string.lblHelpItem));
+        miHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        miHelp.setIcon(R.drawable.gd_action_bar_help);
+        miHelp.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 UIHelper.showSimpleRichTextDialog(TabGameSetActivity.this,
@@ -117,35 +120,36 @@ public class TabGameSetActivity extends BaseActivity {
                                                                          .toString(),
                                                   TabGameSetActivity.this.getString(R.string.titleHelp));
                 return true;
-			}
-		});
-	}
+            }
+        });
+    }
 
-	/**
-	 * Builds a menu including a submenu for old devices.
-	 */
-	private void buildMenuForOldAndroidDevices(Menu menu) {
-		SubMenu subMenuMore = menu.addSubMenu("+");
-		MenuItem subMenuMoreItem = subMenuMore.getItem();
-		subMenuMoreItem.setIcon(R.drawable.ic_menu_moreoverflow_normal_holo_light);
-		subMenuMoreItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+    /**
+     * Builds a menu including a submenu for old devices.
+     */
+    private void buildMenuForOldAndroidDevices(Menu menu) {
+        SubMenu subMenuMore = menu.addSubMenu("+");
+        MenuItem subMenuMoreItem = subMenuMore.getItem();
+        subMenuMoreItem.setIcon(R.drawable.ic_menu_moreoverflow_normal_holo_light);
+        subMenuMoreItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-		MenuItem miSettings = subMenuMore.add(this.getString(R.string.lblPrefsItem));
-		miSettings.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		miSettings.setIcon(R.drawable.perm_group_system_tools);
+        MenuItem miSettings = subMenuMore.add(this.getString(R.string.lblPrefsItem));
+        miSettings.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        miSettings.setIcon(R.drawable.perm_group_system_tools);
         miSettings.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(TabGameSetActivity.this, TabGameSetPreferencesActivity.class);
+                Intent intent = new Intent(TabGameSetActivity.this,
+                                           TabGameSetPreferencesActivity.class);
                 TabGameSetActivity.this.startActivity(intent);
-				return true;
-			}
-		});
+                return true;
+            }
+        });
 
-		MenuItem miHelp = subMenuMore.add(this.getString(R.string.lblHelpItem));
-		miHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		miHelp.setIcon(R.drawable.gd_action_bar_help);
-		miHelp.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        MenuItem miHelp = subMenuMore.add(this.getString(R.string.lblHelpItem));
+        miHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        miHelp.setIcon(R.drawable.gd_action_bar_help);
+        miHelp.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 UIHelper.showSimpleRichTextDialog(TabGameSetActivity.this,
@@ -153,88 +157,94 @@ public class TabGameSetActivity extends BaseActivity {
                                                                          .toString(),
                                                   TabGameSetActivity.this.getString(R.string.titleHelp));
                 return true;
-			}
-		});
-	}
+            }
+        });
+    }
 
-	public GameSet getGameSet() {
+    public GameSet getGameSet() {
         return this.gameSet;
     }
 
     private void initialisePaging() {
-		setupViewPager();
-		tabLayout.setupWithViewPager(viewPager);
-	}
+        setupViewPager();
+        tabLayout.setupWithViewPager(viewPager);
+    }
 
-	private void setupViewPager() {
-		List<Fragment> fragments = newArrayList();
+    private void setupViewPager() {
+        List<Fragment> fragments = newArrayList();
         gameSetGamesFragment = GameSetGamesFragment.newInstance();
         gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
         fragments.add(this.gameSetGamesFragment);
-		fragments.add(this.gameSetSynthesisFragment);
-		pagerAdapter = new TabGameSetPagerAdapter(super.getSupportFragmentManager(), fragments);
-		viewPager.setAdapter(this.pagerAdapter);
-		viewPager.setCurrentItem(this.startPage - 1);
-	}
-
-	private void navigateTowardsBelgianGameCreationActivity() {
-        navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Belgian);
+        fragments.add(this.gameSetSynthesisFragment);
+        pagerAdapter = new TabGameSetPagerAdapter(super.getSupportFragmentManager(), fragments);
+        viewPager.setAdapter(this.pagerAdapter);
+        viewPager.setCurrentItem(this.startPage - 1);
     }
 
-	private void navigateTowardsGameCreationActivity(GameType gametype) {
-		Intent intent = new Intent(TabGameSetActivity.this, GameCreationActivity.class);
-		intent.putExtra(ActivityParams.PARAM_TYPE_OF_GAME, gametype.toString());
+    private void navigateTowardsGameCreationActivity(
+            Class<? extends BaseGameActivity> gameCreationActivityClass
+    ) {
+        Intent intent = new Intent(TabGameSetActivity.this, gameCreationActivityClass);
         startActivityForResult(intent, RequestCodes.ADD_GAME);
     }
 
-	private void navigateTowardsPassedGameCreationActivity() {
-        navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Pass);
+    private void navigateTowardsBelgianGameCreationActivity() {
+        navigateTowardsGameCreationActivity(BelgianGameActivity.class);
     }
 
-	private void navigateTowardsPenaltyGameCreationActivity() {
-        navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Penalty);
+    private void navigateTowardsPassedGameCreationActivity() {
+        navigateTowardsGameCreationActivity(PassActivity.class);
     }
 
-	private void navigateTowardsStandardGameCreationActivity() {
-        navigateTowardsGameCreationActivity(GameCreationActivity.GameType.Standard);
+    private void navigateTowardsPenaltyGameCreationActivity() {
+        navigateTowardsGameCreationActivity(PenaltyActivity.class);
     }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RequestCodes.ADD_GAME && resultCode == ResultCodes.AddGame_Ok) {
-			UIHelper.showModifyOrDeleteGameMessage(this);
+    private void navigateTowardsStandardGameCreationActivity() {
+        navigateTowardsGameCreationActivity(StandardGameActivity.class);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestCodes.ADD_GAME && resultCode == ResultCodes.AddGame_Ok) {
+            UIHelper.showModifyOrDeleteGameMessage(this);
         }
     }
 
-	@Override
-	public void onBackPressed() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		String dialogTitle = this.gameSet.isPersisted() ? this.getString(R.string.titleExitGameSetYesNoWithDAL) : this.getString(R.string.titleExitGameSetYesNo);
-		String dialogMessage = this.gameSet.isPersisted() ? this.getText(R.string.msgExitGameSetYesNoWithDAL).toString() : this.getText(R.string.msgExitGameSetYesNo).toString();
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String dialogTitle = this.gameSet.isPersisted()
+                ? this.getString(R.string.titleExitGameSetYesNoWithDAL)
+                : this.getString(R.string.titleExitGameSetYesNo);
+        String dialogMessage = this.gameSet.isPersisted()
+                ? this.getText(R.string.msgExitGameSetYesNoWithDAL).toString()
+                : this.getText(R.string.msgExitGameSetYesNo).toString();
 
-		builder.setTitle(dialogTitle);
-		builder.setMessage(Html.fromHtml(dialogMessage));
-		builder.setPositiveButton(this.getString(R.string.btnOk), this.leavingDialogClickListener);
-		builder.setNegativeButton(this.getString(R.string.btnCancel), this.leavingDialogClickListener).show();
-		builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setTitle(dialogTitle);
+        builder.setMessage(Html.fromHtml(dialogMessage));
+        builder.setPositiveButton(this.getString(R.string.btnOk), this.leavingDialogClickListener);
+        builder.setNegativeButton(this.getString(R.string.btnCancel),
+                                  this.leavingDialogClickListener).show();
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
     }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         identifyGameSet();
         super.onCreate(savedInstanceState);
-		try {
+        try {
             instance = this;
             initialisePaging();
-			ActionBar mActionBar = getSupportActionBar();
-			mActionBar.setHomeButtonEnabled(true);
-			mActionBar.setDisplayShowHomeEnabled(true);
+            ActionBar mActionBar = getSupportActionBar();
+            mActionBar.setHomeButtonEnabled(true);
+            mActionBar.setDisplayShowHomeEnabled(true);
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
         } catch (Exception e) {
-			AuditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this);
-		}
+            AuditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this);
+        }
     }
 
     // TODO Improve design. Should for instance be retrieved in upper class
@@ -261,130 +271,131 @@ public class TabGameSetActivity extends BaseActivity {
         return R.layout.simple_titles;
     }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		AppParams appParams = AppContext.getApplication().getAppParams();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        AppParams appParams = AppContext.getApplication().getAppParams();
 
-		if (appParams.isBelgianGamesAllowed() || appParams.isPenaltyGamesAllowed() || appParams.isPassedGamesAllowed()) {
-			// prepare menu
-			SubMenu subMenuAdd = menu.addSubMenu(R.string.lblAddGameItem);
-			MenuItem subMenuAddItem = subMenuAdd.getItem();
-			subMenuAddItem.setIcon(R.drawable.gd_action_bar_add);
-			subMenuAddItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (appParams.isBelgianGamesAllowed() || appParams.isPenaltyGamesAllowed() || appParams.isPassedGamesAllowed()) {
+            // prepare menu
+            SubMenu subMenuAdd = menu.addSubMenu(R.string.lblAddGameItem);
+            MenuItem subMenuAddItem = subMenuAdd.getItem();
+            subMenuAddItem.setIcon(R.drawable.gd_action_bar_add);
+            subMenuAddItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-			// Add standard game, always present
-			MenuItem miAddStdGame = subMenuAdd.add(R.string.lblAddGameStandardItem);
-			miAddStdGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            // Add standard game, always present
+            MenuItem miAddStdGame = subMenuAdd.add(R.string.lblAddGameStandardItem);
+            miAddStdGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     TabGameSetActivity.this.navigateTowardsStandardGameCreationActivity();
                     return true;
-				}
-			});
+                }
+            });
 
-			// Add belgian games, optional
-			if (appParams.isBelgianGamesAllowed()) {
-				MenuItem miAddBelgianGame = subMenuAdd.add(R.string.lblAddGameBelgianItem);
-				miAddBelgianGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            // Add belgian games, optional
+            if (appParams.isBelgianGamesAllowed()) {
+                MenuItem miAddBelgianGame = subMenuAdd.add(R.string.lblAddGameBelgianItem);
+                miAddBelgianGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         TabGameSetActivity.this.navigateTowardsBelgianGameCreationActivity();
                         return true;
-					}
-				});
-			}
+                    }
+                });
+            }
 
-			// Add pass, optional
-			if (appParams.isPassedGamesAllowed()) {
-				MenuItem miAddPassedGame = subMenuAdd.add(R.string.lblAddGamePassedItem);
-				miAddPassedGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            // Add pass, optional
+            if (appParams.isPassedGamesAllowed()) {
+                MenuItem miAddPassedGame = subMenuAdd.add(R.string.lblAddGamePassedItem);
+                miAddPassedGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         TabGameSetActivity.this.navigateTowardsPassedGameCreationActivity();
                         return true;
-					}
-				});
-			}
+                    }
+                });
+            }
 
-			// Add penalty, optional
-			if (appParams.isPenaltyGamesAllowed()) {
-				MenuItem miAddPenaltyGame = subMenuAdd.add(R.string.lblAddGamePenaltyItem);
-				miAddPenaltyGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            // Add penalty, optional
+            if (appParams.isPenaltyGamesAllowed()) {
+                MenuItem miAddPenaltyGame = subMenuAdd.add(R.string.lblAddGamePenaltyItem);
+                miAddPenaltyGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         TabGameSetActivity.this.navigateTowardsPenaltyGameCreationActivity();
                         return true;
-					}
-				});
-			}
-		} else {
-			MenuItem miAddGame = menu.add(this.getString(R.string.lblAddGameItem));
-			miAddGame.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-			miAddGame.setIcon(R.drawable.gd_action_bar_add);
-			miAddGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                    }
+                });
+            }
+        } else {
+            MenuItem miAddGame = menu.add(this.getString(R.string.lblAddGameItem));
+            miAddGame.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            miAddGame.setIcon(R.drawable.gd_action_bar_add);
+            miAddGame.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     TabGameSetActivity.this.navigateTowardsStandardGameCreationActivity();
                     return true;
-				}
-			});
-		}
+                }
+            });
+        }
 
-		MenuItem miStats = menu.add(this.getString(R.string.lblDisplayStatsItem));
-		miStats.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		miStats.setIcon(R.drawable.gd_action_bar_pie_chart);
-		miStats.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        MenuItem miStats = menu.add(this.getString(R.string.lblDisplayStatsItem));
+        miStats.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        miStats.setIcon(R.drawable.gd_action_bar_pie_chart);
+        miStats.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = null;
 
-				// running android version >= ICS, show new ui
-				if (android.os.Build.VERSION.SDK_INT >= 14) {
-					intent = new Intent(TabGameSetActivity.this, GameSetChartViewPagerActivity.class);
-				}
-				// prevent problem of incorrect pie charts for versions < ICS =>
-				// use former activity
-				else {
-					intent = new Intent(TabGameSetActivity.this, GameSetChartListActivity.class);
-				}
-				TabGameSetActivity.this.startActivity(intent);
+                // running android version >= ICS, show new ui
+                if (android.os.Build.VERSION.SDK_INT >= 14) {
+                    intent = new Intent(TabGameSetActivity.this,
+                                        GameSetChartViewPagerActivity.class);
+                }
+                // prevent problem of incorrect pie charts for versions < ICS =>
+                // use former activity
+                else {
+                    intent = new Intent(TabGameSetActivity.this, GameSetChartListActivity.class);
+                }
+                TabGameSetActivity.this.startActivity(intent);
 
-				return true;
-			}
-		});
+                return true;
+            }
+        });
 
-		if (android.os.Build.VERSION.SDK_INT > 15) {
+        if (android.os.Build.VERSION.SDK_INT > 15) {
             buildMenuForNewAndroidDevices(menu);
         } else {
             buildMenuForOldAndroidDevices(menu);
         }
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		if (savedInstanceState.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
             gameSet = (GameSet) savedInstanceState.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
         }
-	}
+    }
 
-	@Override
-	protected void onResume() {
-		try {
-			super.onResume();
+    @Override
+    protected void onResume() {
+        try {
+            super.onResume();
             invalidateOptionsMenu();
         } catch (Exception e) {
-			AuditHelper.auditError(ErrorTypes.tabGameSetActivityOnResumeError, e);
-			this.finish();
-		}
-	}
+            AuditHelper.auditError(ErrorTypes.tabGameSetActivityOnResumeError, e);
+            this.finish();
+        }
+    }
 
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED, this.gameSet);
-	}
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED, this.gameSet);
+    }
 
     protected class TabGameSetPagerAdapter extends FragmentPagerAdapter {
 
@@ -420,5 +431,5 @@ public class TabGameSetActivity extends BaseActivity {
                     return "Unknown[" + position + "]";
             }
         }
-	}
+    }
 }

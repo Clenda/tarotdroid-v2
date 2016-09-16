@@ -43,7 +43,16 @@
             android:name=".ui.PlayerStatisticsActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.GameCreationActivity"
+            android:name=".ui.StandardGameActivity"
+            android:configChanges="keyboardHidden|orientation"/>
+        <activity
+            android:name=".ui.BelgianGameActivity"
+            android:configChanges="keyboardHidden|orientation"/>
+        <activity
+            android:name=".ui.PassActivity"
+            android:configChanges="keyboardHidden|orientation"/>
+        <activity
+            android:name=".ui.PenaltyActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
             android:name=".ui.GameReadViewPagerActivity"

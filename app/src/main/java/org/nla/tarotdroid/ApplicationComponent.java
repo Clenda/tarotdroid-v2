@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
+import org.nla.tarotdroid.ui.BaseGameActivity;
 import org.nla.tarotdroid.ui.MainDashboardActivity;
 import org.nla.tarotdroid.ui.PlayerSelectorActivity;
 
@@ -23,6 +24,8 @@ public interface ApplicationComponent {
     void inject(MainDashboardActivity mainDashboardActivity);
 
     void inject(PlayerSelectorActivity playerSelectorActivity);
+
+    void inject(BaseGameActivity baseGameActivity);
 
     Application application();
 

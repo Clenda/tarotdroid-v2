@@ -132,25 +132,25 @@ public class DisplayAndRemoveGameDialogActivity extends AppCompatActivity
 	}
 	
 	private void modifyGame() {
-		String typeOfGame = null;
+		Class<? extends BaseGameActivity> typeOfGame = null;
 		
 		if (this.game instanceof StandardBaseGame) {
-			typeOfGame = GameCreationActivity.GameType.Standard.toString();
+			typeOfGame = StandardGameActivity.class;
 		}
 		else if (this.game instanceof BelgianBaseGame) {
-			typeOfGame = GameCreationActivity.GameType.Belgian.toString();
+			typeOfGame = BelgianGameActivity.class;
 		}
 		else if (this.game instanceof PenaltyGame) {
-			typeOfGame = GameCreationActivity.GameType.Penalty.toString();
+			typeOfGame = PenaltyActivity.class;
 		}
 		else if (this.game instanceof PassedGame) {
-			typeOfGame = GameCreationActivity.GameType.Pass.toString();
+			typeOfGame = PassActivity.class;
 		}
-		
-		Intent intent = new Intent(TabGameSetActivity.getInstance(), GameCreationActivity.class);
+
+		Intent intent = new Intent(TabGameSetActivity.getInstance(), typeOfGame);
 		intent.putExtra(ActivityParams.PARAM_GAME_INDEX, this.game.getIndex());
 		//intent.putExtra(ActivityParams.PARAM_GAMESET_ID, this.gameSet.getId());
-		intent.putExtra(ActivityParams.PARAM_TYPE_OF_GAME, typeOfGame);
+//		intent.putExtra(ActivityParams.PARAM_TYPE_OF_GAME, typeOfGame);
 		TabGameSetActivity.getInstance().startActivity(intent);
 		this.finish();
 	}
