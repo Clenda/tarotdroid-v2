@@ -9,7 +9,7 @@ import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.PlayerList;
 import org.nla.tarotdroid.ui.controls.Selector;
 
-import static com.google.common.collect.Lists.newArrayList;
+import java.util.ArrayList;
 
 public class PassActivity extends BaseGameActivity {
 
@@ -25,31 +25,54 @@ public class PassActivity extends BaseGameActivity {
 
     @Override
     public boolean isFormValid() {
-        return this.selectorDealer.isSelected();
+        return selectorDealer.isSelected();
+    }
+
+    @Override
+    public BaseGame createGame() {
+        PassedGame game = new PassedGame();
+        game.setPlayers(new PlayerList(inGamePlayers));
+        game.setDeadPlayer(selectorDead.getSelected());
+        game.setDealer(selectorDealer.getSelected());
+        return game;
+    }
+
+    @Override
+    public void updateGame(BaseGame game) {
+        game.setPlayers(new PlayerList(inGamePlayers));
+        game.setDeadPlayer(selectorDead.getSelected());
+        game.setDealer(selectorDealer.getSelected());
+    }
+
+    @Override
+    public void displayGame() {
+    }
+
+    @Override
+    public void initializeSpecificViews() {
+        initializeDeadAndDealerPanelForPassCase();
     }
 
     private void initializeDeadAndDealerPanelForPassCase() {
         // if no dead player, case is easy...
-        if (!this.isDisplayDeadPlayerPanel()) {
-            this.panelDead.setVisibility(View.GONE);
-            this.setDealerPlayer();
+        if (!isDisplayDeadPlayerPanel()) {
+            panelDead.setVisibility(View.GONE);
+            setDealerPlayer();
             return;
         }
 
         // if not, it becomes more complicated...
         else {
             // load dead player selector with all players
-            this.selectorDead.setObjects(newArrayList(this.getGameSet().getPlayers().getPlayers()));
-            this.selectorDealer.setObjects(newArrayList(this.getGameSet()
-                                                            .getPlayers()
-                                                            .getPlayers()));
-            this.selectorDead.setObjectSelectedListener(new Selector.OnObjectSelectedListener<Player>() {
+            selectorDead.setObjects(new ArrayList<>(getGameSet().getPlayers().getPlayers()));
+            selectorDealer.setObjects(new ArrayList<>(getGameSet()
+                                                              .getPlayers()
+                                                              .getPlayers()));
+            selectorDead.setObjectSelectedListener(new Selector.OnObjectSelectedListener<Player>() {
 
                 @Override
                 public void onItemSelected(final Player selected) {
-
-                    // create new ingame player list
-                    inGamePlayers = newArrayList(getGameSet().getPlayers().getPlayers());
+                    inGamePlayers = new ArrayList<>(getGameSet().getPlayers().getPlayers());
                     inGamePlayers.remove(selectorDead.getSelected());
                 }
 
@@ -59,41 +82,16 @@ public class PassActivity extends BaseGameActivity {
             });
 
             // if no dead player was previously selected, hide dealer and all other panels
-            if (!this.trySetDeadPlayer()) {
+            if (!trySetDeadPlayer()) {
                 panelDeadAndDealer.setVisibility(View.VISIBLE);
             }
-            this.setDealerPlayer();
+            setDealerPlayer();
         }
-    }
-
-    @Override
-    public BaseGame createGame() {
-        PassedGame game = new PassedGame();
-        game.setPlayers(new PlayerList(this.inGamePlayers));
-        game.setDeadPlayer(this.selectorDead.getSelected());
-        game.setDealer(this.selectorDealer.getSelected());
-        return game;
-    }
-
-    @Override
-    public void updateGame(BaseGame game) {
-        game.setPlayers(new PlayerList(this.inGamePlayers));
-        game.setDeadPlayer(this.selectorDead.getSelected());
-        game.setDealer(this.selectorDealer.getSelected());
-    }
-
-    @Override
-    public void initializeSpecificViews() {
-        initializeDeadAndDealerPanelForPassCase();
     }
 
     // TODO Implement
     @Override
     protected void auditEvent() {
-    }
-
-    @Override
-    public void displayGame() {
     }
 
     @Override

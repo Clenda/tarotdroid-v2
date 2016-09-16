@@ -13,19 +13,19 @@ import org.nla.tarotdroid.biz.PlayerList;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.ui.controls.Selector;
 
-import butterknife.BindView;
+import java.util.ArrayList;
 
-import static com.google.common.collect.Lists.newArrayList;
+import butterknife.BindView;
 
 public class BelgianGameActivity extends BaseGameActivity {
 
     @BindView(R.id.panelFourth) protected RelativeLayout panelFourth;
     @BindView(R.id.panelFifth) protected RelativeLayout panelFifth;
-    private Selector<Player> selectorFirst;
-    private Selector<Player> selectorSecond;
-    private Selector<Player> selectorThird;
-    private Selector<Player> selectorFourth;
-    private Selector<Player> selectorFifth;
+    @BindView(R.id.galleryFirst) protected Selector<Player> selectorFirst;
+    @BindView(R.id.gallerySecond) protected Selector<Player> selectorSecond;
+    @BindView(R.id.galleryThird) protected Selector<Player> selectorThird;
+    @BindView(R.id.galleryFourth) protected Selector<Player> selectorFourth;
+    @BindView(R.id.galleryFifth) protected Selector<Player> selectorFifth;
 
     @Override
     protected int getLayoutResId() {
@@ -107,6 +107,69 @@ public class BelgianGameActivity extends BaseGameActivity {
         }
     }
 
+    private boolean isBelgian5GameValid() {
+        boolean isValid = isBelgian4GameValid();
+
+        // fifth
+        isValid = isValid && selectorFifth.isSelected();
+
+        // 5 != 1
+        isValid = isValid && selectorFifth.getSelected() != selectorFirst.getSelected();
+
+        // 5 != 2
+        isValid = isValid && selectorFifth.getSelected() != selectorSecond.getSelected();
+
+        // 5 != 3
+        isValid = isValid && selectorFifth.getSelected() != selectorThird.getSelected();
+
+        // 5 != 4
+        isValid = isValid && selectorFifth.getSelected() != selectorFourth.getSelected();
+
+        return isValid;
+    }
+
+    private boolean isBelgian4GameValid() {
+        boolean isValid = isBelgian3GameValid();
+
+        // fourth
+        isValid = isValid && selectorFourth.isSelected();
+
+        // 4 != 1
+        isValid = isValid && selectorFourth.getSelected() != selectorFirst.getSelected();
+
+        // 4 != 2
+        isValid = isValid && selectorFourth.getSelected() != selectorSecond.getSelected();
+
+        // 4 != 3
+        isValid = isValid && selectorFourth.getSelected() != selectorThird.getSelected();
+
+        return isValid;
+    }
+
+    private boolean isBelgian3GameValid() {
+        boolean isValid = true;
+
+        // first
+        isValid = isValid && selectorFirst.isSelected();
+
+        // second
+        isValid = isValid && selectorSecond.isSelected();
+
+        // third
+        isValid = isValid && selectorThird.isSelected();
+
+        // 1 != 2
+        isValid = isValid && selectorFirst.getSelected() != selectorSecond.getSelected();
+
+        // 1 != 3
+        isValid = isValid && selectorFirst.getSelected() != selectorThird.getSelected();
+
+        // 2 != 3
+        isValid = isValid && selectorSecond.getSelected() != selectorThird.getSelected();
+
+        return isValid;
+    }
+
     @Override
     public void displayGame() {
         if (game instanceof BelgianTarot3Game) {
@@ -130,26 +193,25 @@ public class BelgianGameActivity extends BaseGameActivity {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    public void initializeSpecificViews() {
+        intializeBelgianViews();
+        initializeDeadAndDealerPanelForBelgianCase();
+    }
+
     private void intializeBelgianViews() {
-        this.selectorFirst = (Selector<Player>) findViewById(R.id.galleryFirst);
-        this.selectorSecond = (Selector<Player>) findViewById(R.id.gallerySecond);
-        this.selectorThird = (Selector<Player>) findViewById(R.id.galleryThird);
-        this.selectorFourth = (Selector<Player>) findViewById(R.id.galleryFourth);
-        this.selectorFifth = (Selector<Player>) findViewById(R.id.galleryFifth);
+        selectorFirst.setObjects(inGamePlayers);
+        selectorSecond.setObjects(inGamePlayers);
+        selectorThird.setObjects(inGamePlayers);
+        selectorFourth.setObjects(inGamePlayers);
+        selectorFifth.setObjects(inGamePlayers);
 
-        this.selectorFirst.setObjects(this.inGamePlayers);
-        this.selectorSecond.setObjects(this.inGamePlayers);
-        this.selectorThird.setObjects(this.inGamePlayers);
-        this.selectorFourth.setObjects(this.inGamePlayers);
-        this.selectorFifth.setObjects(this.inGamePlayers);
-
-        if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot4) {
-            this.panelFourth.setVisibility(View.VISIBLE);
+        if (getGameSet().getGameStyleType() == GameStyleType.Tarot4) {
+            panelFourth.setVisibility(View.VISIBLE);
         }
-        if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
-            this.panelFourth.setVisibility(View.VISIBLE);
-            this.panelFifth.setVisibility(View.VISIBLE);
+        if (getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
+            panelFourth.setVisibility(View.VISIBLE);
+            panelFifth.setVisibility(View.VISIBLE);
         }
     }
 
@@ -164,21 +226,18 @@ public class BelgianGameActivity extends BaseGameActivity {
         // if not, it becomes more complicated...
         else {
             // load dead player selector with all players
-            this.selectorDead.setObjects(newArrayList(this.getGameSet().getPlayers().getPlayers()));
-            this.selectorDealer.setObjects(newArrayList(this.getGameSet()
+            selectorDead.setObjects(new ArrayList<>(getGameSet().getPlayers().getPlayers()));
+            selectorDealer.setObjects(new ArrayList<>(getGameSet()
                                                             .getPlayers()
                                                             .getPlayers()));
 
-            this.selectorDead.setObjectSelectedListener(new Selector.OnObjectSelectedListener<Player>() {
+            selectorDead.setObjectSelectedListener(new Selector.OnObjectSelectedListener<Player>() {
 
-                /* (non-Javadoc)
-                 * @see Selector.OnObjectSelectedListener#onItemSelected(Player)
-                 */
                 @Override
                 public void onItemSelected(final Player selected) {
 
                     // create new ingame player list
-                    inGamePlayers = newArrayList(getGameSet().getPlayers().getPlayers());
+                    inGamePlayers = new ArrayList<>(getGameSet().getPlayers().getPlayers());
                     inGamePlayers.remove(selectorDead.getSelected());
 
                     // load player selector with this new player list
@@ -224,83 +283,15 @@ public class BelgianGameActivity extends BaseGameActivity {
         }
     }
 
-    private boolean isBelgian5GameValid() {
-        boolean isValid = this.isBelgian4GameValid();
-
-        // fifth
-        isValid = isValid && this.selectorFifth.isSelected();
-
-        // 5 != 1
-        isValid = isValid && this.selectorFifth.getSelected() != this.selectorFirst.getSelected();
-
-        // 5 != 2
-        isValid = isValid && this.selectorFifth.getSelected() != this.selectorSecond.getSelected();
-
-        // 5 != 3
-        isValid = isValid && this.selectorFifth.getSelected() != this.selectorThird.getSelected();
-
-        // 5 != 4
-        isValid = isValid && this.selectorFifth.getSelected() != this.selectorFourth.getSelected();
-
-        return isValid;
-    }
-
-    /**
-     * Tells whether the belgian 4 form is valid.
-     *
-     * @return
-     */
-    private boolean isBelgian4GameValid() {
-        boolean isValid = this.isBelgian3GameValid();
-
-        // fourth
-        isValid = isValid && this.selectorFourth.isSelected();
-
-        // 4 != 1
-        isValid = isValid && this.selectorFourth.getSelected() != this.selectorFirst.getSelected();
-
-        // 4 != 2
-        isValid = isValid && this.selectorFourth.getSelected() != this.selectorSecond.getSelected();
-
-        // 4 != 3
-        isValid = isValid && this.selectorFourth.getSelected() != this.selectorThird.getSelected();
-
-        return isValid;
-    }
-
-    private boolean isBelgian3GameValid() {
-        boolean isValid = true;
-
-        // first
-        isValid = isValid && this.selectorFirst.isSelected();
-
-        // second
-        isValid = isValid && this.selectorSecond.isSelected();
-
-        // third
-        isValid = isValid && this.selectorThird.isSelected();
-
-        // 1 != 2
-        isValid = isValid && this.selectorFirst.getSelected() != this.selectorSecond.getSelected();
-
-        // 1 != 3
-        isValid = isValid && this.selectorFirst.getSelected() != this.selectorThird.getSelected();
-
-        // 2 != 3
-        isValid = isValid && this.selectorSecond.getSelected() != this.selectorThird.getSelected();
-
-        return isValid;
-    }
-
     @Override
     public BaseGame createGame() {
-        switch (this.getGameSet().getGameStyleType()) {
+        switch (getGameSet().getGameStyleType()) {
             case Tarot3:
-                return this.createBelgian3Game();
+                return createBelgian3Game();
             case Tarot4:
-                return this.createBelgian4Game();
+                return createBelgian4Game();
             case Tarot5:
-                return this.createBelgian5Game();
+                return createBelgian5Game();
             default:
                 throw new RuntimeException("Incorrect game style type");
         }
@@ -308,128 +299,117 @@ public class BelgianGameActivity extends BaseGameActivity {
 
     private BelgianTarot5Game createBelgian5Game() {
         BelgianTarot5Game game = new BelgianTarot5Game();
-        this.setCommonBelgianProperties(game);
+        setCommonBelgianProperties(game);
 
         // first
-        game.setFirst(this.selectorFirst.getSelected());
+        game.setFirst(selectorFirst.getSelected());
 
         // second
-        game.setSecond(this.selectorSecond.getSelected());
+        game.setSecond(selectorSecond.getSelected());
 
         // third
-        game.setThird(this.selectorThird.getSelected());
+        game.setThird(selectorThird.getSelected());
 
         // fourth
-        game.setFourth(this.selectorFourth.getSelected());
+        game.setFourth(selectorFourth.getSelected());
 
         // fifth
-        game.setFifth(this.selectorFifth.getSelected());
+        game.setFifth(selectorFifth.getSelected());
 
         return game;
     }
 
     private BelgianTarot4Game createBelgian4Game() {
         BelgianTarot4Game game = new BelgianTarot4Game();
-        this.setCommonBelgianProperties(game);
+        setCommonBelgianProperties(game);
 
         // first
-        game.setFirst(this.selectorFirst.getSelected());
+        game.setFirst(selectorFirst.getSelected());
 
         // second
-        game.setSecond(this.selectorSecond.getSelected());
+        game.setSecond(selectorSecond.getSelected());
 
         // third
-        game.setThird(this.selectorThird.getSelected());
+        game.setThird(selectorThird.getSelected());
 
         // fourth
-        game.setFourth(this.selectorFourth.getSelected());
+        game.setFourth(selectorFourth.getSelected());
 
         return game;
     }
 
     private BelgianTarot3Game createBelgian3Game() {
         BelgianTarot3Game game = new BelgianTarot3Game();
-        this.setCommonBelgianProperties(game);
+        setCommonBelgianProperties(game);
 
         // first
-        game.setFirst(this.selectorFirst.getSelected());
+        game.setFirst(selectorFirst.getSelected());
 
         // second
-        game.setSecond(this.selectorSecond.getSelected());
+        game.setSecond(selectorSecond.getSelected());
 
         // third
-        game.setThird(this.selectorThird.getSelected());
+        game.setThird(selectorThird.getSelected());
         return game;
     }
 
     @Override
     public void updateGame(final BaseGame game) {
         if (game instanceof BelgianTarot3Game) {
-            this.updateBelgian3Game((BelgianTarot3Game) game);
+            updateBelgian3Game((BelgianTarot3Game) game);
         } else if (game instanceof BelgianTarot4Game) {
-            this.updateBelgian4Game((BelgianTarot4Game) game);
+            updateBelgian4Game((BelgianTarot4Game) game);
         } else if (game instanceof BelgianTarot5Game) {
-            this.updateBelgian5Game((BelgianTarot5Game) game);
+            updateBelgian5Game((BelgianTarot5Game) game);
         }
     }
 
-    @Override
-    public void initializeSpecificViews() {
-        intializeBelgianViews();
-        initializeDeadAndDealerPanelForBelgianCase();
-    }
-
     private void updateBelgian5Game(final BelgianTarot5Game game) {
-        this.setCommonBelgianProperties(game);
+        setCommonBelgianProperties(game);
 
         // first
-        game.setFirst(this.selectorFirst.getSelected());
+        game.setFirst(selectorFirst.getSelected());
 
         // second
-        game.setSecond(this.selectorSecond.getSelected());
+        game.setSecond(selectorSecond.getSelected());
 
         // third
-        game.setThird(this.selectorThird.getSelected());
+        game.setThird(selectorThird.getSelected());
 
         // fourth
-        game.setFourth(this.selectorFourth.getSelected());
+        game.setFourth(selectorFourth.getSelected());
 
         // fifth
-        game.setFifth(this.selectorFifth.getSelected());
+        game.setFifth(selectorFifth.getSelected());
     }
 
-    /**
-     * Updates and returns a belgian 4 game.
-     *
-     * @return
-     */
     private void updateBelgian4Game(final BelgianTarot4Game game) {
-        this.setCommonBelgianProperties(game);
+        setCommonBelgianProperties(game);
 
         // first
-        game.setFirst(this.selectorFirst.getSelected());
+        game.setFirst(selectorFirst.getSelected());
 
         // second
-        game.setSecond(this.selectorSecond.getSelected());
+        game.setSecond(selectorSecond.getSelected());
 
         // third
-        game.setThird(this.selectorThird.getSelected());
+        game.setThird(selectorThird.getSelected());
 
         // fourth
-        game.setFourth(this.selectorFourth.getSelected());
+        game.setFourth(selectorFourth.getSelected());
     }
 
     private void updateBelgian3Game(final BelgianTarot3Game game) {
-        this.setCommonBelgianProperties(game);
+        setCommonBelgianProperties(game);
 
         // first
-        game.setFirst(this.selectorFirst.getSelected());
+        game.setFirst(selectorFirst.getSelected());
 
         // second
-        game.setSecond(this.selectorSecond.getSelected());
+        game.setSecond(selectorSecond.getSelected());
 
         // third
-        game.setThird(this.selectorThird.getSelected());
+        game.setThird(selectorThird.getSelected());
     }
 
     private void setCommonBelgianProperties(final BaseGame game) {
@@ -438,14 +418,14 @@ public class BelgianGameActivity extends BaseGameActivity {
         }
 
         // game players
-        game.setPlayers(new PlayerList(this.inGamePlayers));
+        game.setPlayers(new PlayerList(inGamePlayers));
 
         // dead player
-        if (this.selectorDead.isSelected()) {
-            game.setDeadPlayer(this.selectorDead.getSelected());
+        if (selectorDead.isSelected()) {
+            game.setDeadPlayer(selectorDead.getSelected());
         }
 
         // dealer player
-        game.setDealer(this.selectorDealer.getSelected());
+        game.setDealer(selectorDealer.getSelected());
     }
 }

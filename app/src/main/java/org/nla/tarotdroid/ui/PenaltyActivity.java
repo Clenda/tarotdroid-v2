@@ -12,10 +12,10 @@ import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.PlayerList;
 import org.nla.tarotdroid.ui.controls.Selector;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.OnClick;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class PenaltyActivity extends BaseGameActivity {
 
@@ -93,79 +93,12 @@ public class PenaltyActivity extends BaseGameActivity {
 
     @Override
     public boolean isFormValid() {
-        if (!this.selectorDealer.isSelected()) {
+        if (!selectorDealer.isSelected()) {
             return false;
         }
 
-        return this.playerPenaltyPoints != 0;
+        return playerPenaltyPoints != 0;
 
-    }
-
-    private void intializePenaltyViews() {
-        this.barPlayerPenaltyPoints.setOnSeekBarChangeListener(this.playerPenaltyPointsChangeListener);
-
-        // set bar properties
-        this.barPlayerPenaltyPoints.setMax(100);
-        this.playerPenaltyPoints = 0;
-
-        // synchronizes buttons/edit text with score
-        this.updatePenaltyPointsViews();
-    }
-
-    private void initializeDeadAndDealerPanelForPenaltyCase() {
-        // if no dead player, case is easy...
-        if (!isDisplayDeadPlayerPanel()) {
-            panelDead.setVisibility(View.GONE);
-            setDealerPlayer();
-            return;
-        }
-
-        // if not, it becomes more complicated...
-        else {
-            // load dead player selector with all players
-            selectorDead.setObjects(newArrayList(this.getGameSet().getPlayers().getPlayers()));
-            selectorDealer.setObjects(newArrayList(this.getGameSet().getPlayers().getPlayers()));
-            selectorDead.setObjectSelectedListener(new Selector.OnObjectSelectedListener<Player>() {
-
-                @Override
-                public void onItemSelected(final Player selected) {
-                    // create new ingame player list
-                    inGamePlayers = newArrayList(getGameSet().getPlayers().getPlayers());
-                    inGamePlayers.remove(selectorDead.getSelected());
-
-                    // display panels
-                    panelMainParameters.startAnimation(new ScaleAnimToShow(1.0f,
-                                                                           1.0f,
-                                                                           1.0f,
-                                                                           0.0f,
-                                                                           500,
-                                                                           panelMainParameters,
-                                                                           true));
-                    txtTitleMainParameters.setOnClickListener(null);
-                }
-
-                @Override
-                public void onNothingSelected() {
-                    // hide panels
-                    panelMainParameters.startAnimation(new ScaleAnimToHide(1.0f,
-                                                                           1.0f,
-                                                                           1.0f,
-                                                                           0.0f,
-                                                                           500,
-                                                                           panelMainParameters,
-                                                                           true));
-                    txtTitleMainParameters.setOnClickListener(onNoDeadPlayerSelectedClickListener);
-                }
-            });
-
-            // if no dead player was previously selected, hide dealer and all other panels
-            if (!this.trySetDeadPlayer()) {
-                panelDeadAndDealer.setVisibility(View.VISIBLE);
-                panelMainParameters.setVisibility(View.GONE);
-                txtTitleMainParameters.setOnClickListener(onNoDeadPlayerSelectedClickListener);
-            }
-            setDealerPlayer();
-        }
     }
 
     private int computeGlobalPenaltyPoints() {
@@ -210,17 +143,84 @@ public class PenaltyActivity extends BaseGameActivity {
     @Override
     public void updateGame(BaseGame game) {
         PenaltyGame penaltyGame = (PenaltyGame) game;
-        penaltyGame.setPlayers(new PlayerList(this.inGamePlayers));
-        penaltyGame.setDeadPlayer(this.selectorDead.getSelected());
-        penaltyGame.setDealer(this.selectorDealer.getSelected());
-        penaltyGame.setPenaltedPlayer(this.selectorDealer.getSelected());
-        penaltyGame.setPenaltyPoints(this.playerPenaltyPoints * this.playerMultiplicationRate);
+        penaltyGame.setPlayers(new PlayerList(inGamePlayers));
+        penaltyGame.setDeadPlayer(selectorDead.getSelected());
+        penaltyGame.setDealer(selectorDealer.getSelected());
+        penaltyGame.setPenaltedPlayer(selectorDealer.getSelected());
+        penaltyGame.setPenaltyPoints(playerPenaltyPoints * playerMultiplicationRate);
     }
 
     @Override
     public void initializeSpecificViews() {
         intializePenaltyViews();
         initializeDeadAndDealerPanelForPenaltyCase();
+    }
+
+    private void intializePenaltyViews() {
+        barPlayerPenaltyPoints.setOnSeekBarChangeListener(playerPenaltyPointsChangeListener);
+
+        // set bar properties
+        barPlayerPenaltyPoints.setMax(100);
+        playerPenaltyPoints = 0;
+
+        // synchronizes buttons/edit text with score
+        updatePenaltyPointsViews();
+    }
+
+    private void initializeDeadAndDealerPanelForPenaltyCase() {
+        // if no dead player, case is easy...
+        if (!isDisplayDeadPlayerPanel()) {
+            panelDead.setVisibility(View.GONE);
+            setDealerPlayer();
+            return;
+        }
+
+        // if not, it becomes more complicated...
+        else {
+            // load dead player selector with all players
+            selectorDead.setObjects(new ArrayList<>(getGameSet().getPlayers().getPlayers()));
+            selectorDealer.setObjects(new ArrayList<>(getGameSet().getPlayers().getPlayers()));
+            selectorDead.setObjectSelectedListener(new Selector.OnObjectSelectedListener<Player>() {
+
+                @Override
+                public void onItemSelected(final Player selected) {
+                    // create new ingame player list
+                    inGamePlayers = new ArrayList<>(getGameSet().getPlayers().getPlayers());
+                    inGamePlayers.remove(selectorDead.getSelected());
+
+                    // display panels
+                    panelMainParameters.startAnimation(new ScaleAnimToShow(1.0f,
+                                                                           1.0f,
+                                                                           1.0f,
+                                                                           0.0f,
+                                                                           500,
+                                                                           panelMainParameters,
+                                                                           true));
+                    txtTitleMainParameters.setOnClickListener(null);
+                }
+
+                @Override
+                public void onNothingSelected() {
+                    // hide panels
+                    panelMainParameters.startAnimation(new ScaleAnimToHide(1.0f,
+                                                                           1.0f,
+                                                                           1.0f,
+                                                                           0.0f,
+                                                                           500,
+                                                                           panelMainParameters,
+                                                                           true));
+                    txtTitleMainParameters.setOnClickListener(onNoDeadPlayerSelectedClickListener);
+                }
+            });
+
+            // if no dead player was previously selected, hide dealer and all other panels
+            if (!trySetDeadPlayer()) {
+                panelDeadAndDealer.setVisibility(View.VISIBLE);
+                panelMainParameters.setVisibility(View.GONE);
+                txtTitleMainParameters.setOnClickListener(onNoDeadPlayerSelectedClickListener);
+            }
+            setDealerPlayer();
+        }
     }
 
     @Override

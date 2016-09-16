@@ -45,18 +45,17 @@ public class StandardGameActivity extends BaseGameActivity {
     @BindView(R.id.txtTitleAnnouncements) protected TextView txtTitleAnnouncements;
     @BindView(R.id.panelAnnouncements) protected LinearLayout panelAnnouncements;
     @BindView(R.id.panelMisery) protected RelativeLayout panelMisery;
-
-    private Selector<Bet> selectorBet;
-    private Selector<Player> selectorLeader;
-    private Selector<Player> selectorCalled;
-    private Selector<King> selectorKing;
-    private Selector<Integer> selectorOudlers;
-    private Selector<Team> selectorHandful;
-    private Selector<Team> selectorDoubleHandful;
-    private Selector<Team> selectorTripleHandful;
-    private Selector<Player> selectorMisery;
-    private Selector<Team> selectorKidAtTheEnd;
-    private Selector<Chelem> selectorSlam;
+    @BindView(R.id.galleryBet) protected Selector<Bet> selectorBet;
+    @BindView(R.id.galleryLeader) protected Selector<Player> selectorLeader;
+    @BindView(R.id.galleryCalled) protected Selector<Player> selectorCalled;
+    @BindView(R.id.galleryKing) protected Selector<King> selectorKing;
+    @BindView(R.id.galleryOudlers) protected Selector<Integer> selectorOudlers;
+    @BindView(R.id.galleryHandful) protected Selector<Team> selectorHandful;
+    @BindView(R.id.galleryDoubleHandful) protected Selector<Team> selectorDoubleHandful;
+    @BindView(R.id.galleryTribleHandful) protected Selector<Team> selectorTripleHandful;
+    @BindView(R.id.galleryMisery) protected Selector<Player> selectorMisery;
+    @BindView(R.id.galleryKidAtTheEnd) protected Selector<Team> selectorKidAtTheEnd;
+    @BindView(R.id.gallerySlam) protected Selector<Chelem> selectorSlam;
 
     private int attackScore;
     private SeekBar.OnSeekBarChangeListener attackPointsChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -114,6 +113,7 @@ public class StandardGameActivity extends BaseGameActivity {
         }
     }
 
+    // TODO Implement
     @Override
     protected void auditEvent() {
     }
@@ -143,20 +143,6 @@ public class StandardGameActivity extends BaseGameActivity {
             case Tarot4:
             default:
                 return getText(R.string.msgHelpNewStd4Game).toString();
-        }
-    }
-
-    @Override
-    public boolean isFormValid() {
-        switch (getGameSet().getGameStyleType()) {
-            case Tarot3:
-                return isStandard3GameValid();
-            case Tarot4:
-                return isStandard4GameValid();
-            case Tarot5:
-                return isStandard5GameValid();
-            default:
-                throw new RuntimeException("Incorrect game style type");
         }
     }
 
@@ -234,26 +220,6 @@ public class StandardGameActivity extends BaseGameActivity {
         }
     }
 
-    private boolean isStandard3GameValid() {
-        return areCommonStandardPropertiesValid();
-    }
-
-    private boolean isStandard4GameValid() {
-        return areCommonStandardPropertiesValid();
-    }
-
-    private boolean isStandard5GameValid() {
-        boolean isValid = areCommonStandardPropertiesValid();
-
-        // king
-        isValid = isValid && selectorKing.isSelected();
-
-        // called playerd
-        isValid = isValid && selectorCalled.isSelected();
-
-        return isValid;
-    }
-
     private StandardTarot3Game createStandard3Game() {
         // game to return
         StandardTarot3Game toReturn = new StandardTarot3Game();
@@ -291,126 +257,37 @@ public class StandardGameActivity extends BaseGameActivity {
     }
 
     @Override
-    public void updateGame(final BaseGame game) {
-        if (game instanceof StandardTarot5Game) {
-            this.updateStandard5Game((StandardTarot5Game) game);
-        } else if (game instanceof StandardBaseGame) {
-            this.updateStandardGame((StandardBaseGame) game);
+    public boolean isFormValid() {
+        switch (getGameSet().getGameStyleType()) {
+            case Tarot3:
+                return isStandard3GameValid();
+            case Tarot4:
+                return isStandard4GameValid();
+            case Tarot5:
+                return isStandard5GameValid();
+            default:
+                throw new RuntimeException("Incorrect game style type");
         }
     }
 
-    @Override
-    public void initializeSpecificViews() {
-        intializeStandardViews();
-        initializeDeadAndDealerPanelForStandardCase();
+    private boolean isStandard3GameValid() {
+        return areCommonStandardPropertiesValid();
     }
 
-    @Override
-    public void displayGame() {
-        StandardBaseGame stdGame = (StandardBaseGame) game;
-
-        // common properties
-        selectorBet.setSelected(stdGame.getBet());
-        selectorLeader.setSelected(stdGame.getLeadingPlayer());
-        selectorOudlers.setSelected(stdGame.getNumberOfOudlers());
-        barAttackPoints.setProgress((int) stdGame.getPoints());
-        txtAttackPoints.setText(new Integer((int) stdGame.getPoints()).toString());
-        barDefensePoints.setProgress(91 - (int) stdGame.getPoints());
-        txtDefensePoints.setText(new Integer(91 - (int) stdGame.getPoints()).toString());
-
-        // announcements
-        panelAnnouncements.setVisibility(View.VISIBLE);
-        selectorHandful.setSelected(stdGame.getTeamWithPoignee());
-        selectorDoubleHandful.setSelected(stdGame.getTeamWithDoublePoignee());
-        selectorTripleHandful.setSelected(stdGame.getTeamWithTriplePoignee());
-        selectorKidAtTheEnd.setSelected(stdGame.getTeamWithKidAtTheEnd());
-        selectorSlam.setSelected(stdGame.getChelem());
-
-        // 5 player specifics
-        if (getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
-            StandardTarot5Game std5Game = (StandardTarot5Game) game;
-            panelCalled.setVisibility(View.VISIBLE);
-            panelKing.setVisibility(View.VISIBLE);
-            panelMisery.setVisibility(View.VISIBLE);
-            selectorCalled.setSelected(std5Game.getCalledPlayer());
-            selectorKing.setSelected(std5Game.getCalledKing());
-            selectorMisery.setSelected(std5Game.getPlayerWithMisery());
-        }
-
-        // display misery if game 3/4 player has a misery set
-        if (stdGame.getPlayerWithMisery() != null) {
-            panelMisery.setVisibility(View.VISIBLE);
-            selectorMisery.setSelected(stdGame.getPlayerWithMisery());
-        }
+    private boolean isStandard4GameValid() {
+        return areCommonStandardPropertiesValid();
     }
 
-    public void updateStandardGame(final StandardBaseGame game) {
-        // sets the common properties
-        setCommonStandardProperties(game);
-    }
+    private boolean isStandard5GameValid() {
+        boolean isValid = areCommonStandardPropertiesValid();
 
-    private void updateStandard5Game(final StandardTarot5Game game) {
-        // sets the common properties
-        setCommonStandardProperties(game);
         // king
-        game.setCalledKing(selectorKing.getSelected());
+        isValid = isValid && selectorKing.isSelected();
 
-        // called player
-        game.setCalledPlayer(selectorCalled.getSelected());
-    }
+        // called playerd
+        isValid = isValid && selectorCalled.isSelected();
 
-    private void setCommonStandardProperties(final StandardBaseGame game) {
-        if (game == null) {
-            throw new IllegalArgumentException("game is null");
-        }
-
-        // game players
-        game.setPlayers(new PlayerList(inGamePlayers));
-
-        // dead player
-//    	if (selectorDead.isSelected()) {
-//    		game.setDeadPlayer(selectorDead.getSelected());
-//    	}
-        game.setDeadPlayer(selectorDead.getSelected());
-
-        // dealer player
-        game.setDealer(selectorDealer.getSelected());
-
-        // bet
-        game.setBet(selectorBet.getSelected());
-
-        // oudlers
-        game.setNumberOfOudlers(selectorOudlers.getSelected());
-
-        // leader player
-        game.setLeadingPlayer(selectorLeader.getSelected());
-
-        // attack score
-        game.setPoints((double) barAttackPoints.getProgress());
-
-        // handful
-        game.setTeamWithPoignee(selectorHandful.getSelected());
-
-        // double handful
-        game.setTeamWithDoublePoignee(selectorDoubleHandful.getSelected());
-
-        // triple handful
-        game.setTeamWithTriplePoignee(selectorTripleHandful.getSelected());
-
-        // misery
-        if (selectorMisery.isSelected()) {
-            PlayerList playersWithMisery = new PlayerList();
-            playersWithMisery.add(selectorMisery.getSelected());
-            game.setPlayersWithMisery(playersWithMisery);
-        } else {
-            game.setPlayersWithMisery(null);
-        }
-
-        // kid at the end
-        game.setTeamWithKidAtTheEnd(selectorKidAtTheEnd.getSelected());
-
-        // slam
-        game.setChelem(selectorSlam.getSelected());
+        return isValid;
     }
 
     private boolean areCommonStandardPropertiesValid() {
@@ -431,22 +308,37 @@ public class StandardGameActivity extends BaseGameActivity {
         return isValid;
     }
 
+    @Override
+    public void updateGame(final BaseGame game) {
+        if (game instanceof StandardTarot5Game) {
+            this.updateStandard5Game((StandardTarot5Game) game);
+        } else if (game instanceof StandardBaseGame) {
+            this.updateStandardGame((StandardBaseGame) game);
+        }
+    }
+
+    public void updateStandardGame(final StandardBaseGame game) {
+        // sets the common properties
+        setCommonStandardProperties(game);
+    }
+
+    private void updateStandard5Game(final StandardTarot5Game game) {
+        // sets the common properties
+        setCommonStandardProperties(game);
+        // king
+        game.setCalledKing(selectorKing.getSelected());
+
+        // called player
+        game.setCalledPlayer(selectorCalled.getSelected());
+    }
+
+    @Override
+    public void initializeSpecificViews() {
+        intializeStandardViews();
+        initializeDeadAndDealerPanelForStandardCase();
+    }
+
     private void intializeStandardViews() {
-        // Main Parameters widgets
-        this.selectorBet = (Selector<Bet>) findViewById(R.id.galleryBet);
-        this.selectorLeader = (Selector<Player>) findViewById(R.id.galleryLeader);
-        this.selectorCalled = (Selector<Player>) findViewById(R.id.galleryCalled);
-        this.selectorKing = (Selector<King>) findViewById(R.id.galleryKing);
-        this.selectorOudlers = (Selector<Integer>) findViewById(R.id.galleryOudlers);
-
-        // Annoucements widgets
-        this.selectorHandful = (Selector<Team>) findViewById(R.id.galleryHandful);
-        this.selectorDoubleHandful = (Selector<Team>) findViewById(R.id.galleryDoubleHandful);
-        this.selectorTripleHandful = (Selector<Team>) findViewById(R.id.galleryTribleHandful);
-        this.selectorMisery = (Selector<Player>) findViewById(R.id.galleryMisery);
-        this.selectorKidAtTheEnd = (Selector<Team>) findViewById(R.id.galleryKidAtTheEnd);
-        this.selectorSlam = (Selector<Chelem>) findViewById(R.id.gallerySlam);
-
         // loading widget contents
         List<Bet> availableBets = newArrayList();
         if (AppContext.getApplication().getAppParams().isPriseAuthorized()) {
@@ -581,5 +473,94 @@ public class StandardGameActivity extends BaseGameActivity {
             }
             setDealerPlayer();
         }
+    }
+
+    @Override
+    public void displayGame() {
+        StandardBaseGame stdGame = (StandardBaseGame) game;
+
+        // common properties
+        selectorBet.setSelected(stdGame.getBet());
+        selectorLeader.setSelected(stdGame.getLeadingPlayer());
+        selectorOudlers.setSelected(stdGame.getNumberOfOudlers());
+        barAttackPoints.setProgress((int) stdGame.getPoints());
+        txtAttackPoints.setText(new Integer((int) stdGame.getPoints()).toString());
+        barDefensePoints.setProgress(91 - (int) stdGame.getPoints());
+        txtDefensePoints.setText(new Integer(91 - (int) stdGame.getPoints()).toString());
+
+        // announcements
+        panelAnnouncements.setVisibility(View.VISIBLE);
+        selectorHandful.setSelected(stdGame.getTeamWithPoignee());
+        selectorDoubleHandful.setSelected(stdGame.getTeamWithDoublePoignee());
+        selectorTripleHandful.setSelected(stdGame.getTeamWithTriplePoignee());
+        selectorKidAtTheEnd.setSelected(stdGame.getTeamWithKidAtTheEnd());
+        selectorSlam.setSelected(stdGame.getChelem());
+
+        // 5 player specifics
+        if (getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
+            StandardTarot5Game std5Game = (StandardTarot5Game) game;
+            panelCalled.setVisibility(View.VISIBLE);
+            panelKing.setVisibility(View.VISIBLE);
+            panelMisery.setVisibility(View.VISIBLE);
+            selectorCalled.setSelected(std5Game.getCalledPlayer());
+            selectorKing.setSelected(std5Game.getCalledKing());
+            selectorMisery.setSelected(std5Game.getPlayerWithMisery());
+        }
+
+        // display misery if game 3/4 player has a misery set
+        if (stdGame.getPlayerWithMisery() != null) {
+            panelMisery.setVisibility(View.VISIBLE);
+            selectorMisery.setSelected(stdGame.getPlayerWithMisery());
+        }
+    }
+
+    private void setCommonStandardProperties(final StandardBaseGame game) {
+        if (game == null) {
+            throw new IllegalArgumentException("game is null");
+        }
+
+        // game players
+        game.setPlayers(new PlayerList(inGamePlayers));
+
+        game.setDeadPlayer(selectorDead.getSelected());
+
+        // dealer player
+        game.setDealer(selectorDealer.getSelected());
+
+        // bet
+        game.setBet(selectorBet.getSelected());
+
+        // oudlers
+        game.setNumberOfOudlers(selectorOudlers.getSelected());
+
+        // leader player
+        game.setLeadingPlayer(selectorLeader.getSelected());
+
+        // attack score
+        game.setPoints((double) barAttackPoints.getProgress());
+
+        // handful
+        game.setTeamWithPoignee(selectorHandful.getSelected());
+
+        // double handful
+        game.setTeamWithDoublePoignee(selectorDoubleHandful.getSelected());
+
+        // triple handful
+        game.setTeamWithTriplePoignee(selectorTripleHandful.getSelected());
+
+        // misery
+        if (selectorMisery.isSelected()) {
+            PlayerList playersWithMisery = new PlayerList();
+            playersWithMisery.add(selectorMisery.getSelected());
+            game.setPlayersWithMisery(playersWithMisery);
+        } else {
+            game.setPlayersWithMisery(null);
+        }
+
+        // kid at the end
+        game.setTeamWithKidAtTheEnd(selectorKidAtTheEnd.getSelected());
+
+        // slam
+        game.setChelem(selectorSlam.getSelected());
     }
 }
