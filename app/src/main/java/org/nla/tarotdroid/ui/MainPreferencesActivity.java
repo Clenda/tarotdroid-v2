@@ -1,39 +1,23 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
 
+import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.helpers.AuditHelper;
 
 // TODO Properly implement logic
 public class MainPreferencesActivity
-		extends AppCompatActivity
+		extends BaseActivity
 		implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main_preferences);
 
 		if (savedInstanceState == null) {
 			// Create the fragment only when the activity is created for the first time.
@@ -45,9 +29,24 @@ public class MainPreferencesActivity
 			}
 
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.fragment_container, fragment, TabGameSetPreferencesFragment.FRAGMENT_TAG);
+			ft.replace(R.id.fragment_container, fragment, MainPreferencesFragment.FRAGMENT_TAG);
 			ft.commit();
 		}
+	}
+
+	@Override
+	protected void inject() {
+		BaseApp.get(this).getComponent().inject(this);
+	}
+
+	@Override
+	protected void auditEvent() {
+		AuditHelper.auditEvent(AuditHelper.EventTypes.displayMainPreferencePage);
+	}
+
+	@Override
+	protected int getLayoutResId() {
+		return R.layout.activity_main_preferences;
 	}
 
 	@Override
@@ -92,10 +91,10 @@ public class MainPreferencesActivity
 //
 //					// dev instances to change
 //					if (key.equals(PreferenceConstants.PrefDevMaxGameCount)) {
-//						AppContext.getApplication().getAppParams().setDevMaxGameCount(sharedPreferences.getInt(PreferenceConstants.PrefDevMaxGameCount, 20));
+//						appParams.setDevMaxGameCount(sharedPreferences.getInt(PreferenceConstants.PrefDevMaxGameCount, 20));
 //					}
 //					else if (key.equals(PreferenceConstants.PrefDevGameSetCount)) {
-//						AppContext.getApplication().getAppParams().setDevGameSetCount(sharedPreferences.getInt(PreferenceConstants.PrefDevGameSetCount, 20));
+//						appParams.setDevGameSetCount(sharedPreferences.getInt(PreferenceConstants.PrefDevGameSetCount, 20));
 //					}
 //				}
 //			};
@@ -106,15 +105,6 @@ public class MainPreferencesActivity
 //        }
 //    }
 //
-//	@Override
-//	protected void onStart() {
-//		super.onStart();
-//		AuditHelper.auditSession(this);
-//	}
-//
-//	private void auditEvent() {
-//		AuditHelper.auditEvent(AuditHelper.EventTypes.displayMainPreferencePage);
-//	}
 //
 //	@Override
 //	protected void onPause() {

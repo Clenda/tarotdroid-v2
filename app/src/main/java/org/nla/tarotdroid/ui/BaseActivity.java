@@ -7,10 +7,12 @@ import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.AppParams;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,19 +20,22 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity {
 
     @Nullable @BindView(R.id.toolbar) protected Toolbar toolbar;
+    @Inject AppParams appParams;
 
     private boolean restarting;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(getLayoutResId());
+        if (shouldSetContentView()) {
+            setContentView(getLayoutResId());
+        }
         ButterKnife.bind(this);
+        inject();
         setupToolbar();
         setKeepScreenOn();
         setTitle();
         auditEvent();
-        inject();
     }
 
     private void setupToolbar() {
@@ -47,6 +52,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    protected boolean shouldSetContentView() {
+        return true;
+    }
+
     protected boolean shouldDisplayHomeAsUpEnabled() {
         return true;
     }
@@ -56,7 +65,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void setKeepScreenOn() {
-        UIHelper.setKeepScreenOn(this, AppContext.getApplication().getAppParams().isKeepScreenOn());
+        UIHelper.setKeepScreenOn(this, appParams.isKeepScreenOn());
     }
 
     protected abstract void inject();

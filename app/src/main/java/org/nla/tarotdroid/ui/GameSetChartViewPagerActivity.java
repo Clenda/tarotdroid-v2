@@ -1,6 +1,7 @@
 package org.nla.tarotdroid.ui;
 
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,16 +9,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 
-import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.helpers.AuditHelper;
-import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.charts.BetsStatsChartFragment;
 import org.nla.tarotdroid.ui.charts.CalledPlayersStatsChartFragment;
 import org.nla.tarotdroid.ui.charts.ChartFragment;
@@ -27,18 +26,19 @@ import org.nla.tarotdroid.ui.charts.KingsStatsChartFragment;
 import org.nla.tarotdroid.ui.charts.LeadingPlayersStatsChartFragment;
 import org.nla.tarotdroid.ui.charts.SuccessesStatsChartFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
+import butterknife.BindView;
 
-public class GameSetChartViewPagerActivity extends AppCompatActivity {
+public class GameSetChartViewPagerActivity extends BaseActivity {
 
-	private static IGameSetStatisticsComputer gameSetStatisticsComputer;
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
+    private static IGameSetStatisticsComputer gameSetStatisticsComputer;
+
+    @BindView(R.id.pager) protected ViewPager viewPager;
+    @BindView(R.id.tabs) protected TabLayout tabLayout;
     private PagerAdapter pagerAdapter;
-
-	private List<ChartFragment> chartFragments;
+    private List<ChartFragment> chartFragments;
 
 	public static IGameSetStatisticsComputer getGameSetStatisticsComputer() {
 		return gameSetStatisticsComputer;
@@ -46,17 +46,9 @@ public class GameSetChartViewPagerActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		try {
-			this.setContentView(R.layout.simple_titles);
-
-            auditEvent();
-            setTitle(this.getString(R.string.lblMainStatActivityTitle));
-
-			UIHelper.setKeepScreenOn(this, AppContext.getApplication().getAppParams().isKeepScreenOn());
-
+            super.onCreate(savedInstanceState);
             initialisePaging();
-
 			ActionBar mActionBar = getSupportActionBar();
 			mActionBar.setHomeButtonEnabled(true);
 			mActionBar.setDisplayShowHomeEnabled(true);
@@ -65,50 +57,59 @@ public class GameSetChartViewPagerActivity extends AppCompatActivity {
 			AuditHelper.auditError(AuditHelper.ErrorTypes.tabGameSetActivityError, e, this);
 		}
 	}
-	
+
 	@Override
-	protected void onStart() {
-		super.onStart();
-		AuditHelper.auditSession(this);
-	}
-	
-	private void auditEvent() {
-		AuditHelper.auditEvent(AuditHelper.EventTypes.displayCharts);
-	}
-	
+    protected void inject() {
+        BaseApp.get(this).getComponent().inject(this);
+    }
+
+    @Override
+    protected void auditEvent() {
+        AuditHelper.auditEvent(AuditHelper.EventTypes.displayCharts);
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.simple_titles;
+    }
+
+    @StringRes
+    protected int getTitleResId() {
+        return R.string.lblMainStatActivityTitle;
+    }
+
+
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().gameSet;
 	}
 
 	private void initialisePaging() {
-        viewPager = (ViewPager) super.findViewById(R.id.pager);
         setupViewPager();
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
 
     private void setupViewPager() {
         // instantiate statistics computer
         gameSetStatisticsComputer = GameSetStatisticsComputerFactory.GetGameSetStatisticsComputer(
-                this.getGameSet(),
+                getGameSet(),
                 "guava");
 
         // instantiate fragments
-        this.chartFragments = newArrayList();
-        this.chartFragments.add(GameScoresEvolutionChartFragment.newInstance());
-        this.chartFragments.add(LeadingPlayersStatsChartFragment.newInstance());
-        this.chartFragments.add(BetsStatsChartFragment.newInstance());
-        this.chartFragments.add(FullBetsStatsChartFragment.newInstance());
-        this.chartFragments.add(SuccessesStatsChartFragment.newInstance());
-        if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
-            this.chartFragments.add(CalledPlayersStatsChartFragment.newInstance());
-            this.chartFragments.add(KingsStatsChartFragment.newInstance());
+        chartFragments = new ArrayList<>();
+        chartFragments.add(GameScoresEvolutionChartFragment.newInstance());
+        chartFragments.add(LeadingPlayersStatsChartFragment.newInstance());
+        chartFragments.add(BetsStatsChartFragment.newInstance());
+        chartFragments.add(FullBetsStatsChartFragment.newInstance());
+        chartFragments.add(SuccessesStatsChartFragment.newInstance());
+        if (getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
+            chartFragments.add(CalledPlayersStatsChartFragment.newInstance());
+            chartFragments.add(KingsStatsChartFragment.newInstance());
         }
 
         // populate adapter and pager
-        this.pagerAdapter = new ChartViewPagerAdapter(super.getSupportFragmentManager(),
-                                                      this.chartFragments);
-        this.viewPager.setAdapter(this.pagerAdapter);
+        pagerAdapter = new ChartViewPagerAdapter(super.getSupportFragmentManager(),
+                                                 chartFragments);
+        viewPager.setAdapter(pagerAdapter);
     }
 
     protected class ChartViewPagerAdapter extends FragmentPagerAdapter {
@@ -122,17 +123,17 @@ public class GameSetChartViewPagerActivity extends AppCompatActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			return this.fragments.get(position);
-		}
+            return fragments.get(position);
+        }
 
 		@Override
 		public int getCount() {
-			return this.fragments.size();
-		}
+            return fragments.size();
+        }
 		
 	    @Override
 	    public CharSequence getPageTitle(int position) {
-	    	return this.fragments.get(position).getChartTitle();
-	    }
+            return fragments.get(position).getChartTitle();
+        }
 	}
 }

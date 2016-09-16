@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
@@ -254,12 +255,11 @@ public class GameSetHistoryActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-
+        BaseApp.get(this).getComponent().inject(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
 		SubMenu subMenuBlueTooth = menu.addSubMenu(this.getString(R.string.lblBluetoothItem));
         MenuItem miBluetooth = subMenuBlueTooth.getItem();
         miBluetooth.setIcon(R.drawable.stat_sys_data_bluetooth);

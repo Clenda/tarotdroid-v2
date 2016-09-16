@@ -3,27 +3,48 @@ package org.nla.tarotdroid.ui;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
 
+import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 
+import javax.inject.Inject;
+
 // TODO Properly implement
 public class TabGameSetPreferencesActivity
-		extends AppCompatActivity
-		implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
+        extends BaseActivity
+        implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
 
-	private OnSharedPreferenceChangeListener listener;
-	private SharedPreferences preferences;
+    @Inject SharedPreferences preferences;
+    private OnSharedPreferenceChangeListener listener;
 	
 	@Override
     public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            // Create the fragment only when the activity is created for the first time.
+            // ie. not after orientation changes
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(
+                    TabGameSetPreferencesFragment.FRAGMENT_TAG);
+            if (fragment == null) {
+                fragment = new TabGameSetPreferencesFragment();
+            }
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_container,
+                       fragment,
+                       TabGameSetPreferencesFragment.FRAGMENT_TAG);
+            ft.commit();
+        }
+
+
 		try {
 //			// check params
 //			checkArgument(this.getIntent().getExtras().containsKey(ActivityParams.PARAM_GAMESET_ID), "Game set id must be provided");
@@ -41,11 +62,7 @@ public class TabGameSetPreferencesActivity
 //			else {
 //				throw new IllegalArgumentException("Game set id or serialized game set must be provided");
 //			}
-			
-            this.auditEvent();
 //        	this.addPreferencesFromResource(R.layout.tablegameset_preferences);
-        	
-//        	this.preferences = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
 //
 //        	// remove "misery allowed" pref if game is 5 player style
 //        	if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
@@ -61,7 +78,6 @@ public class TabGameSetPreferencesActivity
 //        		 */
 //        		@Override
 //				public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
-//					AppParams appParams = AppContext.getApplication().getAppParams();
 //					if (key.equals(PreferenceConstants.PrefDisplayGamesInReverseOrder)) {
 //						appParams.setDisplayGamesInReverseOrder(sharedPreferences.getBoolean(PreferenceConstants.PrefDisplayGamesInReverseOrder, true));
 //					}
@@ -100,15 +116,24 @@ public class TabGameSetPreferencesActivity
         	AuditHelper.auditError(ErrorTypes.tabGameSetPreferencesActivityError, e, this);
         }
     }
-	
+
 	@Override
-	protected void onStart() {
-		super.onStart();
-		AuditHelper.auditSession(this);
-	}
-	
-	@Override
-	protected void onResume() {
+    protected void inject() {
+        BaseApp.get(this).getComponent().inject(this);
+    }
+
+    @Override
+    protected void auditEvent() {
+        AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPreferencePage);
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_main_preferences;
+    }
+
+    @Override
+    protected void onResume() {
 		super.onResume();
 //		// get preferences
 //		EditTextPreference prefPetitePoints = (EditTextPreference)this.findPreference(PreferenceConstants.PrefPetitePoints);
@@ -177,10 +202,6 @@ public class TabGameSetPreferencesActivity
 	
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().gameSet;
-	}
-	
-	private void auditEvent() {
-		AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPreferencePage);
 	}
 
 	@Override

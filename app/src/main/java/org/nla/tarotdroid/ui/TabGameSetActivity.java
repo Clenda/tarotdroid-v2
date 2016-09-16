@@ -19,7 +19,7 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
 
 import org.nla.tarotdroid.AppContext;
-import org.nla.tarotdroid.AppParams;
+import org.nla.tarotdroid.BaseApp;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.helpers.AuditHelper;
@@ -30,13 +30,12 @@ import org.nla.tarotdroid.ui.constants.ActivityParams;
 import org.nla.tarotdroid.ui.constants.RequestCodes;
 import org.nla.tarotdroid.ui.constants.ResultCodes;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 
 public class TabGameSetActivity extends BaseActivity {
 
@@ -59,8 +58,8 @@ public class TabGameSetActivity extends BaseActivity {
 
     protected GameSet gameSet;
     protected ProgressDialog progressDialog;
-    protected @BindView(R.id.tabs) TabLayout tabLayout;
-    protected @BindView(R.id.pager) ViewPager viewPager;
+    @BindView(R.id.tabs) protected TabLayout tabLayout;
+    @BindView(R.id.pager) protected ViewPager viewPager;
 
     private GameSetGamesFragment gameSetGamesFragment;
     private GameSetSynthesisFragment gameSetSynthesisFragment;
@@ -82,7 +81,7 @@ public class TabGameSetActivity extends BaseActivity {
             finish();
 
         } else if (this.gameSet.getGameCount() == 0) {
-            Map<ParameterTypes, Object> parameters = newHashMap();
+            Map<ParameterTypes, Object> parameters = new HashMap<>();
             parameters.put(ParameterTypes.gameStyleType, this.gameSet.getGameStyleType());
             parameters.put(ParameterTypes.playerCount, this.gameSet.getPlayers().size());
             AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithNewGameSetAction,
@@ -171,7 +170,7 @@ public class TabGameSetActivity extends BaseActivity {
     }
 
     private void setupViewPager() {
-        List<Fragment> fragments = newArrayList();
+        List<Fragment> fragments = new ArrayList<>();
         gameSetGamesFragment = GameSetGamesFragment.newInstance();
         gameSetSynthesisFragment = GameSetSynthesisFragment.newInstance();
         fragments.add(this.gameSetGamesFragment);
@@ -263,7 +262,7 @@ public class TabGameSetActivity extends BaseActivity {
 
     @Override
     protected void inject() {
-
+        BaseApp.get(this).getComponent().inject(this);
     }
 
     @Override
@@ -273,8 +272,6 @@ public class TabGameSetActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        AppParams appParams = AppContext.getApplication().getAppParams();
-
         if (appParams.isBelgianGamesAllowed() || appParams.isPenaltyGamesAllowed() || appParams.isPassedGamesAllowed()) {
             // prepare menu
             SubMenu subMenuAdd = menu.addSubMenu(R.string.lblAddGameItem);

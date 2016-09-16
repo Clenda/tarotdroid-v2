@@ -7,7 +7,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.Bet;
@@ -23,13 +22,13 @@ import org.nla.tarotdroid.biz.Team;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.ui.controls.Selector;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Optional;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class StandardGameActivity extends BaseGameActivity {
     @BindView(R.id.btnPlusAttackPoints) protected Button btnPlusAttackPoints;
@@ -340,9 +339,9 @@ public class StandardGameActivity extends BaseGameActivity {
 
     private void intializeStandardViews() {
         // loading widget contents
-        List<Bet> availableBets = newArrayList();
-        if (AppContext.getApplication().getAppParams().isPriseAuthorized()) {
-            if (AppContext.getApplication().getAppParams().isPetiteAuthorized()) {
+        List<Bet> availableBets = new ArrayList<>();
+        if (appParams.isPriseAuthorized()) {
+            if (appParams.isPetiteAuthorized()) {
                 availableBets.add(Bet.PETITE);
             }
             availableBets.add(Bet.PRISE);
@@ -354,20 +353,20 @@ public class StandardGameActivity extends BaseGameActivity {
         selectorBet.setObjects(availableBets);
         selectorLeader.setObjects(inGamePlayers);
         selectorCalled.setObjects(inGamePlayers);
-        selectorKing.setObjects(newArrayList(King.CLUB, King.DIAMOND, King.HEART, King.SPADE));
-        selectorOudlers.setObjects(newArrayList(0, 1, 2, 3));
+        selectorKing.setObjects(Arrays.asList(King.CLUB, King.DIAMOND, King.HEART, King.SPADE));
+        selectorOudlers.setObjects(Arrays.asList(0, 1, 2, 3));
         barAttackPoints.setProgress(0);
         barDefensePoints.setProgress(91);
-        selectorHandful.setObjects(newArrayList(Team.LEADING_TEAM,
-                                                Team.DEFENSE_TEAM,
-                                                Team.BOTH_TEAMS));
-        selectorDoubleHandful.setObjects(newArrayList(Team.LEADING_TEAM, Team.DEFENSE_TEAM));
-        selectorTripleHandful.setObjects(newArrayList(Team.LEADING_TEAM, Team.DEFENSE_TEAM));
-        selectorKidAtTheEnd.setObjects(newArrayList(Team.LEADING_TEAM, Team.DEFENSE_TEAM));
+        selectorHandful.setObjects(Arrays.asList(Team.LEADING_TEAM,
+                                                 Team.DEFENSE_TEAM,
+                                                 Team.BOTH_TEAMS));
+        selectorDoubleHandful.setObjects(Arrays.asList(Team.LEADING_TEAM, Team.DEFENSE_TEAM));
+        selectorTripleHandful.setObjects(Arrays.asList(Team.LEADING_TEAM, Team.DEFENSE_TEAM));
+        selectorKidAtTheEnd.setObjects(Arrays.asList(Team.LEADING_TEAM, Team.DEFENSE_TEAM));
         selectorMisery.setObjects(inGamePlayers);
-        selectorSlam.setObjects(newArrayList(Chelem.CHELEM_ANOUNCED_AND_SUCCEEDED,
-                                             Chelem.CHELEM_ANOUNCED_AND_FAILED,
-                                             Chelem.CHELEM_NOT_ANOUNCED_BUT_SUCCEEDED));
+        selectorSlam.setObjects(Arrays.asList(Chelem.CHELEM_ANOUNCED_AND_SUCCEEDED,
+                                              Chelem.CHELEM_ANOUNCED_AND_FAILED,
+                                              Chelem.CHELEM_NOT_ANOUNCED_BUT_SUCCEEDED));
 
         // event handers
         barAttackPoints.setOnSeekBarChangeListener(attackPointsChangeListener);
@@ -381,7 +380,7 @@ public class StandardGameActivity extends BaseGameActivity {
         }
 
         // set misery visibility at 3/4 player if parameters say so
-        if (AppContext.getApplication().getAppParams().isMiseryAuthorized()) {
+        if (appParams.isMiseryAuthorized()) {
             panelMisery.setVisibility(View.VISIBLE);
         }
 
@@ -401,19 +400,16 @@ public class StandardGameActivity extends BaseGameActivity {
         // if not, it becomes more complicated...
         else {
             // load dead player selector with all players
-            selectorDead.setObjects(newArrayList(getGameSet().getPlayers().getPlayers()));
-            selectorDealer.setObjects(newArrayList(getGameSet().getPlayers().getPlayers()));
+            selectorDead.setObjects(new ArrayList<>(getGameSet().getPlayers().getPlayers()));
+            selectorDealer.setObjects(new ArrayList<>(getGameSet().getPlayers().getPlayers()));
 
             // load/hide the rest of the views when a dead player is selected
             selectorDead.setObjectSelectedListener(new Selector.OnObjectSelectedListener<Player>() {
 
-                /* (non-Javadoc)
-                 * @see Selector.OnObjectSelectedListener#onItemSelected(Player)
-                 */
                 @Override
                 public void onItemSelected(final Player selected) {
                     // create new ingame player list
-                    inGamePlayers = newArrayList(getGameSet().getPlayers().getPlayers());
+                    inGamePlayers = new ArrayList<>(getGameSet().getPlayers().getPlayers());
                     inGamePlayers.remove(selectorDead.getSelected());
 
                     // load player selector with this new player list

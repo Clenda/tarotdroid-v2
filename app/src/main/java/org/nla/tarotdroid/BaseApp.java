@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 
 import org.nla.tarotdroid.biz.Bet;
 import org.nla.tarotdroid.biz.Chelem;
-import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.biz.King;
 import org.nla.tarotdroid.biz.Result;
 import org.nla.tarotdroid.biz.Team;
@@ -99,14 +98,14 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		}
 	}
 
-	public String getFacebookAppUrl() {
-        if (BuildConfig.IS_IN_DEBUG_MODE) {
-            return this.getString(R.string.urlTarotDroidFacebookDevApp);
-		}
-		else {
-			return this.getString(R.string.urlTarotDroidFacebookApp);
-		}
-	}
+//	public String getFacebookAppUrl() {
+//        if (BuildConfig.IS_IN_DEBUG_MODE) {
+//            return this.getString(R.string.urlTarotDroidFacebookDevApp);
+//		}
+//		else {
+//			return this.getString(R.string.urlTarotDroidFacebookApp);
+//		}
+//	}
 	
     private void setLastLaunchTimestamp() {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -193,13 +192,6 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
     public LoadDalTask getLoadDalTask() {
     	return this.loadDalTask;
     }
-    
-    public AppParams getAppParams() {
-		if (this.appParams == null) {
-			this.initializeAppParams();
-		}
-    	return this.appParams;
-	}
 
     @Override
     public BluetoothHelper getBluetoothHelper() {
@@ -214,37 +206,37 @@ public abstract class BaseApp extends MultiDexApplication implements ITarotDroid
 		this.loadDalTask.execute();
     }
 
-    @Override
-	public GameSetParameters initializeGameSetParameters() {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-		// initiailizes game set params
-		GameSetParameters gameSetParameters = new GameSetParameters();
-		gameSetParameters.setPetiteBasePoints(preferences.getInt(PreferenceConstants.PrefPetitePoints, 10));
-		gameSetParameters.setPetiteRate(preferences.getInt(PreferenceConstants.PrefPetiteRate, 1));
-		gameSetParameters.setPriseBasePoints(preferences.getInt(PreferenceConstants.PrefPrisePoints, 25));
-		gameSetParameters.setPriseRate(preferences.getInt(PreferenceConstants.PrefPriseRate, 1));
-		gameSetParameters.setGardeBasePoints(preferences.getInt(PreferenceConstants.PrefGardePoints, 50));
-		gameSetParameters.setGardeRate(preferences.getInt(PreferenceConstants.PrefGardeRate, 2));
-		gameSetParameters.setGardeSansBasePoints(preferences.getInt(PreferenceConstants.PrefGardeSansPoints, 100));
-		gameSetParameters.setGardeSansRate(preferences.getInt(PreferenceConstants.PrefGardeSansRate, 4));
-		gameSetParameters.setGardeContreBasePoints(preferences.getInt(PreferenceConstants.PrefGardeContrePoints, 150));
-		gameSetParameters.setGardeContreRate(preferences.getInt(PreferenceConstants.PrefGardeContreRate, 6));
-		gameSetParameters.setPoigneePoints(preferences.getInt(PreferenceConstants.PrefPoigneePoints, 20));
-		gameSetParameters.setDoublePoigneePoints(preferences.getInt(PreferenceConstants.PrefDoublePoigneePoints, 30));
-		gameSetParameters.setTriplePoigneePoints(preferences.getInt(PreferenceConstants.PrefTriplePoigneePoints, 40));
-		gameSetParameters.setMiseryPoints(preferences.getInt(PreferenceConstants.PrefMiseryPoints, 10));
-		gameSetParameters.setKidAtTheEndPoints(preferences.getInt(PreferenceConstants.PrefKidAtTheEndPoints, 10));
-		gameSetParameters.setAnnouncedAndSucceededChelemPoints(preferences.getInt(PreferenceConstants.PrefAnnouncedAndSucceededChelemPoints, 400));
-		gameSetParameters.setAnnouncedAndFailedChelemPoints(preferences.getInt(PreferenceConstants.PrefAnnouncedAndFailedChelemPoints, -200));
-		gameSetParameters.setNotAnnouncedButSucceededChelemPoints(preferences.getInt(PreferenceConstants.PrefNotAnnouncedButSucceededChelemPoints, 200));
-		gameSetParameters.setBelgianBaseStepPoints(preferences.getInt(PreferenceConstants.PrefBelgianStepPoints, 100));
-
-		// initializes app params
-		this.initializeAppParams();
-
-		return gameSetParameters;
-	}
+//    @Override
+//	public GameSetParameters initializeGameSetParameters() {
+//		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+//
+//		// initiailizes game set params
+//		GameSetParameters gameSetParameters = new GameSetParameters();
+//		gameSetParameters.setPetiteBasePoints(preferences.getInt(PreferenceConstants.PrefPetitePoints, 10));
+//		gameSetParameters.setPetiteRate(preferences.getInt(PreferenceConstants.PrefPetiteRate, 1));
+//		gameSetParameters.setPriseBasePoints(preferences.getInt(PreferenceConstants.PrefPrisePoints, 25));
+//		gameSetParameters.setPriseRate(preferences.getInt(PreferenceConstants.PrefPriseRate, 1));
+//		gameSetParameters.setGardeBasePoints(preferences.getInt(PreferenceConstants.PrefGardePoints, 50));
+//		gameSetParameters.setGardeRate(preferences.getInt(PreferenceConstants.PrefGardeRate, 2));
+//		gameSetParameters.setGardeSansBasePoints(preferences.getInt(PreferenceConstants.PrefGardeSansPoints, 100));
+//		gameSetParameters.setGardeSansRate(preferences.getInt(PreferenceConstants.PrefGardeSansRate, 4));
+//		gameSetParameters.setGardeContreBasePoints(preferences.getInt(PreferenceConstants.PrefGardeContrePoints, 150));
+//		gameSetParameters.setGardeContreRate(preferences.getInt(PreferenceConstants.PrefGardeContreRate, 6));
+//		gameSetParameters.setPoigneePoints(preferences.getInt(PreferenceConstants.PrefPoigneePoints, 20));
+//		gameSetParameters.setDoublePoigneePoints(preferences.getInt(PreferenceConstants.PrefDoublePoigneePoints, 30));
+//		gameSetParameters.setTriplePoigneePoints(preferences.getInt(PreferenceConstants.PrefTriplePoigneePoints, 40));
+//		gameSetParameters.setMiseryPoints(preferences.getInt(PreferenceConstants.PrefMiseryPoints, 10));
+//		gameSetParameters.setKidAtTheEndPoints(preferences.getInt(PreferenceConstants.PrefKidAtTheEndPoints, 10));
+//		gameSetParameters.setAnnouncedAndSucceededChelemPoints(preferences.getInt(PreferenceConstants.PrefAnnouncedAndSucceededChelemPoints, 400));
+//		gameSetParameters.setAnnouncedAndFailedChelemPoints(preferences.getInt(PreferenceConstants.PrefAnnouncedAndFailedChelemPoints, -200));
+//		gameSetParameters.setNotAnnouncedButSucceededChelemPoints(preferences.getInt(PreferenceConstants.PrefNotAnnouncedButSucceededChelemPoints, 200));
+//		gameSetParameters.setBelgianBaseStepPoints(preferences.getInt(PreferenceConstants.PrefBelgianStepPoints, 100));
+//
+//		// initializes app params
+//		this.initializeAppParams();
+//
+//		return gameSetParameters;
+//	}
 	
     private void initializeAppParams() {
     	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);

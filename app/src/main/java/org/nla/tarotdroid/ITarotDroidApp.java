@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.dal.IDalService;
 import org.nla.tarotdroid.helpers.BluetoothHelper;
 import org.nla.tarotdroid.model.TarotDroidUser;
@@ -38,20 +37,23 @@ public interface ITarotDroidApp {
 	String getFlurryApplicationId();
 	String getCloudDns();
 	String getFacebookCloudUrl();
-	String getFacebookAppUrl();
 	Resources getResources();
 	ContentResolver getContentResolver();
 	UUID getUuid();
 	String getServiceName();
 	IDalService getDalService();
-	 void setDalService(IDalService dalService);
-	AppParams getAppParams();
-	BluetoothHelper getBluetoothHelper();
-	long getLastLaunchTimestamp();
+
+    void setDalService(IDalService dalService);
+
+    long getLastLaunchTimestamp();
+
+    BluetoothHelper getBluetoothHelper();
+
 	LoadDalTask getLoadDalTask();
-	GameSetParameters initializeGameSetParameters();
-	TarotDroidUser getTarotDroidUser();
-	void setTarotDroidUser(TarotDroidUser tarotDroidUser);
+
+    TarotDroidUser getTarotDroidUser();
+
+    void setTarotDroidUser(TarotDroidUser tarotDroidUser);
 
 	Map<String, Integer> getNotificationIds();
 

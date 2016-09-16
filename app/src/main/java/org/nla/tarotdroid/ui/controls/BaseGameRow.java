@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.nla.tarotdroid.AppParams;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.ui.DisplayAndRemoveGameDialogActivity;
@@ -38,42 +39,18 @@ import org.nla.tarotdroid.ui.constants.RequestCodes;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import static com.google.common.collect.Maps.newHashMap;
 
-/**
- * The base row widget.
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- */
 public abstract class BaseGameRow extends BaseRow implements View.OnLongClickListener {
 
-	/**
-	 * The game.
-	 */
-	protected BaseGame game;
-	
-	/**
-	 * An internal map of all the view colors.
-	 */
-	private Map<Integer, Integer> cellColors = newHashMap();
-	
-	/**
-	 * The color whose objective is to indicate the row is selected. 
-	 */
 	private static final int SELECTED_COLOR = Color.LTGRAY;
-	
-	/**
-	 * Indicates whether this row is selected.
-	 */
-	private boolean isSelected;
+	protected BaseGame game;
+    @Inject AppParams appParams;
+	private Map<Integer, Integer> cellColors = newHashMap();
+    private boolean isSelected;
 
-	/**
-	 * Constructs a BaseGameRow.
-	 * @param gameSet
-	 * @param context
-	 * @param dialog
-	 * @param attrs
-	 * @param weight
-	 */
 	protected BaseGameRow(final Context context, final ProgressDialog dialog, final AttributeSet attrs, final float weight, final GameSet gameSet) {
 		super(context, dialog, attrs, weight);
 		this.setOrientation(HORIZONTAL);
@@ -82,40 +59,20 @@ public abstract class BaseGameRow extends BaseRow implements View.OnLongClickLis
 		this.isSelected = false;
 	}
 	
-
-	
-	/**
-	 * @return the gameIndex
-	 */
 	public int getGameIndex() {
 		return this.game.getIndex();
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.view.View.OnLongClickListener#onLongClick(android.view.View)
-	 */
 	@Override
 	public final boolean onLongClick(final View v) {
 		Intent intent = new Intent(TabGameSetActivity.getInstance(), DisplayAndRemoveGameDialogActivity.class);
 		intent.putExtra(ActivityParams.PARAM_GAME_INDEX, BaseGameRow.this.game.getIndex());
-		
-//		if (!gameSet.isPersisted()) {
-//			//intent.putExtra(ActivityParams.PARAM_GAMESET_SERIALIZED, UIHelper.serializeGameSet(gameSet));
-//			intent.putExtra(ActivityParams.PARAM_GAMESET_SERIALIZED, gameSet);
-//		}
-//		else {
-//			intent.putExtra(ActivityParams.PARAM_GAMESET_ID, gameSet.getId());
-//		}
-		
 		TabGameSetActivity.getInstance().startActivityForResult(intent, RequestCodes.DISPLAY_OR_MODIFY_OR_REMOVE_GAME);
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.view.View#onTouchEvent(android.view.MotionEvent)
-	 * VERY UGLY CODE: prone to problems in future maintenance... 
-	 * TODO: Refactor...
-	 */
+	 // VERY UGLY CODE: prone to problems in future maintenance...
+	 // TODO: Refactor...
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		switch(event.getAction()) {
@@ -135,9 +92,6 @@ public abstract class BaseGameRow extends BaseRow implements View.OnLongClickLis
 		return super.onTouchEvent(event);
 	}
 	
-	/**
-	 * Highlights the row.
-	 */
 	private void highlightRow() {
 		if (Build.VERSION.SDK_INT >= 11) {
 			this.setBackgroundColor(SELECTED_COLOR);
@@ -167,9 +121,6 @@ public abstract class BaseGameRow extends BaseRow implements View.OnLongClickLis
 		}
 	}
 	
-	/**
-	 * Unhighlights the row.
-	 */
 	private void unHighlightRow() {
 		if (Build.VERSION.SDK_INT >= 11) {
 			if (this.cellColors.size() == 0) {
@@ -197,14 +148,8 @@ public abstract class BaseGameRow extends BaseRow implements View.OnLongClickLis
 		}
 	}
 	
-	/**
-	 * AsyncTask aimed to wait before the row is highlighted.
-	 */
 	private class WaitToHighlightRowTask extends AsyncTask<Void, Void, Void> {
 		
-		/* (non-Javadoc)
-		 * @see android.os.AsyncTask#doInBackground(Params[])
-		 */
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
@@ -215,9 +160,6 @@ public abstract class BaseGameRow extends BaseRow implements View.OnLongClickLis
 			return null;
 		}
 	
-		/* (non-Javadoc)
-		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-		 */
 		@Override
 		protected void onPostExecute(Void result) {
 			if (BaseGameRow.this.isSelected) {
