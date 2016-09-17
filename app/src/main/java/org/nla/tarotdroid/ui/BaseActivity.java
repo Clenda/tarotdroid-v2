@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import org.nla.tarotdroid.AppParams;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.LocalizationHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
 
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Inject AppParams appParams;
     @Inject AuditHelper auditHelper;
     @Inject UIHelper uiHelper;
+    @Inject LocalizationHelper localizationHelper;
 
     private boolean restarting;
 

@@ -27,7 +27,7 @@ import org.achartengine.model.CategorySeries;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.enums.KingType;
-import org.nla.tarotdroid.helpers.UIHelper;
+import org.nla.tarotdroid.helpers.LocalizationHelper;
 import org.nla.tarotdroid.ui.constants.FragmentParameters;
 
 import java.util.Map;
@@ -40,7 +40,7 @@ import javax.inject.Inject;
  */
 public class KingsStatsChartFragment extends ChartFragment {
 
-	@Inject UIHelper uiHelper;
+	@Inject LocalizationHelper localizationHelper;
 
 	/**
 	 * Default constructor.
@@ -71,7 +71,8 @@ public class KingsStatsChartFragment extends ChartFragment {
 															   .getString(R.string.statNameCalledKingFrequency));
 		for (KingType king : mapKingValues.keySet()) {
 			if (mapKingValues.get(king) != 0) {
-				series.add(uiHelper.getKingTranslation(king) + " (" + mapKingValues.get(king) + ")",
+				series.add(localizationHelper.getKingTranslation(king) + " (" + mapKingValues.get(
+						king) + ")",
 						   mapKingValues.get(king));
 			}
 		}

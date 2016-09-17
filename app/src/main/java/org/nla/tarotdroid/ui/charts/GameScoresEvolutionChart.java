@@ -29,7 +29,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.helpers.AuditHelper;
-import org.nla.tarotdroid.helpers.UIHelper;
+import org.nla.tarotdroid.helpers.LocalizationHelper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -149,7 +149,7 @@ public class GameScoresEvolutionChart extends BaseStatsChart {
 	 * @see org.nla.tarotdroid.ui.controls.IStatsChart#execute(android.content.Context)
 	 */
 	@Override
-	public Intent execute(final Context context, final UIHelper uiHelper) {
+	public Intent execute(final Context context, final LocalizationHelper localizationHelper) {
 		List<double[]> scores = this.statisticsComputer.getScores();
 	    XYMultipleSeriesRenderer renderer = this.buildRenderer(this.statisticsComputer.getScoresColors(), this.getScoresPointStyles());
 	    this.setChartSettings(

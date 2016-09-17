@@ -25,7 +25,7 @@ import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.BetType;
 import org.nla.tarotdroid.helpers.AuditHelper;
-import org.nla.tarotdroid.helpers.UIHelper;
+import org.nla.tarotdroid.helpers.LocalizationHelper;
 
 import java.util.Map;
 
@@ -55,12 +55,14 @@ public class BetsStatsChart extends BaseStatsChart {
 	 * @return the category series
 	 */
 	protected CategorySeries buildCategoryDataset(
-			final Map<BetType, Integer> mapBetsValues, Context context, UIHelper uiHelper
+			final Map<BetType, Integer> mapBetsValues,
+			Context context,
+			LocalizationHelper localizationHelper
 	) {
 		CategorySeries series = new CategorySeries(context.getResources()
 														  .getString(R.string.statNameBetsFrequency));
 		for (BetType bet : mapBetsValues.keySet()) {
-			series.add(uiHelper.getBetTranslation(bet) + " (" + mapBetsValues.get(bet) + ")",
+			series.add(localizationHelper.getBetTranslation(bet) + " (" + mapBetsValues.get(bet) + ")",
 					   mapBetsValues.get(bet));
 		}
 		return series;
@@ -71,10 +73,12 @@ public class BetsStatsChart extends BaseStatsChart {
 	 * @see org.nla.tarotdroid.ui.controls.IStatsChart#execute(android.content.Context)
 	 */
 	@Override
-	public Intent execute(final Context context, final UIHelper uiHelper) {
+	public Intent execute(final Context context, final LocalizationHelper localizationHelper) {
 		return ChartFactory.getPieChartIntent(
 				context,
-				this.buildCategoryDataset(this.statisticsComputer.getBetCount(), context, uiHelper),
+				this.buildCategoryDataset(this.statisticsComputer.getBetCount(),
+										  context,
+										  localizationHelper),
 				this.buildCategoryRenderer(this.statisticsComputer.getBetCountColors()),
 				context.getResources().getString(R.string.statNameBetsFrequency)
 		);

@@ -47,7 +47,7 @@ public final class ExcelHelper {
     public static String exportToExcel(
             final Context context,
             final List<GameSet> gameSets,
-            final UIHelper uiHelper
+            final LocalizationHelper localizationHelper
     ) throws Exception {
         checkArgument(gameSets != null, "gameSets is null");
         checkArgument(context != null, "context is null");
@@ -71,7 +71,7 @@ public final class ExcelHelper {
         // generates excel reports
         int index = 0;
         for (GameSet gameSet : gameSets) {
-            exportToExcel(context, gameSet, excelFile, workbook, index, uiHelper);
+            exportToExcel(context, gameSet, excelFile, workbook, index, localizationHelper);
             index += 2;
         }
 
@@ -84,7 +84,7 @@ public final class ExcelHelper {
     public static String exportToExcel(
             final Context context,
             final GameSet gameSet,
-            final UIHelper uiHelper
+            final LocalizationHelper localizationHelper
     ) throws Exception {
         File sdcard = Environment.getExternalStorageDirectory();
         File tarotDroidDir = new File(sdcard.getAbsolutePath(), "TarotDroid");
@@ -95,7 +95,7 @@ public final class ExcelHelper {
                                   ExcelHelper.FORMATTER.format(gameSet.getCreationTs()) + ".xls");
         excelFile.createNewFile();
         WritableWorkbook workbook = Workbook.createWorkbook(excelFile);
-        String fileName = exportToExcel(context, gameSet, excelFile, workbook, 0, uiHelper);
+        String fileName = exportToExcel(context, gameSet, excelFile, workbook, 0, localizationHelper);
         workbook.write();
         workbook.close();
         return fileName;
@@ -107,7 +107,7 @@ public final class ExcelHelper {
             final File excelFile,
             final WritableWorkbook workbook,
             final int startIndex,
-            final UIHelper uiHelper
+            final LocalizationHelper localizationHelper
     ) throws Exception {
         checkArgument(gameSet != null, "gameSet is null");
         checkArgument(context != null, "context is null");
@@ -163,14 +163,14 @@ public final class ExcelHelper {
                                                      (StandardTarot5Game) game,
                                                      globalSheet,
                                                      deltaSheet,
-                                                     row, uiHelper);
+                                                     row, localizationHelper);
             } else if (game instanceof StandardBaseGame) {
                 ExcelHelper.exportStandardGame(context,
                                                gameSet,
                                                (StandardBaseGame) game,
                                                globalSheet,
                                                deltaSheet,
-                                               row, uiHelper);
+                                               row, localizationHelper);
             } else {
                 ExcelHelper.exportBelgianGame(context, gameSet, game, globalSheet, deltaSheet, row);
             }
@@ -188,7 +188,7 @@ public final class ExcelHelper {
             final WritableSheet globalSheet,
             final WritableSheet deltaSheet,
             final int row,
-            final UIHelper uiHelper
+            final LocalizationHelper localizationHelper
     ) throws Exception {
         // game description
         globalSheet.addCell(new Label(0,
@@ -198,7 +198,7 @@ public final class ExcelHelper {
                                                                            stdGame.getBet()
                                                                                   .getBetType(),
                                                                            (int) stdGame.getDifferentialPoints(),
-                                                                           uiHelper)));
+                                                                           localizationHelper)));
         deltaSheet.addCell(new Label(0,
                                      row,
                                      ExcelHelper.buildStandardDescription(context,
@@ -206,7 +206,7 @@ public final class ExcelHelper {
                                                                           stdGame.getBet()
                                                                                  .getBetType(),
                                                                           (int) stdGame.getDifferentialPoints(),
-                                                                          uiHelper)));
+                                                                          localizationHelper)));
 
         // each individual player score
         for (int column = 1; column <= gameSet.getPlayers().size(); ++column) {
@@ -250,7 +250,7 @@ public final class ExcelHelper {
             final WritableSheet globalSheet,
             final WritableSheet deltaSheet,
             final int row,
-            final UIHelper uiHelper
+            final LocalizationHelper localizationHelper
     ) throws Exception {
         // game description
         globalSheet.addCell(new Label(0,
@@ -260,7 +260,7 @@ public final class ExcelHelper {
                                                                            std5Game.getBet()
                                                                                    .getBetType(),
                                                                            (int) std5Game.getDifferentialPoints(),
-                                                                           uiHelper)));
+                                                                           localizationHelper)));
         deltaSheet.addCell(new Label(0,
                                      row,
                                      ExcelHelper.buildStandardDescription(context,
@@ -268,7 +268,7 @@ public final class ExcelHelper {
                                                                           std5Game.getBet()
                                                                                   .getBetType(),
                                                                           (int) std5Game.getDifferentialPoints(),
-                                                                          uiHelper)));
+                                                                          localizationHelper)));
 
         // each individual player score
         for (int column = 1; column <= gameSet.getPlayers().size(); ++column) {
@@ -315,11 +315,11 @@ public final class ExcelHelper {
         // roi appelé
         globalSheet.addCell(new Label(gameSet.getPlayers().size() + 3,
                                       row,
-                                      uiHelper.getKingTranslation(std5Game.getCalledKing()
+                                      localizationHelper.getKingTranslation(std5Game.getCalledKing()
                                                                           .getKingType())));
         deltaSheet.addCell(new Label(gameSet.getPlayers().size() + 3,
                                      row,
-                                     uiHelper.getKingTranslation(std5Game.getCalledKing()
+                                     localizationHelper.getKingTranslation(std5Game.getCalledKing()
                                                                          .getKingType())));
     }
 
@@ -373,12 +373,12 @@ public final class ExcelHelper {
             final int gameIndex,
             final BetType bet,
             final int points,
-            final UIHelper uiHelper
+            final LocalizationHelper localizationHelper
     ) {
         String toReturn = String.format(
                 context.getResources().getString(R.string.lblStandardGameSynthesis),
                 Integer.toString(gameIndex),
-                uiHelper.getBetTranslation(bet),
+                localizationHelper.getBetTranslation(bet),
                 (points >= 0 ? "+" + points : Integer.toString(points))
         );
 

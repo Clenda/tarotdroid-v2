@@ -27,7 +27,7 @@ import org.achartengine.model.CategorySeries;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.enums.BetType;
-import org.nla.tarotdroid.helpers.UIHelper;
+import org.nla.tarotdroid.helpers.LocalizationHelper;
 import org.nla.tarotdroid.ui.constants.FragmentParameters;
 
 import java.util.Map;
@@ -40,7 +40,7 @@ import javax.inject.Inject;
  */
 public class BetsStatsChartFragment extends ChartFragment {
 
-	@Inject UIHelper uiHelper;
+	@Inject LocalizationHelper localizationHelper;
 
 	/**
 	 * Default constructor.
@@ -70,7 +70,7 @@ public class BetsStatsChartFragment extends ChartFragment {
 		CategorySeries series = new CategorySeries(getContext().getResources()
 															   .getString(R.string.statNameBetsFrequency));
 		for (BetType bet : mapBetsValues.keySet()) {
-			series.add(uiHelper.getBetTranslation(bet) + " (" + mapBetsValues.get(bet) + ")",
+			series.add(localizationHelper.getBetTranslation(bet) + " (" + mapBetsValues.get(bet) + ")",
 					   mapBetsValues.get(bet));
 		}
 		return series;

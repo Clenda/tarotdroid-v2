@@ -10,14 +10,14 @@ import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.StandardBaseGame;
 import org.nla.tarotdroid.biz.StandardTarot5Game;
-import org.nla.tarotdroid.helpers.UIHelper;
+import org.nla.tarotdroid.helpers.LocalizationHelper;
 
 import javax.inject.Inject;
 
 public class StandardTarot5GameRow extends BaseGameRow {
 
     @Inject AppParams appParams;
-    @Inject UIHelper uiHelper;
+    @Inject LocalizationHelper localizationHelper;
 
     protected StandardTarot5GameRow(
             final Context context,
@@ -55,7 +55,7 @@ public class StandardTarot5GameRow extends BaseGameRow {
                 getGame().getBet().getBetType(),
                 (int) getGame().getDifferentialPoints(),
                 game.getIndex(),
-                uiHelper
+                localizationHelper
         ));
 
         // each individual player score

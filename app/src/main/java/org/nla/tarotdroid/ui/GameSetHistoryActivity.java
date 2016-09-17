@@ -516,7 +516,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 
 							ExportToExcelTask task = new ExportToExcelTask(GameSetHistoryActivity.this,
 																		   progressDialog,
-																		   uiHelper);
+																		   localizationHelper);
 							task.setCallback(excelExportCallback);
 							task.execute(gameSet);
 						}
@@ -672,9 +672,9 @@ public class GameSetHistoryActivity extends BaseActivity {
 
             ThumbnailItem thumbnailItem = new ThumbnailItem(this.getContext(),
 															drawableId,
-															uiHelper.buildGameSetHistoryTitle(
+															localizationHelper.buildGameSetHistoryTitle(
 																	gameSet),
-															uiHelper.buildGameSetHistoryDescription(
+															localizationHelper.buildGameSetHistoryDescription(
 																	gameSet));
 
             return thumbnailItem;

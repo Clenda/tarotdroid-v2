@@ -24,7 +24,7 @@ import org.achartengine.model.CategorySeries;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.helpers.AuditHelper;
-import org.nla.tarotdroid.helpers.UIHelper;
+import org.nla.tarotdroid.helpers.LocalizationHelper;
 
 import java.util.Map;
 
@@ -70,7 +70,7 @@ public class FullBetsStatsChart extends BaseStatsChart {
 	 * @see org.nla.tarotdroid.ui.controls.IStatsChart#execute(android.content.Context)
 	 */
 	@Override
-	public Intent execute(final Context context, final UIHelper uiHelper) {
+	public Intent execute(final Context context, final LocalizationHelper localizationHelper) {
 		return ChartFactory.getPieChartIntent(
 				context,
 				this.buildCategoryDataset(this.statisticsComputer.getFullBetCount(), context),

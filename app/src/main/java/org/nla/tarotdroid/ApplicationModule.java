@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.LocalizationHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.PreferenceConstants;
 
@@ -138,4 +139,11 @@ public class ApplicationModule {
     UIHelper providesUIHelper(final Context context) {
         return new UIHelper(context);
     }
+
+    @Provides
+    @Singleton
+    LocalizationHelper providesLocalizationHelper(final Context context) {
+        return new LocalizationHelper(context);
+    }
+
 }

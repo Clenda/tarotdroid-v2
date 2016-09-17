@@ -133,7 +133,7 @@ public class GameSetChartListActivity extends BaseActivity {
 			IStatsChart chart = statCharts[position];
 			auditHelper.auditSession(this);
 			auditHelper.auditEvent(chart.getAuditEventType());
-			startActivity(chart.execute(this, uiHelper));
+			startActivity(chart.execute(this, localizationHelper));
 		}
 		catch (Exception e) {
 			Log.v(BuildConfig.APP_LOG_TAG,
