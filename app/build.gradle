@@ -7,6 +7,8 @@ repositories {
 }
 
 def playStoreBaseUrl = "https://play.google.com/store/apps/details?id="
+def backendBaseUrlDEV = "https://tarotdroidtestapp.appspot.com"
+def backendBaseUrlPROD = "https://tarotdroid.appspot.com"
 
 android {
     compileSdkVersion 23
@@ -19,10 +21,18 @@ android {
         versionCode 35
         versionName "5.0.0"
         multiDexEnabled true
+
+        resValue "string", "app_name", "TarotDroid"
         buildConfigField "String", "APP_LOG_TAG", "\"${applicationId}\""
+        def playStoreAppUrl = playStoreBaseUrl + applicationId
+        buildConfigField "boolean", "IS_FULL", "false"
+        buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
         buildConfigField "String", "APP_VERSION", "\"${versionName}\""
+        buildConfigField "String", "APP_ID", "\"${applicationId}\""
         buildConfigField "String", "BLUETOOTH_UUID", "\"00001101-0000-1000-8000-00805F9B34FB\""
         buildConfigField "String", "BLUETOOTH_SERVICE", "\"TarotDroidService\""
+        buildConfigField "String", "FLURRY_APP_ID", "\"JA7HZLWC2VU8V1AGBVQL\""
+        buildConfigField "String", "BACKEND_BASE_URL", "\"${backendBaseUrlDEV}\""
     }
 
     buildTypes {
@@ -34,22 +44,10 @@ android {
 
     productFlavors {
         lite {
-            applicationId "org.nla.tarotdroid"
-            def playStoreAppUrl = playStoreBaseUrl + applicationId
-            resValue "string", "app_name", "TarotDroid"
             buildConfigField "boolean", "IS_IN_DEV_MODE", "false"
-            buildConfigField "boolean", "IS_FULL", "false"
-            buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
-            buildConfigField "String", "FLURRY_APP_ID", "\"JA7HZLWC2VU8V1AGBVQL\""
         }
         liteAndDevMode {
-            applicationId "org.nla.tarotdroid"
-            def playStoreAppUrl = playStoreBaseUrl + applicationId
-            resValue "string", "app_name", "TarotDroid"
             buildConfigField "boolean", "IS_IN_DEV_MODE", "true"
-            buildConfigField "boolean", "IS_FULL", "false"
-            buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
-            buildConfigField "String", "FLURRY_APP_ID", "\"JA7HZLWC2VU8V1AGBVQL\""
         }
         full {
             applicationId "org.nla.tarotdroid.full"
@@ -59,6 +57,7 @@ android {
             buildConfigField "boolean", "IS_FULL", "true"
             buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
             buildConfigField "String", "FLURRY_APP_ID", "\"XXX\""
+            buildConfigField "String", "BACKEND_BASE_URL", "\"${backendBaseUrlPROD}\""
         }
         fullAndDevMode {
             applicationId "org.nla.tarotdroid.full"
@@ -68,6 +67,7 @@ android {
             buildConfigField "boolean", "IS_FULL", "true"
             buildConfigField "String", "PLAYSTORE_APP_URL", "\"${playStoreAppUrl}\""
             buildConfigField "String", "FLURRY_APP_ID", "\"XXX\""
+            buildConfigField "String", "BACKEND_BASE_URL", "\"${backendBaseUrlPROD}\""
         }
     }
 }

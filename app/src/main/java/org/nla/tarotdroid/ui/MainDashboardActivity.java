@@ -179,8 +179,7 @@ public class MainDashboardActivity extends BaseActivity {
 
     private StringBuilder buildMessageBody() {
         StringBuilder contentText = new StringBuilder();
-        contentText.append("TarotDroid version: " + TarotDroidApp.get(this)
-                                                                 .getAppPackage() + "[" + BuildConfig.APP_VERSION + "]");
+        contentText.append("TarotDroid version: " + BuildConfig.APP_ID + "[" + BuildConfig.APP_VERSION + "]");
         contentText.append("\n");
         contentText.append("Android version: " + android.os.Build.VERSION.SDK_INT);
         contentText.append("\n");

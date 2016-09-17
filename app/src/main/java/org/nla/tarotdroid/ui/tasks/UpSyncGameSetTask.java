@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
@@ -35,34 +36,34 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private final boolean isCanceled;
     private Activity activity;
-	private ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
-	public UpSyncGameSetTask(final Activity activity, final ProgressDialog progressDialog) {
-		checkArgument(activity != null, "activity is null");
-		this.activity = activity;
-		this.progressDialog = progressDialog;
-		this.isCanceled = false;
+    public UpSyncGameSetTask(final Activity activity, final ProgressDialog progressDialog) {
+        checkArgument(activity != null, "activity is null");
+        this.activity = activity;
+        this.progressDialog = progressDialog;
+        this.isCanceled = false;
 
-		if (this.httpClient == null) {
+        if (this.httpClient == null) {
             this.httpClient = new OkHttpClient();
         }
         if (this.progressDialog == null) {
-			this.progressDialog = new ProgressDialog(this.activity);
-			this.progressDialog.setCanceledOnTouchOutside(false);
-		}
-	}
+            this.progressDialog = new ProgressDialog(this.activity);
+            this.progressDialog.setCanceledOnTouchOutside(false);
+        }
+    }
 
-	public void attach(Activity activity) {
-		this.activity = activity;
-	}
+    public void attach(Activity activity) {
+        this.activity = activity;
+    }
 
-	public void detach() {
-		this.activity = null;
-	}
+    public void detach() {
+        this.activity = null;
+    }
 
-	@Override
-	protected Void doInBackground(GameSet... params) {
-		try {
+    @Override
+    protected Void doInBackground(GameSet... params) {
+        try {
             // TODO Remplace l'authent' par autre chose...
             String facebookEmail = "facebookEmailProperty.toString();";
 
@@ -72,15 +73,15 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
             upSyncGameSetPlayers(params[0], "facebookEmail", "user");
             upSyncGameSet(params[0], "facebookEmail", "user");
 
-		} catch (Exception e) {
-			this.backgroundException = e;
-		}
-		return null;
-	}
+        } catch (Exception e) {
+            this.backgroundException = e;
+        }
+        return null;
+    }
 
     private boolean accountExists(String facebookEmail, String user) throws IOException {
         Request request = new Request.Builder()
-                .url("http://" + TarotDroidApp.get().getCloudDns() + "/rest/accounts")
+                .url(BuildConfig.BACKEND_BASE_URL + "/rest/accounts")
                 .addHeader("Accept-Language", "fr-FR")
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
@@ -101,7 +102,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
         RequestBody createAccountRequestBody = RequestBody.create(JSON,
                                                                   gson.toJson(newRestAccount));
         Request createAccountRequest = new Request.Builder()
-                .url("http://" + TarotDroidApp.get().getCloudDns() + "/rest/accounts")
+                .url(BuildConfig.BACKEND_BASE_URL + "/rest/accounts")
                 .addHeader("Accept-Language", "fr-FR")
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
@@ -131,7 +132,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 
             RequestBody requestBody = RequestBody.create(JSON, gson.toJson(playersToUploadRest));
             Request request = new Request.Builder()
-                    .url("http://" + TarotDroidApp.get().getCloudDns() + "/rest/players")
+                    .url(BuildConfig.BACKEND_BASE_URL + "/rest/players")
                     .addHeader("Accept-Language", "fr-FR")
                     .addHeader("Cookie",
                                MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
@@ -196,7 +197,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 
         RequestBody requestBody = RequestBody.create(JSON, gson.toJson(gameSetsToUploadRest));
         Request request = new Request.Builder()
-                .url("http://" + TarotDroidApp.get().getCloudDns() + "/rest/gamesets")
+                .url(BuildConfig.BACKEND_BASE_URL + "/rest/gamesets")
                 .addHeader("Accept-Language", "fr-FR")
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
@@ -225,19 +226,19 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 
     @Override
     protected void onPostExecute(final Void param) {
-		this.progressDialog.setOnCancelListener(null);
-		if (this.progressDialog.isShowing()) {
-			this.progressDialog.dismiss();
-		}
+        this.progressDialog.setOnCancelListener(null);
+        if (this.progressDialog.isShowing()) {
+            this.progressDialog.dismiss();
+        }
 
-		if (this.backgroundException != null) {
+        if (this.backgroundException != null) {
             // TODO Keep audit error ?
             // auditHelper.auditError(AuditHelper.ErrorTypes.upSyncGameSetTaskError, this.backgroundException, this.activity);
             return;
-		}
+        }
 
-		if (!this.isCanceled && this.callback != null) {
-			this.callback.execute(null, this.backgroundException);
-		}
-	}
+        if (!this.isCanceled && this.callback != null) {
+            this.callback.execute(null, this.backgroundException);
+        }
+    }
 }

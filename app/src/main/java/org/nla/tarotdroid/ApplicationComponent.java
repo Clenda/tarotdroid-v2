@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.BluetoothHelper;
 import org.nla.tarotdroid.helpers.LocalizationHelper;
 import org.nla.tarotdroid.ui.BaseGameActivity;
 import org.nla.tarotdroid.ui.DisplayAndRemoveGameDialogActivity;
@@ -102,6 +103,8 @@ public interface ApplicationComponent {
     AuditHelper auditHelper();
 
     LocalizationHelper localizationHelper();
+
+    BluetoothHelper bluetoothHelper();
 
     final class Initializer {
 

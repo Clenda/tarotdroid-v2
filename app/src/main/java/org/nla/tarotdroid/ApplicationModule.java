@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.BluetoothHelper;
 import org.nla.tarotdroid.helpers.LocalizationHelper;
 import org.nla.tarotdroid.ui.constants.PreferenceConstants;
 
@@ -139,4 +140,9 @@ public class ApplicationModule {
         return new LocalizationHelper(context);
     }
 
+    @Provides
+    @Singleton
+    BluetoothHelper providesBluetoothHelper(final Context context) {
+        return new BluetoothHelper(context);
+    }
 }
