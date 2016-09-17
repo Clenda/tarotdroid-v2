@@ -54,8 +54,8 @@ public class GameSetChartViewPagerActivity extends BaseActivity {
 			mActionBar.setDisplayShowHomeEnabled(true);
 		}
 		catch (Exception e) {
-			AuditHelper.auditError(AuditHelper.ErrorTypes.tabGameSetActivityError, e, this);
-		}
+            auditHelper.auditError(AuditHelper.ErrorTypes.tabGameSetActivityError, e, this);
+        }
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class GameSetChartViewPagerActivity extends BaseActivity {
 
     @Override
     protected void auditEvent() {
-        AuditHelper.auditEvent(AuditHelper.EventTypes.displayCharts);
+        auditHelper.auditEvent(AuditHelper.EventTypes.displayCharts);
     }
 
     @Override
@@ -96,14 +96,14 @@ public class GameSetChartViewPagerActivity extends BaseActivity {
 
         // instantiate fragments
         chartFragments = new ArrayList<>();
-        chartFragments.add(GameScoresEvolutionChartFragment.newInstance());
-        chartFragments.add(LeadingPlayersStatsChartFragment.newInstance());
-        chartFragments.add(BetsStatsChartFragment.newInstance());
-        chartFragments.add(FullBetsStatsChartFragment.newInstance());
-        chartFragments.add(SuccessesStatsChartFragment.newInstance());
+        chartFragments.add(GameScoresEvolutionChartFragment.newInstance(this));
+        chartFragments.add(LeadingPlayersStatsChartFragment.newInstance(this));
+        chartFragments.add(BetsStatsChartFragment.newInstance(this));
+        chartFragments.add(FullBetsStatsChartFragment.newInstance(this));
+        chartFragments.add(SuccessesStatsChartFragment.newInstance(this));
         if (getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
-            chartFragments.add(CalledPlayersStatsChartFragment.newInstance());
-            chartFragments.add(KingsStatsChartFragment.newInstance());
+            chartFragments.add(CalledPlayersStatsChartFragment.newInstance(this));
+            chartFragments.add(KingsStatsChartFragment.newInstance(this));
         }
 
         // populate adapter and pager

@@ -6,9 +6,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.ui.constants.ResultCodes;
@@ -68,7 +68,8 @@ public class RemoveGameTask extends AsyncTask<BaseGame, Void, Void> {
 				if (this.gameSet.isPersisted()) {
 					// TODO optimize...
 					for (BaseGame removedGame : removedGames) {
-						AppContext.getApplication().getDalService().deleteGame(removedGame, this.gameSet);
+						// TODO Use context
+						TarotDroidApp.get().getDalService().deleteGame(removedGame, this.gameSet);
 					}
 				}
 			}
@@ -78,7 +79,8 @@ public class RemoveGameTask extends AsyncTask<BaseGame, Void, Void> {
 
 				// delete from dal only if gameset is persisted
 				if (this.gameSet.isPersisted()) {
-					AppContext.getApplication().getDalService().deleteGame(removedGame, this.gameSet);
+					// TODO Use context
+					TarotDroidApp.get().getDalService().deleteGame(removedGame, this.gameSet);
 				}
 			}
 		}

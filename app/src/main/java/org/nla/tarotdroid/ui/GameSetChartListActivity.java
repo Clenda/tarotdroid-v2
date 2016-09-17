@@ -1,26 +1,8 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -28,6 +10,7 @@ import android.widget.Toast;
 
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
@@ -48,114 +31,117 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameSetChartListActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.OnItemClick;
 
+public class GameSetChartListActivity extends BaseActivity {
+
+	@BindView(R.id.listView) protected ListView listView;
 	private String[] menuTexts;
 	private String[] menuSummaries;
 	private IStatsChart[] statCharts;
-    private ListView listView;
+
+	@Override
+	protected int getTitleResId() {
+		return R.string.lblMainStatActivityTitle;
+	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		try {
-			this.auditEvent();
-			
-			// set action bar properties
-			this.setTitle(this.getString(R.string.lblMainStatActivityTitle));
-			
+			super.onCreate(savedInstanceState);
 			// create charts objects
-			IGameSetStatisticsComputer gameSetStatisticsComputer = GameSetStatisticsComputerFactory.GetGameSetStatisticsComputer(this.getGameSet(), "guava");
-			IStatsChart[] statChartsTarot4 = new IStatsChart[] { 
-					new GameScoresEvolutionChart(gameSetStatisticsComputer),
-					new BetsStatsChart(gameSetStatisticsComputer),
-					new FullBetsStatsChart(gameSetStatisticsComputer),
-					new SuccessesStatsChart(gameSetStatisticsComputer),
-					new LeadingPlayersStatsChart(gameSetStatisticsComputer),
+			IGameSetStatisticsComputer gameSetStatisticsComputer = GameSetStatisticsComputerFactory.GetGameSetStatisticsComputer(
+					getGameSet(),
+					"guava");
+			IStatsChart[] statChartsTarot4 = new IStatsChart[] {
+					new GameScoresEvolutionChart(gameSetStatisticsComputer, this),
+					new BetsStatsChart(gameSetStatisticsComputer, this),
+					new FullBetsStatsChart(gameSetStatisticsComputer, this),
+					new SuccessesStatsChart(gameSetStatisticsComputer, this),
+					new LeadingPlayersStatsChart(gameSetStatisticsComputer, this),
 			};
-			IStatsChart[] statChartsTarot5 = new IStatsChart[]  { 
-					new GameScoresEvolutionChart(gameSetStatisticsComputer),
-					new KingsStatsChart(gameSetStatisticsComputer),
-					new BetsStatsChart(gameSetStatisticsComputer),
-					new FullBetsStatsChart(gameSetStatisticsComputer),
-					new SuccessesStatsChart(gameSetStatisticsComputer),
-					new LeadingPlayersStatsChart(gameSetStatisticsComputer),
-					new CalledPlayersStatsChart(gameSetStatisticsComputer),
+			IStatsChart[] statChartsTarot5 = new IStatsChart[]  {
+					new GameScoresEvolutionChart(gameSetStatisticsComputer, this),
+					new KingsStatsChart(gameSetStatisticsComputer, this),
+					new BetsStatsChart(gameSetStatisticsComputer, this),
+					new FullBetsStatsChart(gameSetStatisticsComputer, this),
+					new SuccessesStatsChart(gameSetStatisticsComputer, this),
+					new LeadingPlayersStatsChart(gameSetStatisticsComputer, this),
+					new CalledPlayersStatsChart(gameSetStatisticsComputer, this),
 			};			
 			
 			// create data structures backing the list adapter
-            this.setContentView(R.layout.activity_gameset_chart_list);
-            this.listView = (ListView) findViewById(R.id.listView);
-            this.statCharts = this.getGameSet().getGameStyleType() == GameStyleType.Tarot5
-                    ? statChartsTarot5
+			statCharts = getGameSet().getGameStyleType() == GameStyleType.Tarot5
+					? statChartsTarot5
                     : statChartsTarot4;
-            this.menuTexts = new String[this.statCharts.length];
-			this.menuSummaries = new String[this.statCharts.length];
-			for (int i = 0; i < this.statCharts.length; ++i) {
-			    this.menuTexts[i] = this.statCharts[i].getName();
-			    this.menuSummaries[i] = this.statCharts[i].getDescription();
+			menuTexts = new String[statCharts.length];
+			menuSummaries = new String[statCharts.length];
+			for (int i = 0; i < statCharts.length; ++i) {
+				menuTexts[i] = statCharts[i].getName();
+				menuSummaries[i] = statCharts[i].getDescription();
 			}
 
 			// create the adapter backing the list
 			SimpleAdapter adapter = new SimpleAdapter(
-					this, 
-					this.getListValues(),
-					android.R.layout.simple_list_item_2, 
+					this,
+					getListValues(),
+					android.R.layout.simple_list_item_2,
 					new String[] {IStatsChart.NAME, IStatsChart.DESC },
 					new int[] {android.R.id.text1, android.R.id.text2 }
 			);
-            this.listView.setAdapter(adapter);
-            this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    onListItemClick(view, position, id);
-                }
-            });
-        } catch (Exception e) {
-			AuditHelper.auditError(ErrorTypes.gameSetStatisticsActivityError, e, this);
+			listView.setAdapter(adapter);
+		} catch (Exception e) {
+			auditHelper.auditError(ErrorTypes.gameSetStatisticsActivityError, e, this);
 		}
 	}
-	
+
 	@Override
-	protected void onStart() {
-		super.onStart();
-		AuditHelper.auditSession(this);
+	protected void inject() {
+		TarotDroidApp.get(this).getComponent().inject(this);
 	}
-	
+
 	private GameSet getGameSet() {
 		return TabGameSetActivity.getInstance().gameSet;
 	}
-	
-	private void auditEvent() {
-		AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetStatisticsPage);
+
+	@Override
+	protected void auditEvent() {
+		auditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetStatisticsPage);
+	}
+
+	@Override
+	protected int getLayoutResId() {
+		return R.layout.activity_gameset_chart_list;
 	}
 
 	private List<Map<String, String>> getListValues() {
 		List<Map<String, String>> values = new ArrayList<Map<String, String>>();
-		int length = this.menuTexts.length;
+		int length = menuTexts.length;
 		for (int i = 0; i < length; i++) {
 			Map<String, String> v = new HashMap<String, String>();
-			v.put(IStatsChart.NAME, this.menuTexts[i]);
-			v.put(IStatsChart.DESC, this.menuSummaries[i]);
+			v.put(IStatsChart.NAME, menuTexts[i]);
+			v.put(IStatsChart.DESC, menuSummaries[i]);
 			values.add(v);
 		}
 		return values;
 	}
 
-    protected void onListItemClick(final View v, final int position, final long id) {
-        try {
-            IStatsChart chart = this.statCharts[position];
-			AuditHelper.auditSession(this);
-			AuditHelper.auditEvent(chart.getAuditEventType());
-		    this.startActivity(chart.execute(this));
+	@OnItemClick(R.id.listView)
+	protected void onListItemClick(AdapterView<?> parent, int position) {
+		try {
+			IStatsChart chart = statCharts[position];
+			auditHelper.auditSession(this);
+			auditHelper.auditEvent(chart.getAuditEventType());
+			startActivity(chart.execute(this, uiHelper));
 		}
 		catch (Exception e) {
 			Log.v(BuildConfig.APP_LOG_TAG,
-				  "TarotDroid Exception in " + this.getClass().toString(),
+				  "TarotDroid Exception in " + getClass().toString(),
 				  e);
 			Toast.makeText(
 					this,
-					this.getString(R.string.lblErrorStatisticsComputation, e.getMessage()),
+					getString(R.string.lblErrorStatisticsComputation, e.getMessage()),
 					Toast.LENGTH_LONG
 			).show();
 		}
@@ -165,7 +151,7 @@ public class GameSetChartListActivity extends AppCompatActivity {
 	public boolean onKeyDown(final int keyCode, final KeyEvent event)  {
 	    // back button
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			this.finish();
+			finish();
 			return true;
 	    }
 

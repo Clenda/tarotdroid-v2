@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.helpers;
 
 import android.app.Activity;
@@ -43,8 +27,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.enums.BetType;
@@ -60,6 +44,7 @@ public final class UIHelper {
     private final static int DAYS_UNTIL_PROMPT = 3;
     private final static int LAUNCHES_UNTIL_PROMPT = 7;
     private static final Gson gson = new Gson();
+
 	private static DialogInterface.OnClickListener richTextDialogClickListener = new DialogInterface.OnClickListener() {
 	    @Override
 	    public void onClick(final DialogInterface dialog, final int which) {
@@ -71,8 +56,10 @@ public final class UIHelper {
 	        }
 	    }
 	};
+	private final Context context;
 
-	private UIHelper() {
+	public UIHelper(Context context) {
+		this.context = context;
 	}
 	
 	public static void setKeepScreenOn(final Activity activity, final boolean keepScreenOn) {
@@ -335,59 +322,111 @@ public final class UIHelper {
 //			// do nothing
 //		}
 //	}
-	
+
 	/**
-	 * @param gameSet
-	 * @return
+	 * Returns the photo associated to a contact, if it has one.
+	 *
+	 * @param context   The context.
+	 * @param contactId The contact id.
+	 * @return The photo associated to a contact, if it has one.
 	 */
-	public static String buildGameSetHistoryTitle(final GameSet gameSet) {
-		String formatedDate = DateFormat.getInstance().format(gameSet.getCreationTs());
-		
-		return String.format(
-				AppContext.getApplication().getResources().getString(R.string.lblGameSetTitle),
-				formatedDate
-		);	
+	public static Bitmap getContactPicture(final Context context, final String contactId) {
+		// the photo to return
+		Bitmap photoBitmap = null;
+
+		// get the contact id
+		String photoId = null;
+
+		// query for contact name and photo
+		Cursor contact = context.getContentResolver().query(
+				Contacts.CONTENT_URI,
+				new String[]{Contacts.DISPLAY_NAME, Contacts.PHOTO_ID},
+				Contacts._ID + "=?",
+				new String[]{contactId},
+				null
+		);
+
+		// get name and photo id
+		if (contact.moveToFirst()) {
+			photoId = contact.getString(contact.getColumnIndex(Contacts.PHOTO_ID));
+		}
+		contact.close();
+
+		// if possible, try to get the photo
+		if (photoId != null) {
+
+			// query for actual photo
+			Cursor photo = context.getContentResolver().query(
+					Data.CONTENT_URI,
+					new String[]{Photo.PHOTO},
+					Data._ID + "=?",
+					new String[]{photoId},
+					null
+			);
+
+			// get the photo
+			if (photo.moveToFirst()) {
+				byte[] photoBlob = photo.getBlob(photo.getColumnIndex(Photo.PHOTO));
+				photoBitmap = BitmapFactory.decodeByteArray(photoBlob, 0, photoBlob.length);
+			}
+			photo.close();
+		}
+
+		return photoBitmap;
 	}
 	
 	/**
 	 * @param gameSet
 	 * @return
 	 */
-	public static String buildGameSetHistoryDescription(final GameSet gameSet) {
+	public String buildGameSetHistoryTitle(final GameSet gameSet) {
+		String formatedDate = DateFormat.getInstance().format(gameSet.getCreationTs());
+
+		return String.format(
+				context.getResources().getString(R.string.lblGameSetTitle),
+				formatedDate
+		);
+	}
+
+	/**
+	 * @param gameSet
+	 * @return
+	 */
+	public String buildGameSetHistoryDescription(final GameSet gameSet) {
 		String playersIdsAsString = "";
 		for (Player player : gameSet.getPlayers()) {
-			playersIdsAsString += player.getName() + ", "; 
+			playersIdsAsString += player.getName() + ", ";
 		}
 		String gameCountAsString = Integer.toString(gameSet.getGameCount());
-		
+
 		String toFormat = "0".equals(gameCountAsString)
-					? AppContext.getApplication().getResources().getString(R.string.lblGameSetDescriptionSingle)
-					: AppContext.getApplication().getResources().getString(R.string.lblGameSetDescriptionPlural);
-		
+				? context.getResources().getString(R.string.lblGameSetDescriptionSingle)
+				: context.getResources().getString(R.string.lblGameSetDescriptionPlural);
+
 		return String.format(
 			toFormat,
 			gameCountAsString,
 			playersIdsAsString.substring(0, playersIdsAsString.length() - 2)
-		);	
+		);
 	}
-    
+	
 	/**
 	 * Returns a localized String of a KingType enumeration item.
 	 * @param king
 	 * @return a localized String of a KingType enumeration item.
 	 */
-	public static String getKingTranslation(final KingType king) {
+	public String getKingTranslation(final KingType king) {
 		switch(king) {
 			case Clubs:
-				return AppContext.getApplication().getResources().getString(R.string.lblClubsColor);
+				return context.getResources().getString(R.string.lblClubsColor);
 			case Diamonds:
-				return AppContext.getApplication().getResources().getString(R.string.lblDiamondsColor);
+				return context.getResources().getString(R.string.lblDiamondsColor);
 			case Hearts:
-				return AppContext.getApplication().getResources().getString(R.string.lblHeartsColor);
+				return context.getResources().getString(R.string.lblHeartsColor);
 			case Spades:
-				return AppContext.getApplication().getResources().getString(R.string.lblSpadesColor);
-			default :
-				return "unknow Colors"; 
+				return context.getResources().getString(R.string.lblSpadesColor);
+			default:
+				return "unknow Colors";
 		}
 	}
 	
@@ -396,97 +435,46 @@ public final class UIHelper {
 	 * @param bet
 	 * @return	a localized String of a BetType enumeration item.
 	 */
-	public static String getBetTranslation(final BetType bet) {
+	public String getBetTranslation(final BetType bet) {
 		switch (bet) {
-			case Prise :
-				return AppContext.getApplication().getResources().getString(R.string.priseDescription);
-			case Petite :
-				return AppContext.getApplication().getResources().getString(R.string.petiteDescription);
-			case Garde :
-				return AppContext.getApplication().getResources().getString(R.string.gardeDescription);
-			case GardeSans :
-				return AppContext.getApplication().getResources().getString(R.string.gardeSansDescription);
-			case GardeContre :
-				return AppContext.getApplication().getResources().getString(R.string.gardeContreDescription);
-			case Belge :
-				return AppContext.getApplication().getResources().getString(R.string.belgeDescription);
+			case Prise:
+				return context.getResources().getString(R.string.priseDescription);
+			case Petite:
+				return context.getResources().getString(R.string.petiteDescription);
+			case Garde:
+				return context.getResources().getString(R.string.gardeDescription);
+			case GardeSans:
+				return context.getResources().getString(R.string.gardeSansDescription);
+			case GardeContre:
+				return context.getResources().getString(R.string.gardeContreDescription);
+			case Belge:
+				return context.getResources().getString(R.string.belgeDescription);
 			default :
 				return "unknow BetType";
 		}
 	}
-	
+
 	/**
 	 * Returns a localized String of a BetType enumeration item.
 	 * @param bet
 	 * @return	a localized String of a BetType enumeration item.
 	 */
-	public static String getShortBetTranslation(final BetType bet) {
+	public String getShortBetTranslation(final BetType bet) {
 		switch (bet) {
-			case Petite :
-				return AppContext.getApplication().getResources().getString(R.string.shortPetiteDescription);
-			case Prise :
-				return AppContext.getApplication().getResources().getString(R.string.shortPriseDescription);
-			case Garde :
-				return AppContext.getApplication().getResources().getString(R.string.shortGardeDescription);
-			case GardeSans :
-				return AppContext.getApplication().getResources().getString(R.string.shortGardeSansDescription);
-			case GardeContre :
-				return AppContext.getApplication().getResources().getString(R.string.shortGardeContreDescription);
-			case Belge :
-				return AppContext.getApplication().getResources().getString(R.string.shortBelgeDescription);
+			case Petite:
+				return TarotDroidApp.get().getResources().getString(R.string.shortPetiteDescription);
+			case Prise:
+				return TarotDroidApp.get().getResources().getString(R.string.shortPriseDescription);
+			case Garde:
+				return TarotDroidApp.get().getResources().getString(R.string.shortGardeDescription);
+			case GardeSans:
+				return context.getResources().getString(R.string.shortGardeSansDescription);
+			case GardeContre:
+				return context.getResources().getString(R.string.shortGardeContreDescription);
+			case Belge:
+				return context.getResources().getString(R.string.shortBelgeDescription);
 			default :
 				return "unknow BetType";
 		}
 	}
-
-    /**
-     * Returns the photo associated to a contact, if it has one.  
-     * @param context The context.
-     * @param contactId The contact id.
-     * @return The photo associated to a contact, if it has one.
-     */
-    public static Bitmap getContactPicture(final Context context, final String contactId) {
-            // the photo to return
-        Bitmap photoBitmap = null;
-
-        // get the contact id
-        String photoId = null;
-                
-            // query for contact name and photo  
-            Cursor contact =  context.getContentResolver().query(
-					Contacts.CONTENT_URI,
-					new String[] { Contacts.DISPLAY_NAME, Contacts.PHOTO_ID },
-					Contacts._ID + "=?",
-					new String[]{ contactId },
-					null
-            );
-
-            // get name and photo id
-        if (contact.moveToFirst()) {
-                photoId = contact.getString(contact.getColumnIndex(Contacts.PHOTO_ID));
-        }
-        contact.close();
-        
-        // if possible, try to get the photo 
-        if (photoId != null) {
-
-                // query for actual photo
-                Cursor photo = context.getContentResolver().query(
-						Data.CONTENT_URI,
-						new String[] { Photo.PHOTO },
-						Data._ID + "=?",
-						new String[]{ photoId },
-						null
-                );
-                
-                // get the photo
-                if(photo.moveToFirst()) {
-                        byte[] photoBlob = photo.getBlob(photo.getColumnIndex(Photo.PHOTO));
-                        photoBitmap = BitmapFactory.decodeByteArray(photoBlob, 0, photoBlob.length);
-                }
-                photo.close();
-        }
-        
-        return photoBitmap;
-    }
 }

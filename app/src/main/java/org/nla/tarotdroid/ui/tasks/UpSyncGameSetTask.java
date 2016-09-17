@@ -5,13 +5,12 @@ import android.app.ProgressDialog;
 
 import com.google.gson.reflect.TypeToken;
 
-import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.clientmodel.RestAccount;
 import org.nla.tarotdroid.clientmodel.RestGameSet;
 import org.nla.tarotdroid.clientmodel.RestPlayer;
-import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.ui.cloud.GameSetConverter;
 import org.nla.tarotdroid.ui.cloud.PlayerConverter;
 
@@ -81,7 +80,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 
     private boolean accountExists(String facebookEmail, String user) throws IOException {
         Request request = new Request.Builder()
-                .url("http://" + AppContext.getApplication().getCloudDns() + "/rest/accounts")
+                .url("http://" + TarotDroidApp.get().getCloudDns() + "/rest/accounts")
                 .addHeader("Accept-Language", "fr-FR")
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
@@ -102,7 +101,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
         RequestBody createAccountRequestBody = RequestBody.create(JSON,
                                                                   gson.toJson(newRestAccount));
         Request createAccountRequest = new Request.Builder()
-                .url("http://" + AppContext.getApplication().getCloudDns() + "/rest/accounts")
+                .url("http://" + TarotDroidApp.get().getCloudDns() + "/rest/accounts")
                 .addHeader("Accept-Language", "fr-FR")
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
@@ -132,7 +131,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 
             RequestBody requestBody = RequestBody.create(JSON, gson.toJson(playersToUploadRest));
             Request request = new Request.Builder()
-                    .url("http://" + AppContext.getApplication().getCloudDns() + "/rest/players")
+                    .url("http://" + TarotDroidApp.get().getCloudDns() + "/rest/players")
                     .addHeader("Accept-Language", "fr-FR")
                     .addHeader("Cookie",
                                MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
@@ -167,9 +166,9 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
                     }
 
                     // update payer in db
-                    AppContext.getApplication()
-                              .getDalService()
-                              .updatePlayerAfterSync(playerToStore, newPlayerUuid);
+                    TarotDroidApp.get()
+                                 .getDalService()
+                                 .updatePlayerAfterSync(playerToStore, newPlayerUuid);
 
                     // update actual player
                     if (newPlayerUuid != null) {
@@ -197,7 +196,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 
         RequestBody requestBody = RequestBody.create(JSON, gson.toJson(gameSetsToUploadRest));
         Request request = new Request.Builder()
-                .url("http://" + AppContext.getApplication().getCloudDns() + "/rest/gamesets")
+                .url("http://" + TarotDroidApp.get().getCloudDns() + "/rest/gamesets")
                 .addHeader("Accept-Language", "fr-FR")
                 .addHeader("Cookie",
                            MessageFormat.format("EMAIL={0}; EXTID={1}; EXTSYS={2}; TOKEN={3}",
@@ -214,7 +213,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
             // update the game set with its cloud info
             gameSetToUpload.setSyncTimestamp(new Date());
             gameSetToUpload.setSyncAccount(facebookEmail);
-            AppContext.getApplication().getDalService().updateGameSetAfterSync(gameSetToUpload);
+            TarotDroidApp.get().getDalService().updateGameSetAfterSync(gameSetToUpload);
         } else {
             String content = response.body().string();
             throw new Exception(MessageFormat.format(
@@ -232,8 +231,9 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
 		}
 
 		if (this.backgroundException != null) {
-			AuditHelper.auditError(AuditHelper.ErrorTypes.upSyncGameSetTaskError, this.backgroundException, this.activity);
-			return;
+            // TODO Keep audit error ?
+            // auditHelper.auditError(AuditHelper.ErrorTypes.upSyncGameSetTaskError, this.backgroundException, this.activity);
+            return;
 		}
 
 		if (!this.isCanceled && this.callback != null) {

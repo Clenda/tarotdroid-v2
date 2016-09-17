@@ -3,12 +3,11 @@ package org.nla.tarotdroid.ui.tasks;
 import android.app.Activity;
 import android.app.ProgressDialog;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.helpers.AuditHelper;
-import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.helpers.ExcelHelper;
+import org.nla.tarotdroid.helpers.UIHelper;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -34,17 +33,19 @@ public class ExportToExcelTask extends BaseAsyncTask<GameSet, String, String, St
 	 */
 	private boolean backroundErrorHappened;
 
+	private UIHelper uiHelper;
 	/**
 	 * Constructor.
 	 * 
 	 * @param activity
 	 * @param progressDialog
 	 */
-	public ExportToExcelTask(Activity activity, ProgressDialog progressDialog) {
+	public ExportToExcelTask(Activity activity, ProgressDialog progressDialog, UIHelper uiHelper) {
 		checkArgument(activity != null, "activity is null");
 		this.activity = activity;
 		this.isCanceled = false;
 		this.progressDialog = progressDialog;
+		this.uiHelper = uiHelper;
 	}
 
 	/*
@@ -57,9 +58,14 @@ public class ExportToExcelTask extends BaseAsyncTask<GameSet, String, String, St
 		String fileName = null;
 		try {
 			if (params == null || params.length == 0 || params[0] == null) {
-				fileName = ExcelHelper.exportToExcel(this.activity, AppContext.getApplication().getDalService().getAllGameSets());
+				// TODO Use context
+				fileName = ExcelHelper.exportToExcel(this.activity,
+													 TarotDroidApp.get()
+																  .getDalService()
+																  .getAllGameSets(),
+													 uiHelper);
 			} else {
-				fileName = ExcelHelper.exportToExcel(this.activity, params[0]);
+				fileName = ExcelHelper.exportToExcel(this.activity, params[0], uiHelper);
 			}
 		} catch (Exception e) {
 			this.backroundErrorHappened = true;
@@ -81,7 +87,8 @@ public class ExportToExcelTask extends BaseAsyncTask<GameSet, String, String, St
 		}
 
 		if (this.backroundErrorHappened) {
-			AuditHelper.auditError(ErrorTypes.excelFileStorage, this.backgroundException, this.activity);
+			// TODO audit ?
+			// auditHelper.auditError(ErrorTypes.excelFileStorage, this.backgroundException, this.activity);
 			return;
 		}
 

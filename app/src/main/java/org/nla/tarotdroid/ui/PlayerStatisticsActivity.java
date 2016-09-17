@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -19,8 +18,8 @@ import android.widget.ListView;
 
 import com.google.common.base.Throwables;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.computers.IPlayerStatisticsComputer;
 import org.nla.tarotdroid.biz.computers.PlayerStatisticsComputerFactory;
@@ -36,84 +35,80 @@ import org.nla.tarotdroid.ui.controls.IconContextMenu;
 import org.nla.tarotdroid.ui.controls.TextItem;
 import org.nla.tarotdroid.ui.controls.ThumbnailItem;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
-public class PlayerStatisticsActivity extends AppCompatActivity {
-	
-	private static final List<String> READ_PERMISSIONS = Arrays.asList("email");
-	private ActionTypes actionType;
+import butterknife.BindView;
+
+public class PlayerStatisticsActivity extends BaseActivity {
+
+	@BindView(R.id.listView) protected ListView listView;
 	private Player player;
-	private IconContextMenu pictureContextMenu;
 	private PlayerStatisticsAdapter adapter;
+	private IconContextMenu pictureContextMenu;
 	private boolean pictureChanged;
-	private ListView listView;
 
 	@Override
     public void onCreate(final Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
-			setContentView(R.layout.activity_player_statistics);
-			listView = (ListView)findViewById(R.id.listView);
-
-			this.auditEvent();
-			this.pictureChanged = false;
+			pictureChanged = false;
 
 			listView.setCacheColorHint(0);
             listView.setBackgroundResource(R.drawable.img_excuse);
 
 			// make sure player name is provided
-			if (!this.getIntent().getExtras().containsKey("player")) {
+			if (!getIntent().getExtras().containsKey("player")) {
 				throw new IllegalArgumentException("player must be provided");
 			}
 			// retrieves the player
-			this.player = AppContext.getApplication().getDalService().getPlayerByName((this.getIntent().getExtras().getString("player")));
-			//this.player = (Player)this.getIntent().getExtras().get("player");
-			this.setTitle(String.format(getResources().getString(R.string.lblPlayerStatisticsActivityTitle), this.player.getName()));
+			player = TarotDroidApp.get(this)
+								  .getDalService()
+								  .getPlayerByName((getIntent().getExtras().getString("player")));
+			//player = (Player)getIntent().getExtras().get("player");
+			setTitle(String.format(getResources().getString(R.string.lblPlayerStatisticsActivityTitle),
+								   player.getName()));
 
-            this.refresh();
-        }
+			refresh();
+		}
 		catch (final Exception e) {
-			AuditHelper.auditError(ErrorTypes.playerStatisticsActivityError, e, this);
+			auditHelper.auditError(ErrorTypes.playerStatisticsActivityError, e, this);
 		}
     }
-	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
+
 	@Override
-	protected void onStart() {
-		super.onStart();
-		AuditHelper.auditSession(this);
+	protected void inject() {
+		TarotDroidApp.get(this).getComponent().inject(this);
 	}
-	
-	private void auditEvent() {
-		AuditHelper.auditEvent(AuditHelper.EventTypes.displayPlayerStatisticsPage);
+
+	@Override
+	protected void auditEvent() {
+		auditHelper.auditEvent(AuditHelper.EventTypes.displayPlayerStatisticsPage);
 	}
-	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 */
+
+	@Override
+	protected int getLayoutResId() {
+		return R.layout.activity_player_statistics;
+	}
+
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == R.id.select_picture_from_contact_action_code && resultCode == RESULT_OK) {
 			try {
-				this.player.setPictureUri(data.getData().toString());
+				player.setPictureUri(data.getData().toString());
 
-				AppContext.getApplication().getDalService().updatePlayer(this.player);
-				this.pictureChanged = true;
-				this.refresh();
+				TarotDroidApp.get(this).getDalService().updatePlayer(player);
+				pictureChanged = true;
+				refresh();
 			}
 			catch (Exception e) {
 				UIHelper.showSimpleRichTextDialog(
 						this,
 						Throwables.getStackTraceAsString(e),
-						this.getString( R.string.lblUnexpectedError, e.getMessage())
+						getString(R.string.lblUnexpectedError, e.getMessage())
 				);
-				AuditHelper.auditError(ErrorTypes.unexpectedError, e);
+				auditHelper.auditError(ErrorTypes.unexpectedError, e);
 			}
 		}
 	}
@@ -121,21 +116,21 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
     @Override
 	protected Dialog onCreateDialog(int id) {
 	    if (id == R.id.select_picture_context_menu) {
-	        return this.pictureContextMenu.createMenu(this.getString(R.string.lblSelectPictureMenuTitle));
-	    }
+			return pictureContextMenu.createMenu(getString(R.string.lblSelectPictureMenuTitle));
+		}
 	    return super.onCreateDialog(id);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
-        SubMenu menuPicture = menu.addSubMenu(this.getString(R.string.lblPictureItem));
+		SubMenu menuPicture = menu.addSubMenu(getString(R.string.lblPictureItem));
 		MenuItem miPicture = menuPicture.getItem();
 		miPicture.setIcon(R.drawable.icon_add_picture);
 		miPicture.setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT|MenuItem.SHOW_AS_ACTION_ALWAYS);
 
 
-        MenuItem miFromContacts = menuPicture.add(this.getString(R.string.lblPictureFromContactsItem));
+		MenuItem miFromContacts = menuPicture.add(getString(R.string.lblPictureFromContactsItem));
 		miFromContacts.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		miFromContacts.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
@@ -149,26 +144,26 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 			}
 		});
 
-        MenuItem miNoPicture = menuPicture.add(this.getString(R.string.lblPictureNoPictureItem));
+		MenuItem miNoPicture = menuPicture.add(getString(R.string.lblPictureNoPictureItem));
 		miNoPicture.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		miNoPicture.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
             @Override
 			public boolean onMenuItemClick(MenuItem item) {
 				try {
-					PlayerStatisticsActivity.this.player.setPictureUri(null);
+					player.setPictureUri(null);
 
-                    AppContext.getApplication().getDalService().updatePlayer(PlayerStatisticsActivity.this.player);
-					PlayerStatisticsActivity.this.pictureChanged = true;
-					PlayerStatisticsActivity.this.refresh();
+					TarotDroidApp.get().getDalService().updatePlayer(player);
+					pictureChanged = true;
+					refresh();
 				}
 				catch (DalException e) {
 					UIHelper.showSimpleRichTextDialog(
 							PlayerStatisticsActivity.this,
 							Throwables.getStackTraceAsString(e),
-							PlayerStatisticsActivity.this.getString( R.string.lblUnexpectedError, e.getMessage())
+							getString(R.string.lblUnexpectedError, e.getMessage())
 					);
-					AuditHelper.auditError(ErrorTypes.unexpectedError, e);
+					auditHelper.auditError(ErrorTypes.unexpectedError, e);
 				}
 
                 return false;
@@ -180,27 +175,22 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 	
 	private void refresh() {
 		adapter = new PlayerStatisticsAdapter(this);
-		listView.setAdapter(this.adapter);
+		listView.setAdapter(adapter);
 	}
 	
 	@Override
 	public void onBackPressed() {
-		if (this.pictureChanged) {
+		if (pictureChanged) {
 			Intent resultIntent = new Intent();
-			resultIntent.putExtra(ResultCodes.PlayerNameCode, this.player.getName());
-			resultIntent.putExtra(ResultCodes.PlayerPictureUriCode, this.player.getPictureUri());
-			this.setResult(ResultCodes.PlayerPictureChanged, resultIntent);
+			resultIntent.putExtra(ResultCodes.PlayerNameCode, player.getName());
+			resultIntent.putExtra(ResultCodes.PlayerPictureUriCode, player.getPictureUri());
+			setResult(ResultCodes.PlayerPictureChanged, resultIntent);
 		}
 		else {
-			this.setResult(ResultCodes.Irrelevant);
+			setResult(ResultCodes.Irrelevant);
 		}
-		this.finish();
+		finish();
 	}
-
-    private enum ActionTypes {
-        setMyImageAsPlayerPicture,
-        setFriendImageAsPlayerPicture
-    }
 
     private class PlayerStatisticsAdapter extends BaseAdapter {
 		
@@ -215,8 +205,13 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 		
 		public PlayerStatisticsAdapter(Context context) {
 			this.context = context;
-			
-			IPlayerStatisticsComputer playerStatisticsComputer = PlayerStatisticsComputerFactory.GetPlayerStatisticsComputer(AppContext.getApplication().getDalService().getAllGameSets(), player, "guava");
+
+			IPlayerStatisticsComputer playerStatisticsComputer = PlayerStatisticsComputerFactory.GetPlayerStatisticsComputer(
+					TarotDroidApp.get(PlayerStatisticsActivity.this)
+								 .getDalService()
+								 .getAllGameSets(),
+					player,
+					"guava");
 			
 			// gameset statistics
 			int gameSetCountForPlayer = playerStatisticsComputer.getGameSetCountForPlayer();
@@ -271,39 +266,39 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 //					context.getString(R.string.lblPlayerStatsCreateOn, player.getCreationTs().toLocaleString())
 //				);
 //			}
-			this.setPlayerPicture();
-			
-			this.playedGameSetCountItem = new TextItem(
+			setPlayerPicture();
+
+			playedGameSetCountItem = new TextItem(
 					context,
 					context.getString(R.string.lblPlayerStatsGameSets), 
 					context.getString(R.string.lblPlayerStatsGameSetsDetails, gameSetCountForPlayer, wonGameSetCountForPlayer)
 			);
-			
-			this.playedGameSetCountByGameStyleTypeItem = new TextItem(
+
+			playedGameSetCountByGameStyleTypeItem = new TextItem(
 					context,
 					context.getString(R.string.lblPlayerStatsGameSetsRepartition),
 					context.getString(R.string.lblGameSetCountByGameStyleType, gameSetTarot3CountForPlayer, gameSetTarot3SuccessesCountForPlayer, gameSetTarot4CountForPlayer, gameSetTarot4SuccessesCountForPlayer, gameSetTarot5CountForPlayer, gameSetTarot5SuccessesCountForPlayer)
-			);		
-			
-			this.playedGameCountItem = new TextItem(
+			);
+
+			playedGameCountItem = new TextItem(
 					context,
 					context.getString(R.string.lblPlayerStatsGames),
 					context.getString(R.string.lblPlayerStatsGamesDetails, gameCountForPlayer, wonGameCountForPlayer)
 			);
-			
-			this.playedGameCountByBetTypeItem = new TextItem(
+
+			playedGameCountByBetTypeItem = new TextItem(
 					context,
 					context.getString(R.string.lblPlayerStatsGamesRepartition),
 					context.getString(R.string.lblGameCountByBetTypeItem, gamePriseCountForPlayer, gamePriseSuccessesCountForPlayer, gameGardeCountForPlayer, gameGardeSuccessesCountForPlayer, gameGardeSansCountForPlayer, gameGardeSansSuccessesCountForPlayer, gameGardeContreCountForPlayer, gameGardeContreSuccessesCountForPlayer)
 			);
-		
-			this.leaderInGameCountItem = new TextItem(
+
+			leaderInGameCountItem = new TextItem(
 					context,
 					context.getString(R.string.lblPlayerStatsLeadingPlayer),
 					context.getString(R.string.lblPlayerStatsLeadingPlayerDetails, gameCountAsLeadingPlayer)
 			);
-			
-			this.calledInGameCountItem = new TextItem(
+
+			calledInGameCountItem = new TextItem(
 					context,
 					context.getString(R.string.lblPlayerStatsCalledPlayer), 
 					context.getString(R.string.lblPlayerStatsCalledPlayerDetails, gameCountAsCalledPlayer)
@@ -313,7 +308,7 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 		public void setPlayerPicture() {
 
             if (player.getPictureUri() != null) {
-                this.playerItem = new ThumbnailItem(
+				playerItem = new ThumbnailItem(
 						context,
 						Uri.parse(player.getPictureUri()),
 						R.drawable.icon_android,
@@ -324,7 +319,7 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 			
 			// no pic
 			else {
-				this.playerItem = new ThumbnailItem(
+				playerItem = new ThumbnailItem(
 					context,
 					R.drawable.icon_android,
 					player.getName(),
@@ -343,19 +338,19 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 		public Object getItem(int position) {
 			switch(position) {
 				case 0:
-					return this.playerItem;
+					return playerItem;
 				case 1:
-					return this.playedGameSetCountItem;
+					return playedGameSetCountItem;
 				case 2:
-					return this.playedGameSetCountByGameStyleTypeItem;
+					return playedGameSetCountByGameStyleTypeItem;
 				case 3:
-					return this.playedGameCountItem;
+					return playedGameCountItem;
 				case 4:
-					return this.playedGameCountByBetTypeItem;
+					return playedGameCountByBetTypeItem;
 				case 5:
-					return this.leaderInGameCountItem;
+					return leaderInGameCountItem;
 				case 6:
-					return this.calledInGameCountItem;
+					return calledInGameCountItem;
 				default:
 					return null;
 			}
@@ -370,19 +365,19 @@ public class PlayerStatisticsActivity extends AppCompatActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			switch(position) {
 				case 0:
-					return this.playerItem;
+					return playerItem;
 				case 1:
-					return this.playedGameSetCountItem;
+					return playedGameSetCountItem;
 				case 2:
-					return this.playedGameSetCountByGameStyleTypeItem;
+					return playedGameSetCountByGameStyleTypeItem;
 				case 3:
-					return this.playedGameCountItem;
+					return playedGameCountItem;
 				case 4:
-					return this.playedGameCountByBetTypeItem;
+					return playedGameCountByBetTypeItem;
 				case 5:
-					return this.leaderInGameCountItem;
+					return leaderInGameCountItem;
 				case 6:
-					return this.calledInGameCountItem;
+					return calledInGameCountItem;
 				default:
 					return null;
 			}

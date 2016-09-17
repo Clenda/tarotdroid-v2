@@ -21,7 +21,6 @@ import android.content.Intent;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.KingType;
@@ -39,12 +38,15 @@ public class KingsStatsChart extends BaseStatsChart {
 	/**
 	 * Creates a KingsStatsChart.
 	 */
-	public KingsStatsChart(final IGameSetStatisticsComputer gameSetStatisticsComputer) {
+	public KingsStatsChart(
+			final IGameSetStatisticsComputer gameSetStatisticsComputer,
+			Context context
+	) {
 		super(
-			AppContext.getApplication().getResources().getString(R.string.statNameCalledKingFrequency),
-			AppContext.getApplication().getResources().getString(R.string.statDescCalledKingFrequency),
-			gameSetStatisticsComputer,
-			AuditHelper.EventTypes.displayGameSetStatisticsKingsRepartition
+				context.getResources().getString(R.string.statNameCalledKingFrequency),
+				context.getResources().getString(R.string.statDescCalledKingFrequency),
+				gameSetStatisticsComputer,
+				AuditHelper.EventTypes.displayGameSetStatisticsKingsRepartition
 		);
 	}
 	
@@ -52,11 +54,17 @@ public class KingsStatsChart extends BaseStatsChart {
 	 * Builds a category series using the provided values.
 	 * @return the category series
 	 */
-	protected CategorySeries buildCategoryDataset(final Map<KingType, Integer> mapKingValues) {
-		CategorySeries series = new CategorySeries(AppContext.getApplication().getResources().getString(R.string.statNameCalledKingFrequency));
+	protected CategorySeries buildCategoryDataset(
+			final Map<KingType, Integer> mapKingValues,
+			Context context,
+			final UIHelper uiHelper
+	) {
+		CategorySeries series = new CategorySeries(context.getResources()
+														  .getString(R.string.statNameCalledKingFrequency));
 		for (KingType king : mapKingValues.keySet()) {
 			if (mapKingValues.get(king) != 0) {
-				series.add(UIHelper.getKingTranslation(king) + " (" + mapKingValues.get(king) + ")", mapKingValues.get(king));
+				series.add(uiHelper.getKingTranslation(king) + " (" + mapKingValues.get(king) + ")",
+						   mapKingValues.get(king));
 			}
 		}
 		return series;
@@ -67,12 +75,14 @@ public class KingsStatsChart extends BaseStatsChart {
 	 * @see org.nla.tarotdroid.ui.controls.IStatsChart#execute(android.content.Context)
 	 */
 	@Override
-	public Intent execute(final Context context) {
-	    return ChartFactory.getPieChartIntent(
-	    	context, 
-	    	this.buildCategoryDataset(this.statisticsComputer.getKingCount()), 
-	    	this.buildCategoryRenderer(this.statisticsComputer.getKingCountColors()), 
-	    	AppContext.getApplication().getResources().getString(R.string.statNameCalledKingFrequency)
-	    );
+	public Intent execute(final Context context, final UIHelper uiHelper) {
+		return ChartFactory.getPieChartIntent(
+				context,
+				this.buildCategoryDataset(this.statisticsComputer.getKingCount(),
+										  context,
+										  uiHelper),
+				this.buildCategoryRenderer(this.statisticsComputer.getKingCountColors()),
+				context.getResources().getString(R.string.statNameCalledKingFrequency)
+		);
 	}
 }

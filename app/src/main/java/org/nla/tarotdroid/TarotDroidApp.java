@@ -31,7 +31,6 @@ import org.nla.tarotdroid.ui.tasks.LoadDalTask;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -57,10 +56,9 @@ import io.fabric.sdk.android.Fabric;
 )
 public class TarotDroidApp extends MultiDexApplication {
 
+    private static TarotDroidApp app;
     private IDalService dalService;
-    private AppParams appParams;
     private BluetoothHelper bluetoothHelper;
-    private boolean appInDebugMode;
     private String versionName;
     private String packageName;
     private LoadDalTask loadDalTask;
@@ -73,10 +71,15 @@ public class TarotDroidApp extends MultiDexApplication {
         return (TarotDroidApp) context.getApplicationContext();
     }
 
+    // TODO See if we can remove this method
+    public static TarotDroidApp get() {
+        return app;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        AppContext.setApplication(this);
+        app = this;
         Fabric.with(this, new Crashlytics());
         initializeDalService();
         retrieveInfosFromManifest();
@@ -93,13 +96,13 @@ public class TarotDroidApp extends MultiDexApplication {
         return component;
     }
 
-    public UUID getUuid() {
-        return UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    }
-
-    public String getServiceName() {
-        return "TarotDroidService";
-    }
+//    public UUID getUuid() {
+//        return UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+//    }
+//
+//    public String getServiceName() {
+//        return "TarotDroidService";
+//    }
 
     public String getCloudDns() {
         if (BuildConfig.IS_IN_DEV_MODE) {
@@ -137,10 +140,8 @@ public class TarotDroidApp extends MultiDexApplication {
             versionName = packageInfo.versionName;
             packageName = packageInfo.packageName;
             ApplicationInfo appInfo = packageInfo.applicationInfo;
-            appInDebugMode = (appInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == ApplicationInfo.FLAG_DEBUGGABLE;
-
         } catch (NameNotFoundException e) {
-            appInDebugMode = false;
+
         }
     }
 
@@ -177,9 +178,9 @@ public class TarotDroidApp extends MultiDexApplication {
         }
     }
 
-    public String getAppVersion() {
-        return versionName;
-    }
+//    public String getAppVersion() {
+//        return versionName;
+//    }
 
     public String getAppPackage() {
         return packageName;

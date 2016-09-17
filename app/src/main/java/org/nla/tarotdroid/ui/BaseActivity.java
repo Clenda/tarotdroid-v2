@@ -21,6 +21,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Nullable @BindView(R.id.toolbar) protected Toolbar toolbar;
     @Inject AppParams appParams;
+    @Inject AuditHelper auditHelper;
+    @Inject UIHelper uiHelper;
 
     private boolean restarting;
 
@@ -83,12 +85,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        AuditHelper.auditSession(this);
+        auditHelper.auditSession(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        AuditHelper.stopSession(this);
+        auditHelper.stopSession(this);
     }
 }

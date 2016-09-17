@@ -16,6 +16,7 @@
 */
 package org.nla.tarotdroid.ui.charts;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,6 @@ import android.view.ViewGroup;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.ui.constants.FragmentParameters;
 
@@ -44,12 +44,13 @@ public class FullBetsStatsChartFragment extends ChartFragment {
 	/**
 	 * Creates a BetsStatsChartFragment.
 	 */
-	public static FullBetsStatsChartFragment newInstance() {
+	public static FullBetsStatsChartFragment newInstance(Context context) {
 		FullBetsStatsChartFragment fragment = new FullBetsStatsChartFragment();
 		
 		Bundle arguments = new Bundle();
-		arguments.putString(FragmentParameters.CHART_TITLE, AppContext.getApplication().getResources().getString(R.string.statNameFullBetsFrequency));
-	    fragment.setArguments(arguments);
+		arguments.putString(FragmentParameters.CHART_TITLE,
+							context.getResources().getString(R.string.statNameFullBetsFrequency));
+		fragment.setArguments(arguments);
 
 		return fragment;
 	}
@@ -59,7 +60,8 @@ public class FullBetsStatsChartFragment extends ChartFragment {
 	 * @return the category series
 	 */
 	protected CategorySeries buildCategoryDataset(final Map<String, Integer> stringValues) {
-		CategorySeries series = new CategorySeries(AppContext.getApplication().getResources().getString(R.string.statNameFullBetsFrequency));
+		CategorySeries series = new CategorySeries(getContext().getResources()
+															   .getString(R.string.statNameFullBetsFrequency));
 		for (String description : stringValues.keySet()) {
 			series.add(description + " (" + stringValues.get(description) + ")", stringValues.get(description));
 		}

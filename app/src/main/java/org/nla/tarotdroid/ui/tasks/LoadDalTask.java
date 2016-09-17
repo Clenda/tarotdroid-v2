@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 
-import org.nla.tarotdroid.AppContext;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.dal.IDalService;
 import org.nla.tarotdroid.dal.sql.SqliteDalService;
 
@@ -70,7 +70,8 @@ public class LoadDalTask extends BaseAsyncTask<Void, Void, String, String> {
 			this.progressDialog.dismiss();
 		}
 
-		AppContext.getApplication().setDalService(this.dalService);
+		// TODO Get Context
+		TarotDroidApp.get().setDalService(this.dalService);
 
 		if (this.callback != null) {
 			this.callback.execute(this.dalService.getLog(), null);

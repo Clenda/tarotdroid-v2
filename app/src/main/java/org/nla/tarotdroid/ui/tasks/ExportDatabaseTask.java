@@ -3,8 +3,7 @@ package org.nla.tarotdroid.ui.tasks;
 import android.app.Activity;
 import android.os.Environment;
 
-import org.nla.tarotdroid.AppContext;
-import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.helpers.DatabaseHelper;
 
 import java.io.File;
@@ -59,7 +58,10 @@ public class ExportDatabaseTask extends BaseAsyncTask<Void, String, String[], St
 
 		String[] contentToExport = new String[2];
 		try {
-			DatabaseHelper databaseHelper = new DatabaseHelper(this.activity, AppContext.getApplication().getSQLiteDatabase());
+			// TODO Use context
+			DatabaseHelper databaseHelper = new DatabaseHelper(this.activity,
+															   TarotDroidApp.get()
+																			.getSQLiteDatabase());
 			contentToExport[0] = databaseHelper.exportContent();
 		} catch (Exception e) {
 			contentToExport[0] = null;
@@ -101,7 +103,8 @@ public class ExportDatabaseTask extends BaseAsyncTask<Void, String, String[], St
 
 		// display error if exception occured
 		if (this.backroundErrorHappened) {
-			AuditHelper.auditError(AuditHelper.ErrorTypes.exportDatabaseError, this.backgroundException, this.activity);
+			// TODO Audit ?
+//			auditHelper.auditError(AuditHelper.ErrorTypes.exportDatabaseError, this.backgroundException, this.activity);
 			return;
 		}
 

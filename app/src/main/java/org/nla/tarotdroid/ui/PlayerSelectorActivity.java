@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
@@ -54,15 +53,14 @@ public class PlayerSelectorActivity extends BaseActivity {
     	try {
 			// create game set stub
             gameSet = new GameSet();
-//            gameSet.setGameSetParameters(AppContext.getApplication().initializeGameSetParameters());
             gameSet.setGameSetParameters(gameSetParameters);
 
             identifyGameSetType();
 
             // display warning message if more than 5 games are already stored and and app is not limited
-            boolean gameSetNotToBeStored = !BuildConfig.IS_FULL && AppContext.getApplication()
-                                                                             .getDalService()
-                                                                             .getGameSetCount() >= 5;
+            boolean gameSetNotToBeStored = !BuildConfig.IS_FULL && TarotDroidApp.get(this)
+                                                                                .getDalService()
+                                                                                .getGameSetCount() >= 5;
             if (gameSetNotToBeStored) {
 				
 				UIHelper.showSimpleRichTextDialog(
@@ -81,8 +79,8 @@ public class PlayerSelectorActivity extends BaseActivity {
             initializeViews();
         }
         catch (Exception e) {
-        	AuditHelper.auditError(AuditHelper.ErrorTypes.playerSelectorActivityError, e, this);
-		}
+            auditHelper.auditError(AuditHelper.ErrorTypes.playerSelectorActivityError, e, this);
+        }
     }
 
     @Override
@@ -134,9 +132,9 @@ public class PlayerSelectorActivity extends BaseActivity {
     			// form isnt valid
     			if (!isFormValid()) {
     				Toast.makeText(
-							PlayerSelectorActivity.this,
-							AppContext.getApplication().getResources().getString(R.string.msgValidationKo),
-							Toast.LENGTH_SHORT
+                            PlayerSelectorActivity.this,
+                            getResources().getString(R.string.msgValidationKo),
+                            Toast.LENGTH_SHORT
     						).show();
     			}
     			// form is valid
@@ -160,8 +158,8 @@ public class PlayerSelectorActivity extends BaseActivity {
 
     @Override
     protected void auditEvent() {
-        AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetCreationPage);
-	}
+        auditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetCreationPage);
+    }
 
     @Override
     protected int getLayoutResId() {
@@ -230,8 +228,8 @@ public class PlayerSelectorActivity extends BaseActivity {
     private Player getPlayerByName(String playerName) {
     	Player toReturn = null;
     	try {
-			toReturn = AppContext.getApplication().getDalService().getPlayerByName(playerName);
-		}
+            toReturn = TarotDroidApp.get(this).getDalService().getPlayerByName(playerName);
+        }
     	catch (DalException e) {
     		toReturn = null;
 		}

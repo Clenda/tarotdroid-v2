@@ -16,6 +16,7 @@
 */
 package org.nla.tarotdroid.ui.charts;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,20 +24,24 @@ import android.view.ViewGroup;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.enums.KingType;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.FragmentParameters;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 /**
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
  *
  */
 public class KingsStatsChartFragment extends ChartFragment {
-	
+
+	@Inject UIHelper uiHelper;
+
 	/**
 	 * Default constructor.
 	 */
@@ -46,12 +51,13 @@ public class KingsStatsChartFragment extends ChartFragment {
 	/**
 	 * Creates a KingsStatsChartFragment.
 	 */
-	public static KingsStatsChartFragment newInstance() {
+	public static KingsStatsChartFragment newInstance(Context context) {
 		KingsStatsChartFragment fragment = new KingsStatsChartFragment();
 		
 		Bundle arguments = new Bundle();
-		arguments.putString(FragmentParameters.CHART_TITLE, AppContext.getApplication().getResources().getString(R.string.statNameCalledKingFrequency));
-	    fragment.setArguments(arguments);
+		arguments.putString(FragmentParameters.CHART_TITLE,
+							context.getResources().getString(R.string.statNameCalledKingFrequency));
+		fragment.setArguments(arguments);
 
 		return fragment;
 	}
@@ -61,10 +67,12 @@ public class KingsStatsChartFragment extends ChartFragment {
 	 * @return the category series
 	 */
 	protected CategorySeries buildCategoryDataset(final Map<KingType, Integer> mapKingValues) {
-		CategorySeries series = new CategorySeries(AppContext.getApplication().getResources().getString(R.string.statNameCalledKingFrequency));
+		CategorySeries series = new CategorySeries(getContext().getResources()
+															   .getString(R.string.statNameCalledKingFrequency));
 		for (KingType king : mapKingValues.keySet()) {
 			if (mapKingValues.get(king) != 0) {
-				series.add(UIHelper.getKingTranslation(king) + " (" + mapKingValues.get(king) + ")", mapKingValues.get(king));
+				series.add(uiHelper.getKingTranslation(king) + " (" + mapKingValues.get(king) + ")",
+						   mapKingValues.get(king));
 			}
 		}
 		return series;
@@ -75,8 +83,8 @@ public class KingsStatsChartFragment extends ChartFragment {
 	 */
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-
-	    return ChartFactory.getPieChartView(
+		TarotDroidApp.get(getContext()).getComponent().inject(this);
+		return ChartFactory.getPieChartView(
 	    	this.getActivity(), 
 	    	this.buildCategoryDataset(this.statisticsComputer.getKingCount()), 
 	    	this.buildCategoryRenderer(this.statisticsComputer.getKingCountColors())

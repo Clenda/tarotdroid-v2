@@ -8,55 +8,36 @@ import android.util.Log;
 import com.flurry.android.FlurryAgent;
 import com.google.common.base.Throwables;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BuildConfig;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-
 public class AuditHelper {
-
-    private static final List<UserEventTypes> userEvents = newArrayList();
-
     static {
         if (!BuildConfig.IS_IN_DEV_MODE) {
             FlurryAgent.setContinueSessionMillis(180000);
         }
     }
 
-    private AuditHelper() {
-    }
-
-    public static void trackUserEvent(final UserEventTypes userEventTypes) {
-        checkArgument(userEventTypes != null, "userEventTypes is null");
-        userEvents.add(userEventTypes);
-    }
-
-    public static void auditSession(final Context context) {
+    public void auditSession(final Context context) {
         FlurryAgent.onStartSession(context, BuildConfig.FLURRY_APP_ID);
     }
 
-    public static void stopSession(final Context context) {
+    public void stopSession(final Context context) {
         FlurryAgent.onEndSession(context);
     }
 
-    public static void auditEvent(final EventTypes eventType) {
+    public void auditEvent(final EventTypes eventType) {
         auditEvent(eventType, null);
     }
 
-    public static void auditEvent(
+    public void auditEvent(
             final EventTypes eventType,
             final Map<ParameterTypes, Object> parameters
     ) {
         try {
-            Map<String, String> toSend = newHashMap();
-            toSend.put(ParameterTypes.version.toString(),
-                       AppContext.getApplication().getAppVersion());
-
+            Map<String, String> toSend = new HashMap<>();
             if (parameters != null) {
                 for (Map.Entry<ParameterTypes, Object> entry : parameters.entrySet()) {
                     try {
@@ -72,7 +53,7 @@ public class AuditHelper {
         }
     }
 
-    public static void auditError(
+    public void auditError(
             final ErrorTypes errorType,
             final Throwable exception,
             final Activity activity
@@ -87,25 +68,25 @@ public class AuditHelper {
         auditError(errorType, exceptionAsString);
     }
 
-    public static void auditErrorAsString(
-            final ErrorTypes errorType,
-            final String exceptionAsString,
-            final Activity activity
-    ) {
-        if (activity != null) {
-            UIHelper.showSimpleRichTextDialog(activity, exceptionAsString, "Unexpected error");
-        }
-        auditError(errorType, exceptionAsString);
-    }
+//    public static void auditErrorAsString(
+//            final ErrorTypes errorType,
+//            final String exceptionAsString,
+//            final Activity activity
+//    ) {
+//        if (activity != null) {
+//            UIHelper.showSimpleRichTextDialog(activity, exceptionAsString, "Unexpected error");
+//        }
+//        auditError(errorType, exceptionAsString);
+//    }
 
-    public static void auditError(final ErrorTypes errorType, final Throwable exception) {
+    public void auditError(final ErrorTypes errorType, final Throwable exception) {
         String exceptionAsString = exception == null
                 ? null
                 : Throwables.getStackTraceAsString(exception);
         auditError(errorType, exceptionAsString);
     }
 
-    public static void auditError(final ErrorTypes errorType, final String exceptionAsString) {
+    public void auditError(final ErrorTypes errorType, final String exceptionAsString) {
         try {
             ErrorTypes errorTypeToAudit = errorType;
             if (errorTypeToAudit == null) {

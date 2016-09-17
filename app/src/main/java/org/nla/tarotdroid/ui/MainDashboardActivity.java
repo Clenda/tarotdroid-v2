@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.AppParams;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
@@ -180,9 +179,8 @@ public class MainDashboardActivity extends BaseActivity {
 
     private StringBuilder buildMessageBody() {
         StringBuilder contentText = new StringBuilder();
-        contentText.append("TarotDroid version: " + AppContext.getApplication()
-                                                              .getAppPackage() + "[" + AppContext.getApplication()
-                                                                                                 .getAppVersion() + "]");
+        contentText.append("TarotDroid version: " + TarotDroidApp.get(this)
+                                                                 .getAppPackage() + "[" + BuildConfig.APP_VERSION + "]");
         contentText.append("\n");
         contentText.append("Android version: " + android.os.Build.VERSION.SDK_INT);
         contentText.append("\n");
@@ -272,7 +270,7 @@ public class MainDashboardActivity extends BaseActivity {
             super.onCreate(savedInstanceState);
             initializeViews(savedInstanceState);
         } catch (Exception e) {
-            AuditHelper.auditError(AuditHelper.ErrorTypes.mainDashBoardActivityError, e, this);
+            auditHelper.auditError(AuditHelper.ErrorTypes.mainDashBoardActivityError, e, this);
         }
     }
 
@@ -326,8 +324,7 @@ public class MainDashboardActivity extends BaseActivity {
                                                   MainDashboardActivity.this.getText(idMsgAbout)
                                                                             .toString(),
                                                   MainDashboardActivity.this.getString(R.string.titleAbout,
-                                                                                       AppContext.getApplication()
-                                                                                                 .getAppVersion()));
+                                                                                       BuildConfig.APP_VERSION));
                 return true;
             }
         });
@@ -373,7 +370,7 @@ public class MainDashboardActivity extends BaseActivity {
 
                 this.startActivity(Intent.createChooser(intent, "Envoyer l'export..."));
             } catch (Exception e) {
-                AuditHelper.auditError(AuditHelper.ErrorTypes.exportDatabaseError, e, this);
+                auditHelper.auditError(AuditHelper.ErrorTypes.exportDatabaseError, e, this);
             }
         }
     }

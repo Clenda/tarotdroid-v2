@@ -19,8 +19,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.UIConstants;
@@ -123,8 +123,8 @@ public class PlayerSelectorRow extends LinearLayout {
 	
 	private PlayerAdapter buildAdapter() {
 		List<HashMap<String,String>> friendList = new ArrayList<HashMap<String,String>>();
-		for (Player player : AppContext.getApplication().getDalService().getAllPlayers()) {
-            HashMap<String, String> hm = new HashMap<String,String>();
+		for (Player player : TarotDroidApp.get(getContext()).getDalService().getAllPlayers()) {
+			HashMap<String, String> hm = new HashMap<String,String>();
             hm.put(UIConstants.PLAYER_PICTURE_URI, player.getPictureUri());
             hm.put(UIConstants.PLAYER_NAME, player.getName());
             friendList.add(hm);

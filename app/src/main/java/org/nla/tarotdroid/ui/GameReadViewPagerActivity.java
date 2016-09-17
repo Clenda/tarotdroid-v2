@@ -60,7 +60,7 @@ public class GameReadViewPagerActivity extends BaseActivity {
             mActionBar.setDisplayShowHomeEnabled(true);
             setTitle(R.string.lblViewGameActivityTitle);
         } catch (Exception e) {
-            AuditHelper.auditError(AuditHelper.ErrorTypes.gameReadViewPagerActivityError, e, this);
+            auditHelper.auditError(AuditHelper.ErrorTypes.gameReadViewPagerActivityError, e, this);
         }
     }
 

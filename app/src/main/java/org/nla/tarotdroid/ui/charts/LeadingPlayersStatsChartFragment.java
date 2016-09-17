@@ -16,6 +16,7 @@
 */
 package org.nla.tarotdroid.ui.charts;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,6 @@ import android.view.ViewGroup;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.ui.constants.FragmentParameters;
@@ -45,12 +45,14 @@ public class LeadingPlayersStatsChartFragment extends ChartFragment {
 	/**
 	 * Creates a LeadingPlayersStatsChartFragment.
 	 */
-	public static LeadingPlayersStatsChartFragment newInstance() {
+	public static LeadingPlayersStatsChartFragment newInstance(Context context) {
 		LeadingPlayersStatsChartFragment fragment = new LeadingPlayersStatsChartFragment();
 		
 		Bundle arguments = new Bundle();
-		arguments.putString(FragmentParameters.CHART_TITLE, AppContext.getApplication().getResources().getString(R.string.statNameLeadingPlayerFrequency));
-	    fragment.setArguments(arguments);
+		arguments.putString(FragmentParameters.CHART_TITLE,
+							context.getResources()
+								   .getString(R.string.statNameLeadingPlayerFrequency));
+		fragment.setArguments(arguments);
 
 		return fragment;
 	}

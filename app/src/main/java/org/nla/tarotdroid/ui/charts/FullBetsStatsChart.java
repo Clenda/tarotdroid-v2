@@ -21,10 +21,10 @@ import android.content.Intent;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.UIHelper;
 
 import java.util.Map;
 
@@ -37,12 +37,15 @@ public class FullBetsStatsChart extends BaseStatsChart {
 	/**
 	 * Creates a KingsStatsChart.
 	 */
-	public FullBetsStatsChart(final IGameSetStatisticsComputer gameSetStatisticsComputer) {
+	public FullBetsStatsChart(
+			final IGameSetStatisticsComputer gameSetStatisticsComputer,
+			Context context
+	) {
 		super(
-			AppContext.getApplication().getResources().getString(R.string.statNameFullBetsFrequency),
-			AppContext.getApplication().getResources().getString(R.string.statDescFullBetsFrequency),
-            gameSetStatisticsComputer,
-			AuditHelper.EventTypes.displayGameSetStatisticsBetsDistribution
+				context.getResources().getString(R.string.statNameFullBetsFrequency),
+				context.getResources().getString(R.string.statDescFullBetsFrequency),
+				gameSetStatisticsComputer,
+				AuditHelper.EventTypes.displayGameSetStatisticsBetsDistribution
 		);
 	}
 	
@@ -50,8 +53,12 @@ public class FullBetsStatsChart extends BaseStatsChart {
 	 * Builds a category series using the provided values.
 	 * @return the category series
 	 */
-	protected CategorySeries buildCategoryDataset(final Map<String, Integer> stringValues) {
-		CategorySeries series = new CategorySeries(AppContext.getApplication().getResources().getString(R.string.statNameFullBetsFrequency));
+	protected CategorySeries buildCategoryDataset(
+			final Map<String, Integer> stringValues,
+			Context context
+	) {
+		CategorySeries series = new CategorySeries(context.getResources()
+														  .getString(R.string.statNameFullBetsFrequency));
 		for (String description : stringValues.keySet()) {
 			series.add(description + " (" + stringValues.get(description) + ")", stringValues.get(description));
 		}
@@ -63,12 +70,12 @@ public class FullBetsStatsChart extends BaseStatsChart {
 	 * @see org.nla.tarotdroid.ui.controls.IStatsChart#execute(android.content.Context)
 	 */
 	@Override
-	public Intent execute(final Context context) {
-	    return ChartFactory.getPieChartIntent(
-	    	context, 
-	    	this.buildCategoryDataset(this.statisticsComputer.getFullBetCount()), 
-	    	this.buildCategoryRenderer(this.statisticsComputer.getFullBetCountColors()), 
-	    	AppContext.getApplication().getResources().getString(R.string.statNameFullBetsFrequency)
-	    );
+	public Intent execute(final Context context, final UIHelper uiHelper) {
+		return ChartFactory.getPieChartIntent(
+				context,
+				this.buildCategoryDataset(this.statisticsComputer.getFullBetCount(), context),
+				this.buildCategoryRenderer(this.statisticsComputer.getFullBetCountColors()),
+				context.getResources().getString(R.string.statNameFullBetsFrequency)
+		);
 	}
 }

@@ -48,12 +48,12 @@ public class TabGameSetPreferencesActivity
 		try {
 //			// check params
 //			checkArgument(this.getIntent().getExtras().containsKey(ActivityParams.PARAM_GAMESET_ID), "Game set id must be provided");
-//			this.gameSet = AppContext.getApplication().getDalService().getGameSetById(this.getIntent().getExtras().getLong(ActivityParams.PARAM_GAMESET_ID));
+//			this.gameSet = TarotDroidApp.get(this).getDalService().getGameSetById(this.getIntent().getExtras().getLong(ActivityParams.PARAM_GAMESET_ID));
             
 //			// check params
 //			Bundle args = this.getIntent().getExtras();
 //			if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-//				this.gameSet = AppContext.getApplication().getDalService().getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
+//				this.gameSet = TarotDroidApp.get(this).getDalService().getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
 //			}
 //			else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
 //				//this.gameSet = UIHelper.deserializeGameSet(args.getString(ActivityParams.PARAM_GAMESET_SERIALIZED));
@@ -113,7 +113,7 @@ public class TabGameSetPreferencesActivity
 //			this.preferences.registerOnSharedPreferenceChangeListener(this.listener);
 		} 
         catch (Exception e) {
-        	AuditHelper.auditError(ErrorTypes.tabGameSetPreferencesActivityError, e, this);
+            auditHelper.auditError(ErrorTypes.tabGameSetPreferencesActivityError, e, this);
         }
     }
 
@@ -124,7 +124,7 @@ public class TabGameSetPreferencesActivity
 
     @Override
     protected void auditEvent() {
-        AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPreferencePage);
+        auditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPreferencePage);
     }
 
     @Override

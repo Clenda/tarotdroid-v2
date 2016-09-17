@@ -8,8 +8,13 @@ import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.StandardBaseGame;
+import org.nla.tarotdroid.helpers.UIHelper;
+
+import javax.inject.Inject;
 
 public class StandardTarotGameRow extends BaseGameRow {
+
+    @Inject UIHelper uiHelper;
 
     protected StandardTarotGameRow(
             final Context context,
@@ -34,6 +39,7 @@ public class StandardTarotGameRow extends BaseGameRow {
             final GameSet gameSet
     ) {
         this(context, dialog, null, game, weight, gameSet);
+        TarotDroidApp.get(context).getComponent().inject(this);
     }
 
     public StandardBaseGame getGame() {
@@ -46,7 +52,8 @@ public class StandardTarotGameRow extends BaseGameRow {
                 getContext(),
                 getGame().getBet().getBetType(),
                 (int) getGame().getDifferentialPoints(),
-                game.getIndex()
+                game.getIndex(),
+                uiHelper
         ));
 
         // each individual player score

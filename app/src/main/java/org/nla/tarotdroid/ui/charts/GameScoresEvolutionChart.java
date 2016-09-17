@@ -26,10 +26,10 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.UIHelper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,12 +55,15 @@ public class GameScoresEvolutionChart extends BaseStatsChart {
 	/**
 	 * Creates a GameScoresEvolutionChart.
 	 */
-	public GameScoresEvolutionChart(final IGameSetStatisticsComputer gameSetStatisticsComputer) {
+	public GameScoresEvolutionChart(
+			final IGameSetStatisticsComputer gameSetStatisticsComputer,
+			Context context
+	) {
 		super(
-			AppContext.getApplication().getResources().getString(R.string.statNameScoreEvolution),
-			AppContext.getApplication().getResources().getString(R.string.statDescScoreEvolution),
-			gameSetStatisticsComputer,
-			AuditHelper.EventTypes.displayGameSetStatisticsScoresEvolutionChart
+				context.getString(R.string.statNameScoreEvolution),
+				context.getString(R.string.statDescScoreEvolution),
+				gameSetStatisticsComputer,
+				AuditHelper.EventTypes.displayGameSetStatisticsScoresEvolutionChart
 		);
 	}
 
@@ -146,14 +149,14 @@ public class GameScoresEvolutionChart extends BaseStatsChart {
 	 * @see org.nla.tarotdroid.ui.controls.IStatsChart#execute(android.content.Context)
 	 */
 	@Override
-	public Intent execute(final Context context) {
+	public Intent execute(final Context context, final UIHelper uiHelper) {
 		List<double[]> scores = this.statisticsComputer.getScores();
 	    XYMultipleSeriesRenderer renderer = this.buildRenderer(this.statisticsComputer.getScoresColors(), this.getScoresPointStyles());
 	    this.setChartSettings(
 				renderer,
-				AppContext.getApplication().getResources().getString(R.string.statNameScoreEvolution),
-				AppContext.getApplication().getResources().getString(R.string.lblScoreEvolutionGames),
-				AppContext.getApplication().getResources().getString(R.string.lblScoreEvolutionPoints),
+				context.getString(R.string.statNameScoreEvolution),
+				context.getString(R.string.lblScoreEvolutionGames),
+				context.getString(R.string.lblScoreEvolutionPoints),
 				0,
 				this.statisticsComputer.getGameCount() + 1,
 				this.statisticsComputer.getMaxAbsoluteScore() * -1 - 100,

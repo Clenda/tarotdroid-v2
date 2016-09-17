@@ -16,6 +16,7 @@
 */
 package org.nla.tarotdroid.ui.charts;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,7 +29,6 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.ui.constants.FragmentParameters;
 
@@ -63,12 +63,13 @@ public class GameScoresEvolutionChartFragment extends ChartFragment {
 	/**
 	 * Creates a GameScoresEvolutionChartFragment.
 	 */
-	public static GameScoresEvolutionChartFragment newInstance() {
+	public static GameScoresEvolutionChartFragment newInstance(Context context) {
 		GameScoresEvolutionChartFragment fragment = new GameScoresEvolutionChartFragment();
 		
 		Bundle arguments = new Bundle();
-		arguments.putString(FragmentParameters.CHART_TITLE, AppContext.getApplication().getResources().getString(R.string.statNameScoreEvolution));
-	    fragment.setArguments(arguments);
+		arguments.putString(FragmentParameters.CHART_TITLE,
+							context.getResources().getString(R.string.statNameScoreEvolution));
+		fragment.setArguments(arguments);
 
 		return fragment;
 	}
@@ -160,8 +161,8 @@ public class GameScoresEvolutionChartFragment extends ChartFragment {
 	    this.setChartSettings(
 				renderer,
 				"",
-				AppContext.getApplication().getResources().getString(R.string.lblScoreEvolutionGames),
-				AppContext.getApplication().getResources().getString(R.string.lblScoreEvolutionPoints),
+				getContext().getResources().getString(R.string.lblScoreEvolutionGames),
+				getContext().getResources().getString(R.string.lblScoreEvolutionPoints),
 				0,
 				this.statisticsComputer.getGameCount() + 1,
 				this.statisticsComputer.getMaxAbsoluteScore() * -1 - 100,

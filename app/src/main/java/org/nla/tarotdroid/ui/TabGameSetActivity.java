@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
@@ -74,7 +73,7 @@ public class TabGameSetActivity extends BaseActivity {
     @Override
     protected void auditEvent() {
         if (this.gameSet == null) {
-            AuditHelper.auditEvent(AuditHelper.EventTypes.tabGameSetActivity_auditEvent_GameSetIsNull);
+            auditHelper.auditEvent(AuditHelper.EventTypes.tabGameSetActivity_auditEvent_GameSetIsNull);
             UIHelper.showSimpleRichTextDialog(this,
                                               this.getString(R.string.msgUnmanagedErrorGameSetLost),
                                               this.getString(R.string.titleUnmanagedErrorGameSetLost));
@@ -84,10 +83,10 @@ public class TabGameSetActivity extends BaseActivity {
             Map<ParameterTypes, Object> parameters = new HashMap<>();
             parameters.put(ParameterTypes.gameStyleType, this.gameSet.getGameStyleType());
             parameters.put(ParameterTypes.playerCount, this.gameSet.getPlayers().size());
-            AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithNewGameSetAction,
+            auditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithNewGameSetAction,
                                    parameters);
         } else {
-            AuditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithExistingGameSetAction);
+            auditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithExistingGameSetAction);
         }
     }
 
@@ -242,7 +241,7 @@ public class TabGameSetActivity extends BaseActivity {
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
         } catch (Exception e) {
-            AuditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this);
+            auditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this);
         }
     }
 
@@ -250,9 +249,9 @@ public class TabGameSetActivity extends BaseActivity {
     private void identifyGameSet() {
         Bundle args = this.getIntent().getExtras();
         if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-            gameSet = AppContext.getApplication()
-                                .getDalService()
-                                .getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
+            gameSet = TarotDroidApp.get(this)
+                                   .getDalService()
+                                   .getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
         } else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
             gameSet = (GameSet) args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
         } else {
@@ -383,7 +382,7 @@ public class TabGameSetActivity extends BaseActivity {
             super.onResume();
             invalidateOptionsMenu();
         } catch (Exception e) {
-            AuditHelper.auditError(ErrorTypes.tabGameSetActivityOnResumeError, e);
+            auditHelper.auditError(ErrorTypes.tabGameSetActivityOnResumeError, e);
             this.finish();
         }
     }
@@ -417,12 +416,10 @@ public class TabGameSetActivity extends BaseActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return AppContext.getApplication()
-                                     .getResources()
+                    return getResources()
                                      .getString(R.string.lblGamesTitle);
                 case 1:
-                    return AppContext.getApplication()
-                                     .getResources()
+                    return getResources()
                                      .getString(R.string.lblSynthesisTitle);
                 default:
                     return "Unknown[" + position + "]";

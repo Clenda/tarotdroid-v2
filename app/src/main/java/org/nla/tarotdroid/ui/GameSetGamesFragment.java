@@ -34,6 +34,7 @@ public class GameSetGamesFragment extends Fragment {
     @BindView(R.id.playersLayout) protected LinearLayout playersLayout;
     @BindView(R.id.gamesLayout) protected LinearLayout gamesLayout;
     @Inject protected AppParams appParams;
+    @Inject protected AuditHelper auditHelper;
     private View viewTabGameSet;
     private ScoresRow playerScoresRow;
     private PlayersRow playersRow;
@@ -47,22 +48,17 @@ public class GameSetGamesFragment extends Fragment {
 		return TabGameSetActivity.getInstance().gameSet;
 	}
 
-	@Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TarotDroidApp.get(getContext()).getComponent().inject(this);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         try {
+            TarotDroidApp.get(getContext()).getComponent().inject(this);
             viewTabGameSet = inflater.inflate(R.layout.tablegameset, null);
 //            playersLayout = (LinearLayout)viewTabGameSet.findViewById(R.id.playersLayout);
 //            gamesLayout = (LinearLayout) viewTabGameSet.findViewById(R.id.gamesLayout);
             playerScoresRow = new ScoresRow(getActivity(), getGameSet());
         }
         catch (Exception e) {
-            AuditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, getActivity());
+            auditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, getActivity());
         }
 
         return viewTabGameSet;

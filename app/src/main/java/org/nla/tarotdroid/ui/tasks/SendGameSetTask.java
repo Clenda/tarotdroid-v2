@@ -1,20 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
- */
-
 package org.nla.tarotdroid.ui.tasks;
 
 import android.app.Activity;
@@ -25,65 +8,26 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.UIHelper;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-/**
- * A class aimed to transfer data from client to server.
- */
 public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object> {
 
-    /**
-     * The context.
-     */
     private final Activity activity;
-
-    /**
-     * The bluetooth adapter.
-     */
     private final BluetoothAdapter bluetoothAdapter;
-
-    /**
-     * The bluetooth device.
-     */
     private final BluetoothDevice bluetoothDevice;
-    /**
-     * The game set to transfer.
-     */
     private final GameSet gameSet;
-    /**
-     * The outputstream.
-     */
     private final OutputStream outStream;
-    /**
-     * The bluetooth socket.
-     */
     private final BluetoothSocket socket;
-    /**
-     * A progress dialog shown during the game creation and storage.
-     */
     private ProgressDialog dialog;
 
-    /**
-     * Constructor.
-     *
-     * @param activity
-     * @param dialog
-     * @param gameSet
-     * @param bluetoothDevice
-     * @param bluetoothAdapter
-     * @throws IOException
-     */
     public SendGameSetTask(
             final Activity activity,
             final ProgressDialog dialog,
@@ -92,18 +36,20 @@ public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object
             final BluetoothAdapter bluetoothAdapter
     )
             throws IOException {
-        checkArgument(activity != null, "activity is null");
-        checkArgument(gameSet != null, "gameSet is null");
-        checkArgument(bluetoothDevice != null, "bluetoothDevice is null");
-        checkArgument(bluetoothAdapter != null, "bluetoothAdapter is null");
+
+        // TODO Still useful to check arguments ?
+//        checkArgument(activity != null, "activity is null");
+//        checkArgument(gameSet != null, "gameSet is null");
+//        checkArgument(bluetoothDevice != null, "bluetoothDevice is null");
+//        checkArgument(bluetoothAdapter != null, "bluetoothAdapter is null");
 
         this.activity = activity;
         this.dialog = dialog;
         this.gameSet = gameSet;
         this.bluetoothAdapter = bluetoothAdapter;
         this.bluetoothDevice = bluetoothDevice;
-        this.socket = this.bluetoothDevice.createRfcommSocketToServiceRecord(AppContext.getApplication()
-                                                                                       .getUuid());
+        this.socket = this.bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString(
+                BuildConfig.BLUETOOTH_UUID));
         this.outStream = this.socket.getOutputStream();
 
         if (this.dialog == null) {
@@ -111,11 +57,6 @@ public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.os.AsyncTask#doInBackground(Params[])
-     */
     @Override
     protected Integer doInBackground(final Void... params) {
         this.bluetoothAdapter.cancelDiscovery();
@@ -150,11 +91,6 @@ public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object
         return Integer.valueOf(nbGameSetDownloaded);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.os.AsyncTask#onCancelled()
-     */
     @Override
     protected void onCancelled() {
         super.onCancelled();
@@ -164,11 +100,6 @@ public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-     */
     @Override
     protected void onPostExecute(final Integer nbGameSets) {
         // hide busy idicator
@@ -180,12 +111,12 @@ public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object
         if (this.backgroundException != null) {
             UIHelper.showSimpleRichTextDialog(this.activity,
                                               this.activity.getString(R.string.msgBluetoothTransferProblem,
-                                                                      AppContext.getApplication()
-                                                                                .getAppVersion(),
+                                                                      BuildConfig.APP_VERSION,
                                                                       this.backgroundException.getMessage()),
                                               this.activity.getString(R.string.titleBluetoothTransferProblem));
-            AuditHelper.auditError(AuditHelper.ErrorTypes.bluetoothSendError,
-                                   this.backgroundException);
+            // TODO auditError still useful ?
+//            auditHelper.auditError(AuditHelper.ErrorTypes.bluetoothSendError,
+//                                   this.backgroundException);
         }
 
         // display toast if everything's okay
@@ -201,11 +132,6 @@ public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.os.AsyncTask#onPreExecute()
-     */
     @Override
     protected final void onPreExecute() {
         this.dialog.setMessage(this.activity.getResources()
@@ -214,11 +140,6 @@ public class SendGameSetTask extends BaseAsyncTask<Void, String, Integer, Object
         this.dialog.show();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.os.AsyncTask#onProgressUpdate(Progress[])
-     */
     @Override
     protected void onProgressUpdate(final String... messages) {
         if (messages.length > 0) {

@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
@@ -103,7 +102,7 @@ public abstract class BaseGameActivity extends BaseActivity {
                 displayGame();
             }
         } catch (Exception e) {
-            AuditHelper.auditError(AuditHelper.ErrorTypes.gameCreationActivityError, e, this);
+            auditHelper.auditError(AuditHelper.ErrorTypes.gameCreationActivityError, e, this);
         }
     }
 
@@ -461,15 +460,15 @@ public abstract class BaseGameActivity extends BaseActivity {
 
                     // update the game
                     if (isInEditMode) {
-                        AppContext.getApplication()
-                                  .getDalService()
-                                  .updateGame(game, BaseGameActivity.this.getGameSet());
+                        TarotDroidApp.get(BaseGameActivity.this)
+                                     .getDalService()
+                                     .updateGame(game, BaseGameActivity.this.getGameSet());
                     }
                     // create the game
                     else {
-                        AppContext.getApplication()
-                                  .getDalService()
-                                  .saveGame(game, BaseGameActivity.this.getGameSet());
+                        TarotDroidApp.get(BaseGameActivity.this)
+                                     .getDalService()
+                                     .saveGame(game, BaseGameActivity.this.getGameSet());
                     }
                 }
             } catch (DalException e) {
@@ -488,7 +487,7 @@ public abstract class BaseGameActivity extends BaseActivity {
 
             // display toast if error happened
             if (backgroundErrorHappened) {
-                AuditHelper.auditError(AuditHelper.ErrorTypes.persistGameTaskError,
+                auditHelper.auditError(AuditHelper.ErrorTypes.persistGameTaskError,
                                        backgroundException,
                                        BaseGameActivity.this);
             } else {

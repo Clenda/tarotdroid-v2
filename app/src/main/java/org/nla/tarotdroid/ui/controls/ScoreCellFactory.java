@@ -26,9 +26,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.enums.BetType;
 import org.nla.tarotdroid.biz.enums.KingType;
-import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.UIConstants;
 
@@ -37,12 +37,12 @@ import org.nla.tarotdroid.ui.constants.UIConstants;
  *
  */
 public final class ScoreCellFactory {
-	
-    /**
-     * Default constructor.
+
+	/**
+	 * Default constructor.
      */
-    private ScoreCellFactory() {        
-    }
+	private ScoreCellFactory() {
+	}
     
 	/**
 	 *Returns a View describing a standard game.
@@ -52,7 +52,13 @@ public final class ScoreCellFactory {
 	 * @param gameIndex
 	 * @return a View describing a standard game.
 	 */
-	protected static View buildStandardGameDescription(final Context context, final BetType bet, final int points, final int gameIndex) {
+	protected static View buildStandardGameDescription(
+			final Context context,
+			final BetType bet,
+			final int points,
+			final int gameIndex,
+			final UIHelper uiHelper
+	) {
 		TextView txtBet = new TextView(context);
 		txtBet.setGravity(Gravity.LEFT);
 		txtBet.setLayoutParams(UIConstants.TABGAMESET_LAYOUT_PARAMS);
@@ -67,7 +73,7 @@ public final class ScoreCellFactory {
 				String.format(
 						context.getResources().getString(R.string.lblStandardGameSynthesis),
 						Integer.toString(gameIndex),
-						UIHelper.getShortBetTranslation(bet),
+						uiHelper.getShortBetTranslation(bet),
 						(points >= 0 ? "+" + points : Integer.toString(points))
 				)
 		);

@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.UIHelper;
 
 /**
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
@@ -60,5 +61,5 @@ public interface IStatsChart {
 	 * @param context
 	 * @return the chart as an Intent
 	 */
-	Intent execute(Context context);
+	Intent execute(Context context, UIHelper uiHelper);
 }

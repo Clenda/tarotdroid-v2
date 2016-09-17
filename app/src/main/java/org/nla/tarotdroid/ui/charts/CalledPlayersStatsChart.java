@@ -21,11 +21,11 @@ import android.content.Intent;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.UIHelper;
 
 import java.util.Map;
 
@@ -38,12 +38,15 @@ public class CalledPlayersStatsChart extends BaseStatsChart {
 	/**
 	 * Creates a CalledPlayersStatsChart.
 	 */
-	public CalledPlayersStatsChart(final IGameSetStatisticsComputer gameSetStatisticsComputer) {
+	public CalledPlayersStatsChart(
+			final IGameSetStatisticsComputer gameSetStatisticsComputer,
+			Context context
+	) {
 		super(
-			AppContext.getApplication().getResources().getString(R.string.statNameCalledPlayersFrequency),
-			AppContext.getApplication().getResources().getString(R.string.statDescCalledPlayersFrequency),
-            gameSetStatisticsComputer,
-			AuditHelper.EventTypes.displayGameSetStatisticsCalledPlayerRepartition
+				context.getResources().getString(R.string.statNameCalledPlayersFrequency),
+				context.getResources().getString(R.string.statDescCalledPlayersFrequency),
+				gameSetStatisticsComputer,
+				AuditHelper.EventTypes.displayGameSetStatisticsCalledPlayerRepartition
 		);
 	}
 	
@@ -65,12 +68,12 @@ public class CalledPlayersStatsChart extends BaseStatsChart {
 	 * @see org.nla.tarotdroid.ui.controls.IStatsChart#execute(android.content.Context)
 	 */
 	@Override
-	public Intent execute(final Context context) {
-	    return ChartFactory.getPieChartIntent(
-	    	context, 
-	    	this.buildCategoryDataset(this.statisticsComputer.getCalledCount()), 
-	    	this.buildCategoryRenderer(this.statisticsComputer.getCalledCountColors()), 
-	    	AppContext.getApplication().getResources().getString(R.string.statNameCalledPlayersFrequency)
-	    );
+	public Intent execute(final Context context, UIHelper uiHelper) {
+		return ChartFactory.getPieChartIntent(
+				context,
+				this.buildCategoryDataset(this.statisticsComputer.getCalledCount()),
+				this.buildCategoryRenderer(this.statisticsComputer.getCalledCountColors()),
+				context.getResources().getString(R.string.statNameCalledPlayersFrequency)
+		);
 	}
 }

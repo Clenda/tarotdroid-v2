@@ -21,12 +21,12 @@ import android.content.Intent;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.Result;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.ResultType;
 import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.UIHelper;
 
 import java.util.Map;
 
@@ -39,12 +39,15 @@ public class SuccessesStatsChart extends BaseStatsChart {
 	/**
 	 * Creates a KingsStatsChart.
 	 */
-	public SuccessesStatsChart(final IGameSetStatisticsComputer gameSetStatisticsComputer) {
+	public SuccessesStatsChart(
+			final IGameSetStatisticsComputer gameSetStatisticsComputer,
+			Context context
+	) {
 		super(
-			AppContext.getApplication().getResources().getString(R.string.statNameSuccessesFrequency),
-			AppContext.getApplication().getResources().getString(R.string.statDescSuccessesFrequency),
-			gameSetStatisticsComputer,
-			AuditHelper.EventTypes.displayGameSetStatisticsResultsDistribution
+				context.getResources().getString(R.string.statNameSuccessesFrequency),
+				context.getResources().getString(R.string.statDescSuccessesFrequency),
+				gameSetStatisticsComputer,
+				AuditHelper.EventTypes.displayGameSetStatisticsResultsDistribution
 		);
 	}
 	
@@ -54,6 +57,7 @@ public class SuccessesStatsChart extends BaseStatsChart {
 	 * @return a category series using the provided values.
 	 */
 	protected CategorySeries buildCategoryDataset(final Map<ResultType, Integer> mapResultValues) {
+		// TODO Localize
 		CategorySeries series = new CategorySeries("Successes/Failures 1");
 		
 		for (ResultType result : mapResultValues.keySet()) {
@@ -67,12 +71,12 @@ public class SuccessesStatsChart extends BaseStatsChart {
 	 * @see org.nla.tarotdroid.ui.controls.IStatsChart#execute(android.content.Context)
 	 */
 	@Override
-	public Intent execute(final Context context) {
-	    return ChartFactory.getPieChartIntent(
-	    	context, 
-	    	this.buildCategoryDataset(this.statisticsComputer.getResultsCount()), 
-	    	this.buildCategoryRenderer(this.statisticsComputer.getResultsColors()), 
-	    	AppContext.getApplication().getResources().getString(R.string.statNameSuccessesFrequency)
-	    );
+	public Intent execute(final Context context, final UIHelper uiHelper) {
+		return ChartFactory.getPieChartIntent(
+				context,
+				this.buildCategoryDataset(this.statisticsComputer.getResultsCount()),
+				this.buildCategoryRenderer(this.statisticsComputer.getResultsColors()),
+				context.getResources().getString(R.string.statNameSuccessesFrequency)
+		);
 	}
 }

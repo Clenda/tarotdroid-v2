@@ -16,6 +16,7 @@
 */
 package org.nla.tarotdroid.ui.charts;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,6 @@ import android.view.ViewGroup;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.ui.constants.FragmentParameters;
@@ -45,12 +45,14 @@ public class CalledPlayersStatsChartFragment extends ChartFragment {
 	/**
 	 * Creates a CalledPlayersStatsChartFragment.
 	 */
-	public static CalledPlayersStatsChartFragment newInstance() {
+	public static CalledPlayersStatsChartFragment newInstance(Context context) {
 		CalledPlayersStatsChartFragment fragment = new CalledPlayersStatsChartFragment();
 		
 		Bundle arguments = new Bundle();
-		arguments.putString(FragmentParameters.CHART_TITLE, AppContext.getApplication().getResources().getString(R.string.statNameCalledPlayersFrequency));
-	    fragment.setArguments(arguments);
+		arguments.putString(FragmentParameters.CHART_TITLE,
+							context.getResources()
+								   .getString(R.string.statNameCalledPlayersFrequency));
+		fragment.setArguments(arguments);
 
 		return fragment;
 	}
@@ -61,6 +63,7 @@ public class CalledPlayersStatsChartFragment extends ChartFragment {
 	 * @return the category series
 	 */
 	protected CategorySeries buildCategoryDataset(final Map<Player, Integer> mapPlayerValues) {
+		// TODO Localize
 		CategorySeries series = new CategorySeries("Called players 1");
 		for (Player player : mapPlayerValues.keySet()) {
 			series.add(player.getName() + " (" + mapPlayerValues.get(player) + ")", mapPlayerValues.get(player));

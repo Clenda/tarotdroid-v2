@@ -21,9 +21,9 @@ import android.app.ProgressDialog;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -74,7 +74,8 @@ public class RemoveGameSetTask extends BaseAsyncTask<Void, Void, Void, Object> {
 	@Override
 	protected final Void doInBackground(final Void... voids) {
 		try {
-			AppContext.getApplication().getDalService().deleteGameSet(this.gameSet);
+			// TODO Use context
+			TarotDroidApp.get().getDalService().deleteGameSet(this.gameSet);
 		} catch (Exception e) {
 			this.backgroundException = e;
 			Log.v(BuildConfig.APP_LOG_TAG,

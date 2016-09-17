@@ -26,7 +26,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
@@ -62,10 +61,19 @@ import butterknife.OnItemClick;
 public class GameSetHistoryActivity extends BaseActivity {
 
     private static final Item[] allItems = {
-            new Item(AppContext.getApplication().getResources().getString(R.string.lblEditGameSet), android.R.drawable.ic_menu_edit, Item.ItemTypes.edit),
-			new Item(AppContext.getApplication().getResources().getString(R.string.lblDeleteGameSet), R.drawable.gd_action_bar_trashcan, Item.ItemTypes.remove),
-			new Item(AppContext.getApplication().getResources().getString(R.string.lblBluetoothSend), R.drawable.stat_sys_data_bluetooth, Item.ItemTypes.transferOverBluetooth),
-			new Item(AppContext.getApplication().getResources().getString(R.string.lblExcelExport), R.drawable.ic_excel, Item.ItemTypes.exportToExcel), };
+			new Item(TarotDroidApp.get().getResources().getString(R.string.lblEditGameSet),
+					 android.R.drawable.ic_menu_edit,
+					 Item.ItemTypes.edit),
+			new Item(TarotDroidApp.get().getResources().getString(R.string.lblDeleteGameSet),
+					 R.drawable.gd_action_bar_trashcan,
+					 Item.ItemTypes.remove),
+			new Item(TarotDroidApp.get().getResources().getString(R.string.lblBluetoothSend),
+					 R.drawable.stat_sys_data_bluetooth,
+					 Item.ItemTypes.transferOverBluetooth),
+			new Item(TarotDroidApp.get().getResources().getString(R.string.lblExcelExport),
+					 R.drawable.ic_excel,
+					 Item.ItemTypes.exportToExcel),
+	};
 	private static final Comparator<GameSet> gameSetCreationDateDescendingComparator = new Comparator<GameSet>() {
 
 		@Override
@@ -74,9 +82,16 @@ public class GameSetHistoryActivity extends BaseActivity {
 		}
 	};
 	private static final Item[] limitedItems = {
-			new Item(AppContext.getApplication().getResources().getString(R.string.lblEditGameSet), android.R.drawable.ic_menu_edit, Item.ItemTypes.edit),
-			new Item(AppContext.getApplication().getResources().getString(R.string.lblDeleteGameSet), R.drawable.gd_action_bar_trashcan, Item.ItemTypes.remove),
-			new Item(AppContext.getApplication().getResources().getString(R.string.lblBluetoothSend), R.drawable.stat_sys_data_bluetooth, Item.ItemTypes.transferOverBluetooth) };
+			new Item(TarotDroidApp.get().getResources().getString(R.string.lblEditGameSet),
+					 android.R.drawable.ic_menu_edit,
+					 Item.ItemTypes.edit),
+			new Item(TarotDroidApp.get().getResources().getString(R.string.lblDeleteGameSet),
+					 R.drawable.gd_action_bar_trashcan,
+					 Item.ItemTypes.remove),
+			new Item(TarotDroidApp.get().getResources().getString(R.string.lblBluetoothSend),
+					 R.drawable.stat_sys_data_bluetooth,
+					 Item.ItemTypes.transferOverBluetooth)
+	};
 	private static final String PENDING_REAUTH_KEY = "pendingReauthRequest";
 
     @BindView(R.id.listView) protected ListView listView;
@@ -131,7 +146,9 @@ public class GameSetHistoryActivity extends BaseActivity {
 
 					startActivity(Intent.createChooser(intent, getString(R.string.lblDbExportAndroidIntentTitle)));
 				} catch (Exception e) {
-					AuditHelper.auditError(ErrorTypes.exportExcelError, e, GameSetHistoryActivity.this);
+					auditHelper.auditError(ErrorTypes.exportExcelError,
+										   e,
+										   GameSetHistoryActivity.this);
 				}
 				break;
 			case DialogInterface.BUTTON_NEGATIVE:
@@ -158,7 +175,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 
     @Override
     protected void auditEvent() {
-        AuditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetHistoryPage);
+		auditHelper.auditEvent(AuditHelper.EventTypes.displayGameSetHistoryPage);
 	}
 
     @Override
@@ -169,7 +186,11 @@ public class GameSetHistoryActivity extends BaseActivity {
     private boolean isBluetoothActivated() {
         boolean isActivated = GameSetHistoryActivity.this.bluetoothHelper.isBluetoothEnabled();
 		if (!isActivated) {
-			Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getString(R.string.msgActivateBluetooth), Toast.LENGTH_SHORT).show();
+			Toast.makeText(GameSetHistoryActivity.this,
+						   TarotDroidApp.get(this)
+										.getResources()
+										.getString(R.string.msgActivateBluetooth),
+						   Toast.LENGTH_SHORT).show();
 		}
 		return isActivated;
 	}
@@ -205,7 +226,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 			this.progressDialog.setCanceledOnTouchOutside(false);
 
 			// initialize bluetooth
-			this.bluetoothHelper = AppContext.getApplication().getBluetoothHelper();
+			this.bluetoothHelper = TarotDroidApp.get(this).getBluetoothHelper();
 			this.bluetoothHelper.setActivity(this);
 
 			// set excuse as background image
@@ -220,9 +241,13 @@ public class GameSetHistoryActivity extends BaseActivity {
 			this.tempGameSet = null;
 
 			// wait for the dal to be initiated to refresh the game sets
-			if (AppContext.getApplication().getLoadDalTask().getStatus() == AsyncTask.Status.RUNNING) {
-				AppContext.getApplication().getLoadDalTask().showDialogOnActivity(this, this.getResources().getString(R.string.msgGameSetsRetrieval));
-				AppContext.getApplication().getLoadDalTask().setCallback(new IAsyncCallback<String>() {
+			if (TarotDroidApp.get(this).getLoadDalTask().getStatus() == AsyncTask.Status.RUNNING) {
+				TarotDroidApp.get(this)
+							 .getLoadDalTask()
+							 .showDialogOnActivity(this,
+												   this.getResources()
+													   .getString(R.string.msgGameSetsRetrieval));
+				TarotDroidApp.get(this).getLoadDalTask().setCallback(new IAsyncCallback<String>() {
 
 					@Override
 					public void execute(String result, Exception e) {
@@ -249,8 +274,8 @@ public class GameSetHistoryActivity extends BaseActivity {
                 }
             }
 		} catch (Exception e) {
-			AuditHelper.auditError(ErrorTypes.gameSetHistoryActivityError, e, this);
-        }
+			auditHelper.auditError(ErrorTypes.gameSetHistoryActivityError, e, this);
+		}
     }
 
     @Override
@@ -279,7 +304,7 @@ public class GameSetHistoryActivity extends BaseActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 if (isBluetoothActivated()) {
                     GameSetHistoryActivity.this.bluetoothHelper.startDiscovery();
-					AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothDiscoverDevices);
+					auditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothDiscoverDevices);
 				}
 				return true;
 			}
@@ -290,7 +315,7 @@ public class GameSetHistoryActivity extends BaseActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 if (isBluetoothActivated()) {
                     GameSetHistoryActivity.this.bluetoothHelper.setBluetoothDeviceDiscoverable();
-					AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSetDiscoverable);
+					auditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSetDiscoverable);
 				}
 				return true;
 			}
@@ -303,7 +328,9 @@ public class GameSetHistoryActivity extends BaseActivity {
                     // retrieve game count
 					int gameSetCount;
 					try {
-						gameSetCount = AppContext.getApplication().getDalService().getGameSetCount();
+						gameSetCount = TarotDroidApp.get(GameSetHistoryActivity.this)
+													.getDalService()
+													.getGameSetCount();
 					} catch (DalException de) {
 						gameSetCount = 0;
 					}
@@ -311,7 +338,9 @@ public class GameSetHistoryActivity extends BaseActivity {
 					// prevent user from downloading if game set count > 5 and
 					// limited version
                     if (!BuildConfig.IS_FULL && gameSetCount >= 5) {
-                        Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getString(R.string.msgLimitedVersionInformation), Toast.LENGTH_SHORT).show();
+						Toast.makeText(GameSetHistoryActivity.this,
+									   getResources().getString(R.string.msgLimitedVersionInformation),
+									   Toast.LENGTH_SHORT).show();
 					}
 
 					// ok for download
@@ -321,12 +350,15 @@ public class GameSetHistoryActivity extends BaseActivity {
 									GameSetHistoryActivity.this.bluetoothHelper.getBluetoothAdapter());
 							GameSetHistoryActivity.this.receiveGameSetTask.setCallback(refreshCallback);
 							GameSetHistoryActivity.this.receiveGameSetTask.execute();
-							AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothReceiveGameSet);
+							auditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothReceiveGameSet);
 						} catch (IOException ioe) {
                             Log.v(BuildConfig.APP_LOG_TAG,
                                   "TarotDroid Exception in " + this.getClass().toString(),
                                   ioe);
-                            Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getString(R.string.msgBluetoothError, ioe), Toast.LENGTH_SHORT).show();
+							Toast.makeText(GameSetHistoryActivity.this,
+										   getResources().getString(R.string.msgBluetoothError,
+																	ioe),
+										   Toast.LENGTH_SHORT).show();
 						}
 					}
 				}
@@ -338,12 +370,10 @@ public class GameSetHistoryActivity extends BaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 UIHelper.showSimpleRichTextDialog(GameSetHistoryActivity.this,
-                                                  AppContext.getApplication()
-                                                            .getResources()
-                                                            .getText(R.string.msgHelpBluetooth)
+												  getResources()
+														  .getText(R.string.msgHelpBluetooth)
                                                             .toString(),
-                                                  AppContext.getApplication()
-                                                            .getResources().getString(R.string.titleHelpBluetooth));
+												  getResources().getString(R.string.titleHelpBluetooth));
 				return true;
 			}
 		});
@@ -476,20 +506,27 @@ public class GameSetHistoryActivity extends BaseActivity {
 						AlertDialog alert = builder.create();
 						alert.show();
 					} catch (Exception e) {
-						AuditHelper.auditError(ErrorTypes.gameSetHistoryActivityError, e, GameSetHistoryActivity.this);
+						auditHelper.auditError(ErrorTypes.gameSetHistoryActivityError,
+											   e,
+											   GameSetHistoryActivity.this);
 					}
 				} else if (item.itemType == Item.ItemTypes.exportToExcel) {
 					try {
                         if (BuildConfig.IS_FULL) {
 
-							ExportToExcelTask task = new ExportToExcelTask(GameSetHistoryActivity.this, progressDialog);
+							ExportToExcelTask task = new ExportToExcelTask(GameSetHistoryActivity.this,
+																		   progressDialog,
+																		   uiHelper);
 							task.setCallback(excelExportCallback);
 							task.execute(gameSet);
 						}
 					} catch (Exception e) {
-						Toast.makeText(GameSetHistoryActivity.this, AppContext.getApplication().getResources().getText(R.string.msgGameSetExportError).toString() + e.getMessage(), Toast.LENGTH_LONG)
+						Toast.makeText(GameSetHistoryActivity.this,
+									   getResources().getText(R.string.msgGameSetExportError)
+													 .toString() + e.getMessage(),
+									   Toast.LENGTH_LONG)
 							 .show();
-						AuditHelper.auditError(ErrorTypes.excelFileStorage, e);
+						auditHelper.auditError(ErrorTypes.excelFileStorage, e);
 					}
 				} else if (item.itemType == Item.ItemTypes.edit) {
 					Intent intent = new Intent(GameSetHistoryActivity.this, TabGameSetActivity.class);
@@ -511,7 +548,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (AppContext.getApplication().getLoadDalTask().getStatus() == AsyncTask.Status.FINISHED) {
+		if (TarotDroidApp.get(this).getLoadDalTask().getStatus() == AsyncTask.Status.FINISHED) {
 			this.refresh();
         }
     }
@@ -523,7 +560,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 	}
 
 	public void refresh() {
-		List<GameSet> gameSets = AppContext.getApplication().getDalService().getAllGameSets();
+		List<GameSet> gameSets = TarotDroidApp.get(this).getDalService().getAllGameSets();
 		Collections.sort(gameSets, gameSetCreationDateDescendingComparator);
         this.listView.setAdapter(new GameSetAdapter(this, gameSets));
         this.setTitle();
@@ -531,7 +568,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 
 	private void sendGameSetOverBluetooth(final GameSet gameSet, final BluetoothDevice bluetoothDevice) {
 		try {
-			AuditHelper.auditEvent(EventTypes.actionBluetoothSendGameSet);
+			auditHelper.auditEvent(EventTypes.actionBluetoothSendGameSet);
 			this.sendGameSetTask = new SendGameSetTask(this, this.progressDialog, gameSet, bluetoothDevice, this.bluetoothHelper.getBluetoothAdapter());
 			this.sendGameSetTask.setCallback(refreshCallback);
 			this.sendGameSetTask.execute();
@@ -545,12 +582,20 @@ public class GameSetHistoryActivity extends BaseActivity {
 
     @Override
     protected void setTitle() {
-        if (AppContext.getApplication().getDalService() == null || AppContext.getApplication().getDalService().getAllGameSets().size() == 0) {
+		if (TarotDroidApp.get(this).getDalService() == null || TarotDroidApp.get(this)
+																			.getDalService()
+																			.getAllGameSets()
+																			.size() == 0) {
 			this.setTitle(this.getResources().getString(R.string.lblGameSetHistoryActivityTitleNone));
-		} else if (AppContext.getApplication().getDalService().getAllGameSets().size() == 1) {
+		} else if (TarotDroidApp.get(this).getDalService().getAllGameSets().size() == 1) {
 			this.setTitle(this.getResources().getString(R.string.lblGameSetHistoryActivityTitleSingle));
 		} else {
-			this.setTitle(this.getResources().getString(R.string.lblGameSetHistoryActivityTitlePlural, AppContext.getApplication().getDalService().getAllGameSets().size()));
+			this.setTitle(this.getResources()
+							  .getString(R.string.lblGameSetHistoryActivityTitlePlural,
+										 TarotDroidApp.get(this)
+													  .getDalService()
+													  .getAllGameSets()
+													  .size()));
 		}
 
 	}
@@ -592,8 +637,8 @@ public class GameSetHistoryActivity extends BaseActivity {
 
         @Override
         public void onClick(final DialogInterface dialog, final int which) {
-            AuditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSendGameSet);
-            GameSetHistoryActivity.this.sendGameSetOverBluetooth(this.gameSet,
+			auditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSendGameSet);
+			GameSetHistoryActivity.this.sendGameSetOverBluetooth(this.gameSet,
                                                                  GameSetHistoryActivity.this.bluetoothHelper
                                                                          .getBluetoothDevice(this.bluetoothDeviceNames[which]));
         }
@@ -626,11 +671,11 @@ public class GameSetHistoryActivity extends BaseActivity {
             }
 
             ThumbnailItem thumbnailItem = new ThumbnailItem(this.getContext(),
-                                                            drawableId,
-                                                            UIHelper.buildGameSetHistoryTitle(
-                                                                    gameSet),
-                                                            UIHelper.buildGameSetHistoryDescription(
-                                                                    gameSet));
+															drawableId,
+															uiHelper.buildGameSetHistoryTitle(
+																	gameSet),
+															uiHelper.buildGameSetHistoryDescription(
+																	gameSet));
 
             return thumbnailItem;
         }

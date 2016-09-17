@@ -5,18 +5,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.ui.constants.RequestCodes;
@@ -28,7 +26,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class PlayerListActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.OnItemClick;
+
+public class PlayerListActivity extends BaseActivity {
 
 	private final Comparator<Player> playerNameComparator = new Comparator<Player>() {
 
@@ -49,10 +50,16 @@ public class PlayerListActivity extends AppCompatActivity {
 			return player1.getName().toLowerCase().compareTo(player2.getName().toLowerCase());
 		}
 	};
-	private ListView listView;
+	@BindView((R.id.listView)) protected ListView listView;
 
-	private void auditEvent() {
-		AuditHelper.auditEvent(AuditHelper.EventTypes.displayPlayerListPage);
+	@Override
+	public void auditEvent() {
+		auditHelper.auditEvent(AuditHelper.EventTypes.displayPlayerListPage);
+	}
+
+	@Override
+	protected int getLayoutResId() {
+		return R.layout.activity_player_list;
 	}
 
 	@Override
@@ -66,30 +73,27 @@ public class PlayerListActivity extends AppCompatActivity {
 	}
 
 	@Override
+	protected int getTitleResId() {
+		return R.string.lblPlayerListActivityTitle;
+	}
+
+	@Override
 	public void onCreate(final Bundle icicle) {
 		try {
 			super.onCreate(icicle);
-			this.auditEvent();
-			setContentView(R.layout.activity_player_list);
-			listView = (ListView)findViewById(R.id.listView);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    onListItemClick(view, position, id);
-                }
-            });
 
 			// set excuse as background image
 			listView.setCacheColorHint(0);
 			listView.setBackgroundResource(R.drawable.img_excuse);
 
-			// set action bar properties
-			this.setTitle(this.getResources().getString(R.string.lblPlayerListActivityTitle));
-
 			// wait for the dal to be initiated to refresh the player list
-			if (AppContext.getApplication().getLoadDalTask().getStatus() == AsyncTask.Status.RUNNING) {
-				AppContext.getApplication().getLoadDalTask().showDialogOnActivity(this, this.getResources().getString(R.string.msgGameSetsRetrieval));
-				AppContext.getApplication().getLoadDalTask().setCallback(new IAsyncCallback<String>() {
+			if (TarotDroidApp.get(this).getLoadDalTask().getStatus() == AsyncTask.Status.RUNNING) {
+				TarotDroidApp.get(this)
+							 .getLoadDalTask()
+							 .showDialogOnActivity(this,
+												   this.getResources()
+													   .getString(R.string.msgGameSetsRetrieval));
+				TarotDroidApp.get(this).getLoadDalTask().setCallback(new IAsyncCallback<String>() {
 
 					@Override
 					public void execute(String isNull, Exception e) {
@@ -100,35 +104,35 @@ public class PlayerListActivity extends AppCompatActivity {
 			}
 			// refresh the player list
 			else {
-				this.refresh();
+				refresh();
 			}
 		} catch (Exception e) {
-			AuditHelper.auditError(AuditHelper.ErrorTypes.playerListActivityError, e, this);
+			auditHelper.auditError(AuditHelper.ErrorTypes.playerListActivityError, e, this);
 		}
 	}
 
+	@Override
+	protected void inject() {
+		TarotDroidApp.get(this).getComponent().inject(this);
+	}
+
+	@OnItemClick(R.id.listView)
 	protected void onListItemClick(View v, int position, long id) {
 		Intent intent = new Intent(this, PlayerStatisticsActivity.class);
 		intent.putExtra("player", ((Player) listView.getAdapter().getItem(position)).getName());
 		this.startActivityForResult(intent, RequestCodes.DISPLAY_PLAYER);
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		AuditHelper.auditSession(this);
-	}
-
 	private void refresh() {
 		try {
 
-			List<Player> players = AppContext.getApplication().getDalService().getAllPlayers();
+			List<Player> players = TarotDroidApp.get(this).getDalService().getAllPlayers();
 			Collections.sort(players, playerNameComparator);
 			listView.setAdapter(new PlayerAdapter(this, players));
 		} catch (final Exception e) {
 			Log.v(BuildConfig.APP_LOG_TAG, this.getClass().toString(), e);
 			Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-			AuditHelper.auditError(AuditHelper.ErrorTypes.unexpectedError, e);
+			auditHelper.auditError(AuditHelper.ErrorTypes.unexpectedError, e);
 
 		}
 	}

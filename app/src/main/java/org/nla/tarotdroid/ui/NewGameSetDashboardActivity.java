@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.ui.constants.ActivityParams;
@@ -36,19 +37,21 @@ public class NewGameSetDashboardActivity extends BaseActivity {
             initializeViews();
         }
         catch (Exception e) {
-        	AuditHelper.auditError(AuditHelper.ErrorTypes.newGameSetDashboardActivityError, e, this);
+            auditHelper.auditError(AuditHelper.ErrorTypes.newGameSetDashboardActivityError,
+                                   e,
+                                   this);
         }
     }
 
 	@Override
     protected void inject() {
-
-	}
+        TarotDroidApp.get(this).getComponent().inject(this);
+    }
 
     @Override
     protected void auditEvent() {
-        AuditHelper.auditEvent(AuditHelper.EventTypes.displayNewGameSetDashboardPage);
-	}
+        auditHelper.auditEvent(AuditHelper.EventTypes.displayNewGameSetDashboardPage);
+    }
 
     @Override
     protected int getLayoutResId() {

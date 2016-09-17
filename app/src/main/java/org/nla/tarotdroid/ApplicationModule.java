@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
+import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.PreferenceConstants;
 
 import javax.inject.Singleton;
@@ -123,5 +125,17 @@ public class ApplicationModule {
         gameSetParameters.setBelgianBaseStepPoints(preferences.getInt(PreferenceConstants.PrefBelgianStepPoints,
                                                                       100));
         return gameSetParameters;
+    }
+
+    @Provides
+    @Singleton
+    AuditHelper providesAuditHelper() {
+        return new AuditHelper();
+    }
+
+    @Provides
+    @Singleton
+    UIHelper providesUIHelper(final Context context) {
+        return new UIHelper(context);
     }
 }

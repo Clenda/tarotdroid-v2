@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import org.nla.tarotdroid.AppContext;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
@@ -20,7 +19,6 @@ import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PassedGame;
 import org.nla.tarotdroid.biz.PenaltyGame;
 import org.nla.tarotdroid.biz.StandardBaseGame;
-import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.ui.constants.ActivityParams;
 import org.nla.tarotdroid.ui.tasks.RemoveGameTask;
@@ -94,7 +92,7 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
 				    };
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(AppContext.getApplication().getResources().getString(R.string.lblGameOptionsDialogTitle));
+			builder.setTitle(getResources().getString(R.string.lblGameOptionsDialogTitle));
 			
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
 			    
@@ -123,7 +121,9 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
 			alert.show();
 		}
 		catch (Exception e) {
-			AuditHelper.auditError(ErrorTypes.displayAndRemoveGameDialogActivityCreationError, e, this);
+			auditHelper.auditError(ErrorTypes.displayAndRemoveGameDialogActivityCreationError,
+								   e,
+								   this);
 		}
 	}
 

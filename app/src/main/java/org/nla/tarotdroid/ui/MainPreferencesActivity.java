@@ -41,7 +41,7 @@ public class MainPreferencesActivity
 
 	@Override
 	protected void auditEvent() {
-		AuditHelper.auditEvent(AuditHelper.EventTypes.displayMainPreferencePage);
+		auditHelper.auditEvent(AuditHelper.EventTypes.displayMainPreferencePage);
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class MainPreferencesActivity
 //			this.preferences.registerOnSharedPreferenceChangeListener(this.listener);
 //        }
 //        catch (Exception e) {
-//        	AuditHelper.auditError(ErrorTypes.mainPreferencesActivityError, e, this);
+//        	auditHelper.auditError(ErrorTypes.mainPreferencesActivityError, e, this);
 //        }
 //    }
 //

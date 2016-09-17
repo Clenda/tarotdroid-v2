@@ -3,8 +3,7 @@ package org.nla.tarotdroid.ui.tasks;
 import android.app.Activity;
 import android.os.Environment;
 
-import org.nla.tarotdroid.AppContext;
-import org.nla.tarotdroid.helpers.AuditHelper;
+import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.helpers.DatabaseHelper;
 
 import java.io.BufferedReader;
@@ -12,38 +11,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.PrintStream;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-/**
- * An AsyncTask aimed to post a gameset on Facebook.
- */
 public class ImportDatabaseTask extends BaseAsyncTask<Void, String, String, String> {
 
-	/**
-	 * The context.
-	 */
 	private final Activity activity;
-	/**
-	 * Path of the file to import.
-	 */
 	private final String importFilePath;
-	/**
-	 * Indicates whether task was canceled;
-	 */
 	private final boolean isCanceled;
-	/**
-	 * Flag indicating whether an error occured in the background.
-	 */
 	private boolean backroundErrorHappened;
 
-	/**
-	 * Constructor using a context and a dal service container.
-	 * 
-	 * @param context
-	 */
 	public ImportDatabaseTask(final Activity activity, final String importFilePath) {
-		checkArgument(activity != null, "activity is null");
-		checkArgument(importFilePath != null, "importFileUri is null");
+		// TODO checkArgument ?
+//		checkArgument(activity != null, "activity is null");
+//		checkArgument(importFilePath != null, "importFileUri is null");
 		this.activity = activity;
 		this.isCanceled = false;
 		this.importFilePath = importFilePath;
@@ -59,7 +37,10 @@ public class ImportDatabaseTask extends BaseAsyncTask<Void, String, String, Stri
 
 		String exportFileUri = null;
 		try {
-			DatabaseHelper databaseHelper = new DatabaseHelper(this.activity, AppContext.getApplication().getSQLiteDatabase());
+			// TODO Use context
+			DatabaseHelper databaseHelper = new DatabaseHelper(this.activity,
+															   TarotDroidApp.get()
+																			.getSQLiteDatabase());
 
 			File sdcard = Environment.getExternalStorageDirectory();
 			File tarotDroidDir = new File(sdcard.getAbsolutePath(), "TarotDroid");
@@ -84,7 +65,8 @@ public class ImportDatabaseTask extends BaseAsyncTask<Void, String, String, Stri
 			reader.close();
 
 			databaseHelper.importContent(xmlContent.toString());
-			AppContext.getApplication().getDalService().initialize();
+			// TODO Use context
+			TarotDroidApp.get().getDalService().initialize();
 			exportFileUri = "imported";
 		} catch (Exception e) {
 			this.backroundErrorHappened = true;
@@ -103,7 +85,9 @@ public class ImportDatabaseTask extends BaseAsyncTask<Void, String, String, Stri
 
 		// display error if exception occured
 		if (this.backroundErrorHappened) {
-			AuditHelper.auditError(AuditHelper.ErrorTypes.importDatabaseError, this.backgroundException, this.activity);
+
+			// TODO audit ?
+			//auditHelper.auditError(AuditHelper.ErrorTypes.importDatabaseError, this.backgroundException, this.activity);
 			return;
 		}
 
