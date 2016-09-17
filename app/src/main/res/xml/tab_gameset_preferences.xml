@@ -48,61 +48,61 @@
             android:title="@string/lblIsMiseryAuthorized"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/lblComputationPrefs">
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="petitePoints"
             android:title="@string/lblPetitePoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="petiteRate"
             android:title="@string/lblPetiteRate"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="prisePoints"
             android:title="@string/lblPrisePoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="priseRate"
             android:title="@string/lblPriseRate"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="gardePoints"
             android:title="@string/lblGardePoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="gardeRate"
             android:title="@string/lblGardeRate"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="gardeSansPoints"
             android:title="@string/lblGardeSansPoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="gardeSansRate"
             android:title="@string/lblGardeSansRate"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="gardeContrePoints"
             android:title="@string/lblGardeContrePoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="gardeContreRate"
             android:title="@string/lblGardeContreRate"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="belgianStepPoints"
             android:title="@string/lblBelgianStepPoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="miseryPoints"
             android:title="@string/lblMiseryPoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="poigneePoints"
             android:title="@string/lblPoigneePoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="doublePoigneePoints"
             android:title="@string/lblDoublePoigneePoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="triplePoigneePoints"
             android:title="@string/lblTriplePoigneePoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="kidAtTheEndPoints"
             android:title="@string/lblKidAtTheEndPoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="announcedAndSucceededChelemPoints"
             android:title="@string/lblAnnouncedAndSucceededChelemPoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="announcedAndFailedChelemPoints"
             android:title="@string/lblAnnouncedAndFailedChelemPoints"/>
-        <org.nla.tarotdroid.ui.controls.EditIntegerPreference
+        <org.nla.tarotdroid.core.EditIntegerPreference
             android:key="notAnnouncedButSucceededChelemPoints"
             android:title="@string/lblNotAnnouncedButSucceededChelemPoints"/>
     </PreferenceCategory>

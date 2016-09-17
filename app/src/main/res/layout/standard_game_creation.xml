@@ -59,7 +59,7 @@
 						android:padding="5dip"
 						android:text="@string/lblDeadPlayer" />
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
                         android:id="@+id/galleryDead"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
 						android:padding="5dip"
 						android:text="@string/lblDealer"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
                         android:id="@+id/galleryDealer"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
 						android:padding="5dip"
 						android:text="@string/lblBet"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
                         android:id="@+id/galleryBet"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -174,7 +174,7 @@
 						android:padding="5dip"
 						android:text="@string/leaderPlayer"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
                         android:id="@+id/galleryLeader"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -202,7 +202,7 @@
 						android:padding="5dip"
 						android:text="@string/lblCalledColor"/>
 
-					<org.nla.tarotdroid.ui.controls.KingSelector
+					<org.nla.tarotdroid.gameset.controls.KingSelector
                         android:id="@+id/galleryKing"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -230,7 +230,7 @@
 						android:padding="5dip"
 						android:text="@string/calledPlayer"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
                         android:id="@+id/galleryCalled"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -258,7 +258,7 @@
 						android:padding="5dip"
 						android:text="@string/oudlerCount"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
                         android:id="@+id/galleryOudlers"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -450,7 +450,7 @@
 						android:padding="5dip"
 						android:text="@string/lblPoignee"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
 	                    android:id="@+id/galleryHandful"
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"
@@ -478,7 +478,7 @@
 						android:padding="5dip"
 						android:text="@string/lblDoublePoignee"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
 	                    android:id="@+id/galleryDoubleHandful"
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"
@@ -506,7 +506,7 @@
 						android:padding="5dip"
 						android:text="@string/lblTriplePoignee"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
 	                    android:id="@+id/galleryTribleHandful"
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"
@@ -534,7 +534,7 @@
 						android:padding="5dip"
 						android:text="@string/lblMisery"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
 	                    android:id="@+id/galleryMisery"
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"
@@ -562,7 +562,7 @@
 						android:padding="5dip"
 						android:text="@string/lblKidAtTheEnd"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
 	                    android:id="@+id/galleryKidAtTheEnd"
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"
@@ -590,7 +590,7 @@
 						android:padding="5dip"
 						android:text="@string/lblChelem"/>
 
-					<org.nla.tarotdroid.ui.controls.Selector
+					<org.nla.tarotdroid.gameset.controls.Selector
 	                    android:id="@+id/gallerySlam"
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"

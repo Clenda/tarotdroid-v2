@@ -16,11 +16,11 @@ import org.nla.tarotdroid.biz.Chelem;
 import org.nla.tarotdroid.biz.King;
 import org.nla.tarotdroid.biz.Result;
 import org.nla.tarotdroid.biz.Team;
-import org.nla.tarotdroid.dal.IDalService;
-import org.nla.tarotdroid.dal.sql.SqliteDalService;
-import org.nla.tarotdroid.helpers.BluetoothHelper;
-import org.nla.tarotdroid.ui.constants.PreferenceConstants;
-import org.nla.tarotdroid.ui.tasks.LoadDalTask;
+import org.nla.tarotdroid.constants.PreferenceConstants;
+import org.nla.tarotdroid.core.LoadDalTask;
+import org.nla.tarotdroid.core.dal.IDalService;
+import org.nla.tarotdroid.core.dal.sql.SqliteDalService;
+import org.nla.tarotdroid.core.helpers.BluetoothHelper;
 
 import java.util.Map;
 

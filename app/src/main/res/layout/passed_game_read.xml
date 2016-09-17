@@ -65,7 +65,7 @@
                         android:padding="5dip"
                         android:text="@string/lblDeadPlayer" />
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                         android:id="@+id/galleryDead"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                         android:padding="5dip"
                         android:text="@string/lblDealer"/>
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                         android:id="@+id/galleryDealer"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"

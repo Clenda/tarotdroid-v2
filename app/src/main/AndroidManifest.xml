@@ -19,51 +19,50 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.TarotDroid">
         <activity android:name="org.achartengine.GraphicalActivity"/>
-        <activity android:name=".ui.MainPreferencesActivity"/>
-        <activity android:name=".ui.TabGameSetPreferencesActivity"/>
+        <activity android:name=".dashboard.MainPreferencesActivity"/>
+        <activity android:name=".gameset.TabGameSetPreferencesActivity"/>
         <activity
-            android:name=".ui.TabGameSetActivity"
+            android:name=".gameset.TabGameSetActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.GameSetChartViewPagerActivity"
+            android:name=".gameset.GameSetChartViewPagerActivity"
             android:screenOrientation="landscape"/>
         <activity
-            android:name=".ui.GameSetHistoryActivity"
+            android:name=".history.GameSetHistoryActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.NewGameSetDashboardActivity"
+            android:name=".dashboard.NewGameSetDashboardActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.PlayerListActivity"
+            android:name=".players.PlayerListActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.PlayerStatisticsActivity"
+            android:name=".players.PlayerStatisticsActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.StandardGameActivity"
+            android:name=".gameset.StandardGameActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.BelgianGameActivity"
+            android:name=".gameset.BelgianGameActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.PassActivity"
+            android:name=".gameset.PassActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.PenaltyActivity"
+            android:name=".gameset.PenaltyActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.GameReadViewPagerActivity"
+            android:name=".gameset.GameReadViewPagerActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.DisplayAndRemoveGameDialogActivity"
+            android:name=".gameset.DisplayAndRemoveGameDialogActivity"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/Theme.TarotDroid.Dialog"/>
         <activity
-            android:name=".ui.PlayerSelectorActivity"
+            android:name=".dashboard.PlayerSelectorActivity"
             android:configChanges="keyboardHidden|orientation"/>
-        <activity android:name=".ui.NotificationActivity"/>
         <activity
-            android:name=".ui.MainDashboardActivity"
+            android:name=".dashboard.MainDashboardActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name">
             <intent-filter>

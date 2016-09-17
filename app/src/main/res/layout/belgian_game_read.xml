@@ -64,7 +64,7 @@
                         android:padding="5dip"
                         android:text="@string/lblDeadPlayer" />
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                          
                         android:id="@+id/galleryDead"
                         android:layout_width="fill_parent"
@@ -94,7 +94,7 @@
                         android:padding="5dip"
                         android:text="@string/lblDealer"/>
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                          
                         android:id="@+id/galleryDealer"
                         android:layout_width="fill_parent"
@@ -154,7 +154,7 @@
                         android:padding="5dip"
                         android:text="@string/first"/>
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                          
                         android:id="@+id/galleryFirst"
                         android:layout_width="fill_parent"
@@ -183,7 +183,7 @@
                         android:padding="5dip"
                         android:text="@string/second"/>
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                          
                         android:id="@+id/gallerySecond"
                         android:layout_width="fill_parent"
@@ -212,7 +212,7 @@
                         android:padding="5dip"
                         android:text="@string/third"/>
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                          
                         android:id="@+id/galleryThird"
                         android:layout_width="fill_parent"
@@ -241,7 +241,7 @@
                         android:padding="5dip"
                         android:text="@string/fourth"/>
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                          
                         android:id="@+id/galleryFourth"
                         android:layout_width="fill_parent"
@@ -270,7 +270,7 @@
                         android:padding="5dip"
                         android:text="@string/fifth"/>
 
-                    <org.nla.tarotdroid.ui.controls.Selector
+                    <org.nla.tarotdroid.gameset.controls.Selector
                          
                         android:id="@+id/galleryFifth"
                         android:layout_width="fill_parent"

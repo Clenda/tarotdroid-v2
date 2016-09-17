@@ -6,10 +6,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
-import org.nla.tarotdroid.helpers.AuditHelper;
-import org.nla.tarotdroid.helpers.BluetoothHelper;
-import org.nla.tarotdroid.helpers.LocalizationHelper;
-import org.nla.tarotdroid.ui.constants.PreferenceConstants;
+import org.nla.tarotdroid.constants.PreferenceConstants;
+import org.nla.tarotdroid.core.AppParams;
+import org.nla.tarotdroid.core.helpers.AuditHelper;
+import org.nla.tarotdroid.core.helpers.BluetoothHelper;
+import org.nla.tarotdroid.core.helpers.LocalizationHelper;
 
 import javax.inject.Singleton;
 
