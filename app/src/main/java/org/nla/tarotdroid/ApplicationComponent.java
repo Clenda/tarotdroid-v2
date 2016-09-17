@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.LocalizationHelper;
-import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.BaseGameActivity;
 import org.nla.tarotdroid.ui.DisplayAndRemoveGameDialogActivity;
 import org.nla.tarotdroid.ui.GameReadViewPagerActivity;
@@ -86,8 +85,6 @@ public interface ApplicationComponent {
 
     void inject(NewGameSetDashboardActivity newGameSetDashboardActivity);
 
-    void inject(GameSetChartListActivity gameSetChartListActivity);
-
     void inject(KingsStatsChartFragment kingsStatsChartFragment);
 
     void inject(BetsStatsChartFragment betsStatsChartFragment);
@@ -103,8 +100,6 @@ public interface ApplicationComponent {
     AppParams appParams();
 
     AuditHelper auditHelper();
-
-    UIHelper uIHelper();
 
     LocalizationHelper localizationHelper();
 

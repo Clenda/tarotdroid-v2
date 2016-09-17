@@ -23,7 +23,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Nullable @BindView(R.id.toolbar) protected Toolbar toolbar;
     @Inject AppParams appParams;
     @Inject AuditHelper auditHelper;
-    @Inject UIHelper uiHelper;
     @Inject LocalizationHelper localizationHelper;
 
     private boolean restarting;

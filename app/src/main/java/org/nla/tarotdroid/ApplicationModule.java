@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.helpers.AuditHelper;
 import org.nla.tarotdroid.helpers.LocalizationHelper;
-import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.constants.PreferenceConstants;
 
 import javax.inject.Singleton;
@@ -132,12 +131,6 @@ public class ApplicationModule {
     @Singleton
     AuditHelper providesAuditHelper() {
         return new AuditHelper();
-    }
-
-    @Provides
-    @Singleton
-    UIHelper providesUIHelper(final Context context) {
-        return new UIHelper(context);
     }
 
     @Provides

@@ -49,12 +49,6 @@ public final class UIHelper {
 	        }
 	    }
 	};
-	private final Context context;
-
-	public UIHelper(Context context) {
-		this.context = context;
-	}
-	
 	public static void setKeepScreenOn(final Activity activity, final boolean keepScreenOn) {
 		if (keepScreenOn) {
 			activity.getWindow().addFlags(
