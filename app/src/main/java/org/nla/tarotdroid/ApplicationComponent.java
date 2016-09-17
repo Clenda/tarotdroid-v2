@@ -11,7 +11,6 @@ import org.nla.tarotdroid.helpers.UIHelper;
 import org.nla.tarotdroid.ui.BaseGameActivity;
 import org.nla.tarotdroid.ui.DisplayAndRemoveGameDialogActivity;
 import org.nla.tarotdroid.ui.GameReadViewPagerActivity;
-import org.nla.tarotdroid.ui.GameSetChartListActivity;
 import org.nla.tarotdroid.ui.GameSetChartViewPagerActivity;
 import org.nla.tarotdroid.ui.GameSetGamesFragment;
 import org.nla.tarotdroid.ui.GameSetHistoryActivity;

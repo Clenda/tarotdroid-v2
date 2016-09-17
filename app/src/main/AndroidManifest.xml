@@ -25,9 +25,6 @@
             android:name=".ui.TabGameSetActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
-            android:name=".ui.GameSetChartListActivity"
-            android:configChanges="keyboardHidden|orientation"/>
-        <activity
             android:name=".ui.GameSetChartViewPagerActivity"
             android:screenOrientation="landscape"/>
         <activity

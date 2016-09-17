@@ -1,19 +1,3 @@
-/*
-	This file is part of the Android application TarotDroid.
- 	
-	TarotDroid is free software: you can redistribute it and/or modify
- 	it under the terms of the GNU General Public License as published by
- 	the Free Software Foundation, either version 3 of the License, or
- 	(at your option) any later version.
- 	
- 	TarotDroid is distributed in the hope that it will be useful,
- 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- 	GNU General Public License for more details.
- 	
- 	You should have received a copy of the GNU General Public License
- 	along with TarotDroid. If not, see <http://www.gnu.org/licenses/>.
-*/
 package org.nla.tarotdroid.ui.charts;
 
 import android.content.Context;
@@ -30,68 +14,46 @@ import org.nla.tarotdroid.ui.constants.FragmentParameters;
 
 import java.util.Map;
 
-/**
- * @author Nicolas LAURENT daffycricket<a>yahoo.fr
- *
- */
 public class CalledPlayersStatsChartFragment extends ChartFragment {
-	
-	/**
-	 * Default constructor.
-	 */
-	public CalledPlayersStatsChartFragment() {
-	}
 
-	/**
-	 * Creates a CalledPlayersStatsChartFragment.
-	 */
-	public static CalledPlayersStatsChartFragment newInstance(Context context) {
-		CalledPlayersStatsChartFragment fragment = new CalledPlayersStatsChartFragment();
-		
-		Bundle arguments = new Bundle();
-		arguments.putString(FragmentParameters.CHART_TITLE,
-							context.getResources()
-								   .getString(R.string.statNameCalledPlayersFrequency));
-		fragment.setArguments(arguments);
+    public static CalledPlayersStatsChartFragment newInstance(Context context) {
+        CalledPlayersStatsChartFragment fragment = new CalledPlayersStatsChartFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString(FragmentParameters.CHART_TITLE,
+                            context.getResources()
+                                   .getString(R.string.statNameCalledPlayersFrequency));
+        fragment.setArguments(arguments);
+        return fragment;
+    }
 
-		return fragment;
-	}
-	
-	/**
-	 * Builds a category series using the provided values.
-	 * @param mapPlayerValues
-	 * @return the category series
-	 */
-	protected CategorySeries buildCategoryDataset(final Map<Player, Integer> mapPlayerValues) {
-		// TODO Localize
-		CategorySeries series = new CategorySeries("Called players 1");
-		for (Player player : mapPlayerValues.keySet()) {
-			series.add(player.getName() + " (" + mapPlayerValues.get(player) + ")", mapPlayerValues.get(player));
-		}
-		return series;
-	}
+    protected CategorySeries buildCategoryDataset(final Map<Player, Integer> mapPlayerValues) {
+        // TODO Localize
+        CategorySeries series = new CategorySeries("Called players 1");
+        for (Player player : mapPlayerValues.keySet()) {
+            series.add(player.getName() + " (" + mapPlayerValues.get(player) + ")",
+                       mapPlayerValues.get(player));
+        }
+        return series;
+    }
 
-	
-	/* (non-Javadoc)
-	 * @see org.nla.tarotdroid.ui.ChartFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-	 */
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		
-	    return ChartFactory.getPieChartView(
-	    	this.getActivity(), 
-	    	this.buildCategoryDataset(this.statisticsComputer.getCalledCount()), 
-	    	this.buildCategoryRenderer(this.statisticsComputer.getCalledCountColors())
-	    );
-	}
-	
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onSaveInstanceState(android.os.Bundle)
-	 */
-	@Override
+    @Override
+    public View onCreateView(
+            final LayoutInflater inflater,
+            final ViewGroup container,
+            final Bundle savedInstanceState
+    ) {
+
+        return ChartFactory.getPieChartView(
+                this.getActivity(),
+                this.buildCategoryDataset(this.statisticsComputer.getCalledCount()),
+                this.buildCategoryRenderer(this.statisticsComputer.getCalledCountColors())
+        );
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
-    	// HACK found on http://code.google.com/p/android/issues/detail?id=19917 to prevent error "Unable to pause activity" (described on web site) 
-    	outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
-    	super.onSaveInstanceState(outState);
+        // HACK found on http://code.google.com/p/android/issues/detail?id=19917 to prevent error "Unable to pause activity" (described on web site)
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
     }
 }

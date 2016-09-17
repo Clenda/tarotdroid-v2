@@ -17,9 +17,6 @@ import java.util.Map;
 
 public class SuccessesStatsChartFragment extends ChartFragment {
 
-	public SuccessesStatsChartFragment() {
-	}
-
 	public static SuccessesStatsChartFragment newInstance(Context context) {
 		SuccessesStatsChartFragment fragment = new SuccessesStatsChartFragment();
 		
@@ -42,22 +39,12 @@ public class SuccessesStatsChartFragment extends ChartFragment {
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-
 	    return ChartFactory.getPieChartView(
-	    	this.getActivity(), 
-	    	this.buildCategoryDataset(this.statisticsComputer.getResultsCount()), 
-	    	this.buildCategoryRenderer(this.statisticsComputer.getResultsColors())
-	    );
+				getActivity(),
+				buildCategoryDataset(statisticsComputer.getResultsCount()),
+				buildCategoryRenderer(statisticsComputer.getResultsColors())
+		);
 	}
-
-	// TODO Implement ?
-//	@Override
-//	public void onViewCreated(
-//			View view, @Nullable Bundle savedInstanceState
-//	) {
-//		super.onViewCreated(view, savedInstanceState);
-//		TarotDroidApp.get(getContext()).getComponent().inject(this);
-//	}
 
 	@Override
     public void onSaveInstanceState(Bundle outState) {

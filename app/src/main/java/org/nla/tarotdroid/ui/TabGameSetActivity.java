@@ -344,16 +344,16 @@ public class TabGameSetActivity extends BaseActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = null;
 
-                // running android version >= ICS, show new ui
-                if (android.os.Build.VERSION.SDK_INT >= 14) {
+//                // running android version >= ICS, show new ui
+//                if (android.os.Build.VERSION.SDK_INT >= 14) {
                     intent = new Intent(TabGameSetActivity.this,
                                         GameSetChartViewPagerActivity.class);
-                }
-                // prevent problem of incorrect pie charts for versions < ICS =>
-                // use former activity
-                else {
-                    intent = new Intent(TabGameSetActivity.this, GameSetChartListActivity.class);
-                }
+//                }
+//                // prevent problem of incorrect pie charts for versions < ICS =>
+//                // use former activity
+//                else {
+//                    intent = new Intent(TabGameSetActivity.this, GameSetChartListActivity.class);
+//                }
                 TabGameSetActivity.this.startActivity(intent);
 
                 return true;
