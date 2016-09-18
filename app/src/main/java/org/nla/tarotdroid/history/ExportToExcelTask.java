@@ -4,55 +4,36 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.core.BaseAsyncTask;
 import org.nla.tarotdroid.core.IAsyncCallback;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.ExcelHelper;
 import org.nla.tarotdroid.core.helpers.LocalizationHelper;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-/**
- * An AsyncTask aimed to post a gameset on Facebook.
- */
 public class ExportToExcelTask extends BaseAsyncTask<GameSet, String, String, String> {
 
-    /**
-     * The context.
-     */
     private final Activity activity;
-    /**
-     * Indicates whether task was canceled;
-     */
     private final boolean isCanceled;
-    /**
-     * Progress dialog to display messages.
-     */
     private final ProgressDialog progressDialog;
-    /**
-     * Flag indicating whether an error occured in the background.
-     */
     private boolean backroundErrorHappened;
-
     private LocalizationHelper localizationHelper;
+    private IDalService dalService;
 
-    /**
-     * Constructor.
-     *
-     * @param activity
-     * @param progressDialog
-     */
     public ExportToExcelTask(
             Activity activity,
             ProgressDialog progressDialog,
-            LocalizationHelper localizationHelper
+            LocalizationHelper localizationHelper,
+            final IDalService dalService
     ) {
         checkArgument(activity != null, "activity is null");
         this.activity = activity;
         this.isCanceled = false;
         this.progressDialog = progressDialog;
         this.localizationHelper = localizationHelper;
+        this.dalService = dalService;
     }
 
     /*
@@ -66,10 +47,7 @@ public class ExportToExcelTask extends BaseAsyncTask<GameSet, String, String, St
         try {
             if (params == null || params.length == 0 || params[0] == null) {
                 // TODO Use context
-                fileName = ExcelHelper.exportToExcel(this.activity,
-                                                     TarotDroidApp.get()
-                                                                  .getDalService()
-                                                                  .getAllGameSets(),
+                fileName = ExcelHelper.exportToExcel(this.activity, dalService.getAllGameSets(),
                                                      localizationHelper);
             } else {
                 fileName = ExcelHelper.exportToExcel(this.activity, params[0], localizationHelper);

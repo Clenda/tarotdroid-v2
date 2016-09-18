@@ -23,6 +23,7 @@ import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.constants.UIConstants;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 import org.nla.tarotdroid.dashboard.PlayerSelectorAutoCompleteTextView;
 
@@ -30,160 +31,174 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static com.google.common.collect.Lists.newArrayList;
 
 public class PlayerSelectorRow extends LinearLayout {
 
-	private int playerIndex;
-	private TextView txtPlayerIndex;
-	private LinearLayout textLayout;
-	private PlayerSelectorAutoCompleteTextView txtPlayerName;
-	private String tempClickedName;
-	
-	public PlayerSelectorRow(Activity context, int playerIndex) {
-		super(context);
-		this.playerIndex = playerIndex;
-		this.tempClickedName = "";
+    @Inject IDalService dalService;
+    private int playerIndex;
+    private TextView txtPlayerIndex;
+    private LinearLayout textLayout;
+    private PlayerSelectorAutoCompleteTextView txtPlayerName;
+    private String tempClickedName;
 
-		this.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-		this.setOrientation(HORIZONTAL);
-		
-		// player id
-		this.txtPlayerIndex = new TextView(context);
-		this.txtPlayerIndex.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		this.txtPlayerIndex.setText(Integer.toString(playerIndex));
-		
-		// player name
-		this.txtPlayerName = new PlayerSelectorAutoCompleteTextView(context);
-		this.txtPlayerName.setWidth(10);
-		this.txtPlayerName.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-		this.txtPlayerName.setFilters(new InputFilter[] { new InputFilter.LengthFilter(9) });
-		this.txtPlayerName.setThreshold(1);
+    public PlayerSelectorRow(Activity context, int playerIndex) {
+        super(context);
+        TarotDroidApp.get(context).getComponent().inject(this);
+        this.playerIndex = playerIndex;
+        this.tempClickedName = "";
 
-		// player id / name container
-		this.textLayout = new LinearLayout(context);
-		this.textLayout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-		this.textLayout.setOrientation(VERTICAL);
-		this.textLayout.setPadding(2, 2, 2, 2);
-		this.textLayout.setGravity(Gravity.CENTER_VERTICAL);
-		this.textLayout.addView(this.txtPlayerIndex);
-		this.textLayout.addView(this.txtPlayerName);
+        this.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+        this.setOrientation(HORIZONTAL);
 
-		this.addView(this.textLayout);
-		this.initializeViews();
-	}
-	
-	public PlayerSelectorRow(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		this.playerIndex = 0;
-		this.tempClickedName = "";
-		
-		this.setOrientation(HORIZONTAL);
-		
-		// player id
-		this.txtPlayerIndex = new TextView(context);
-		this.txtPlayerIndex.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		this.txtPlayerIndex.setText(Integer.toString(playerIndex));
-		
-		// player name
-		this.txtPlayerName = new PlayerSelectorAutoCompleteTextView(context);
-		this.txtPlayerName.setWidth(10);
-		this.txtPlayerName.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-		this.txtPlayerName.setFilters(new InputFilter[] { new InputFilter.LengthFilter(9) });
-		this.txtPlayerName.setThreshold(1);
+        // player id
+        this.txtPlayerIndex = new TextView(context);
+        this.txtPlayerIndex.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                                                             LayoutParams.WRAP_CONTENT));
+        this.txtPlayerIndex.setText(Integer.toString(playerIndex));
 
-		// player id / name container
-		this.textLayout = new LinearLayout(context);
-		this.textLayout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT, 15));
-		this.textLayout.setOrientation(VERTICAL);
-		this.textLayout.setPadding(2, 2, 2, 2);
-		this.textLayout.setGravity(Gravity.CENTER_VERTICAL);
-		this.textLayout.addView(this.txtPlayerIndex);
-		this.textLayout.addView(this.txtPlayerName);
+        // player name
+        this.txtPlayerName = new PlayerSelectorAutoCompleteTextView(context);
+        this.txtPlayerName.setWidth(10);
+        this.txtPlayerName.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+                                                            LayoutParams.WRAP_CONTENT));
+        this.txtPlayerName.setFilters(new InputFilter[]{new InputFilter.LengthFilter(9)});
+        this.txtPlayerName.setThreshold(1);
 
-		this.addView(this.textLayout);
-		this.initializeViews();
-	}
+        // player id / name container
+        this.textLayout = new LinearLayout(context);
+        this.textLayout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+                                                         LayoutParams.WRAP_CONTENT));
+        this.textLayout.setOrientation(VERTICAL);
+        this.textLayout.setPadding(2, 2, 2, 2);
+        this.textLayout.setGravity(Gravity.CENTER_VERTICAL);
+        this.textLayout.addView(this.txtPlayerIndex);
+        this.textLayout.addView(this.txtPlayerName);
 
-	private void initializeViews() {
-		this.txtPlayerIndex.setText(this.getContext().getString(R.string.lblPlayerNumber, String.valueOf(this.playerIndex + 1)));
-		this.txtPlayerName.setAdapter(this.buildAdapter());
-				
-		this.txtPlayerName.setOnItemClickListener(new OnItemClickListener() {
+        this.addView(this.textLayout);
+        this.initializeViews();
+    }
 
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View clickedView, int arg2, long arg3) {
+    public PlayerSelectorRow(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        TarotDroidApp.get(context).getComponent().inject(this);
+        this.playerIndex = 0;
+        this.tempClickedName = "";
 
-				LinearLayout layout = (LinearLayout)clickedView;
-				TextView txtName = (TextView)layout.getChildAt(1);
-				tempClickedName = txtName.getText().toString();
-				txtPlayerName.setText(tempClickedName);
-			}
-		});
-	}
-	
-	private PlayerAdapter buildAdapter() {
-		List<HashMap<String,String>> friendList = new ArrayList<HashMap<String,String>>();
-		for (Player player : TarotDroidApp.get(getContext()).getDalService().getAllPlayers()) {
-			HashMap<String, String> hm = new HashMap<String,String>();
+        this.setOrientation(HORIZONTAL);
+
+        // player id
+        this.txtPlayerIndex = new TextView(context);
+        this.txtPlayerIndex.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                                                             LayoutParams.WRAP_CONTENT));
+        this.txtPlayerIndex.setText(Integer.toString(playerIndex));
+
+        // player name
+        this.txtPlayerName = new PlayerSelectorAutoCompleteTextView(context);
+        this.txtPlayerName.setWidth(10);
+        this.txtPlayerName.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+                                                            LayoutParams.WRAP_CONTENT));
+        this.txtPlayerName.setFilters(new InputFilter[]{new InputFilter.LengthFilter(9)});
+        this.txtPlayerName.setThreshold(1);
+
+        // player id / name container
+        this.textLayout = new LinearLayout(context);
+        this.textLayout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+                                                         LayoutParams.WRAP_CONTENT,
+                                                         15));
+        this.textLayout.setOrientation(VERTICAL);
+        this.textLayout.setPadding(2, 2, 2, 2);
+        this.textLayout.setGravity(Gravity.CENTER_VERTICAL);
+        this.textLayout.addView(this.txtPlayerIndex);
+        this.textLayout.addView(this.txtPlayerName);
+
+        this.addView(this.textLayout);
+        this.initializeViews();
+    }
+
+    private void initializeViews() {
+        this.txtPlayerIndex.setText(this.getContext()
+                                        .getString(R.string.lblPlayerNumber,
+                                                   String.valueOf(this.playerIndex + 1)));
+        this.txtPlayerName.setAdapter(this.buildAdapter());
+
+        this.txtPlayerName.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View clickedView, int arg2, long arg3) {
+
+                LinearLayout layout = (LinearLayout) clickedView;
+                TextView txtName = (TextView) layout.getChildAt(1);
+                tempClickedName = txtName.getText().toString();
+                txtPlayerName.setText(tempClickedName);
+            }
+        });
+    }
+
+    private PlayerAdapter buildAdapter() {
+        List<HashMap<String, String>> friendList = new ArrayList<HashMap<String, String>>();
+        for (Player player : dalService.getAllPlayers()) {
+            HashMap<String, String> hm = new HashMap<String, String>();
             hm.put(UIConstants.PLAYER_PICTURE_URI, player.getPictureUri());
             hm.put(UIConstants.PLAYER_NAME, player.getName());
             friendList.add(hm);
-		}
-		
-		return new PlayerAdapter(this.getContext(), friendList);
-	}
+        }
 
-	public int getPlayerIndex() {
-		return this.playerIndex;
-	}
+        return new PlayerAdapter(this.getContext(), friendList);
+    }
 
-	public void setPlayerIndex(int playerIndex) {
-		this.playerIndex = playerIndex;
-	}
+    public int getPlayerIndex() {
+        return this.playerIndex;
+    }
 
-	public String getPlayerName() {
-		return this.txtPlayerName.getText().toString();
-	}
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
+    }
 
-	public void setPlayerName(String playerName) {
-		this.txtPlayerName.setText(playerName);
-	}
-	
+    public String getPlayerName() {
+        return this.txtPlayerName.getText().toString();
+    }
+
+    public void setPlayerName(String playerName) {
+        this.txtPlayerName.setText(playerName);
+    }
+
     private class PlayerAdapter extends BaseAdapter implements Filterable {
-    	
-    	private AlphabeticalPlayerNameFilter alphabeticalPlayerNameFilter;
-		private List<HashMap<String, String>> filteredFriendList;
-		private List<HashMap<String,String>> originalFriendList;
-    	private Context context;
-    	
-    	protected PlayerAdapter(Context context, List<HashMap<String,String>> friendList) {
-    		this.context = context;
-    		this.originalFriendList = newArrayList(friendList);
-    		this.filteredFriendList = friendList;
-    		this.alphabeticalPlayerNameFilter = new AlphabeticalPlayerNameFilter();
-    	}
-    	
-		@Override
-		public int getCount() {
-			return this.filteredFriendList.size();
-		}
 
-		@Override
-		public Object getItem(int position) {
-			return this.filteredFriendList.get(position);
-		}
+        private AlphabeticalPlayerNameFilter alphabeticalPlayerNameFilter;
+        private List<HashMap<String, String>> filteredFriendList;
+        private List<HashMap<String, String>> originalFriendList;
+        private Context context;
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+        protected PlayerAdapter(Context context, List<HashMap<String, String>> friendList) {
+            this.context = context;
+            this.originalFriendList = newArrayList(friendList);
+            this.filteredFriendList = friendList;
+            this.alphabeticalPlayerNameFilter = new AlphabeticalPlayerNameFilter();
+        }
 
-		@SuppressWarnings("unchecked")
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+        @Override
+        public int getCount() {
+            return this.filteredFriendList.size();
+        }
 
-		   // TODO Improve for perf issues
+        @Override
+        public Object getItem(int position) {
+            return this.filteredFriendList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            // TODO Improve for perf issues
 
 //		   View view = convertView;
 //		   if (view == null) {
@@ -191,79 +206,77 @@ public class PlayerSelectorRow extends LinearLayout {
 //			   view = layoutInflater.inflate(R.layout.autocomplete_layout_pic, parent, false);
 //		   }
 
-			HashMap<String,String> playerMap = (HashMap<String,String>)this.getItem(position);
-		   
-		    View view = null;
-		    LayoutInflater layoutInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			view = layoutInflater.inflate(R.layout.autocomplete_layout_pic, parent, false);
+            HashMap<String, String> playerMap = (HashMap<String, String>) this.getItem(position);
 
-			String playerPictureUri = playerMap.get(UIConstants.PLAYER_PICTURE_URI);
-			if (playerPictureUri != null && playerPictureUri.length() != 0) {
+            View view = null;
+            LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = layoutInflater.inflate(R.layout.autocomplete_layout_pic, parent, false);
 
-			   Bitmap contactBitmap = null;
-			   try {
-				   String contactId = Uri.parse(playerMap.get(UIConstants.PLAYER_PICTURE_URI)).getLastPathSegment();
-				   contactBitmap = UIHelper.getContactPicture(this.context, contactId);
-			   }
-			   catch(Exception e) {
-				   contactBitmap = null;
-			   }
+            String playerPictureUri = playerMap.get(UIConstants.PLAYER_PICTURE_URI);
+            if (playerPictureUri != null && playerPictureUri.length() != 0) {
 
-			   // no problem when retrieving image => set it as player image
-			   if (contactBitmap != null) {
-				   ImageView playerPicture = (ImageView)view.findViewById(R.id.playerPicture);
-				   playerPicture.setImageBitmap(contactBitmap);
-			   }
-		   }
+                Bitmap contactBitmap = null;
+                try {
+                    String contactId = Uri.parse(playerMap.get(UIConstants.PLAYER_PICTURE_URI))
+                                          .getLastPathSegment();
+                    contactBitmap = UIHelper.getContactPicture(this.context, contactId);
+                } catch (Exception e) {
+                    contactBitmap = null;
+                }
 
-			TextView textView = (TextView)view.findViewById(R.id.username);
-		   textView.setText(playerMap.get(UIConstants.PLAYER_NAME));
+                // no problem when retrieving image => set it as player image
+                if (contactBitmap != null) {
+                    ImageView playerPicture = (ImageView) view.findViewById(R.id.playerPicture);
+                    playerPicture.setImageBitmap(contactBitmap);
+                }
+            }
 
-		   
-		   return view;
-			
-		}
+            TextView textView = (TextView) view.findViewById(R.id.username);
+            textView.setText(playerMap.get(UIConstants.PLAYER_NAME));
 
-		@Override
-		public Filter getFilter() {
-			return this.alphabeticalPlayerNameFilter;
-		}
-		
-		private class AlphabeticalPlayerNameFilter extends Filter {
-			
-		    @Override
-		    protected FilterResults performFiltering(CharSequence filterString) {
-		        FilterResults results = new FilterResults();
-		        if (filterString == null || filterString.length() == 0) {
-		            results.values = originalFriendList;
-		            results.count = originalFriendList.size();
-		        }
-		        else {
-		        	String name = filterString.toString().toLowerCase();
-			        List<HashMap<String,String>> friendsMatching = new ArrayList<HashMap<String,String>>();
-			        for (HashMap<String,String> friend : originalFriendList) {
-			        	if (friend.get(UIConstants.PLAYER_NAME).toLowerCase().startsWith(name)) {
-			        		friendsMatching.add(friend);
-			        	}
-			        }
-			        results.values = friendsMatching;
-			        results.count = friendsMatching.size();
-		        }
 
-		        return results;
-		    }
+            return view;
 
-		    @SuppressWarnings("unchecked")
-			@Override
-		    protected void publishResults(CharSequence constraint, FilterResults results) {
-		        if (results.count == 0) {
-		            notifyDataSetInvalidated();
-		        }
-		        else {
-		        	filteredFriendList = (List<HashMap<String,String>>) results.values;
-		            notifyDataSetChanged();
-		        }
-		    }
-		}
+        }
+
+        @Override
+        public Filter getFilter() {
+            return this.alphabeticalPlayerNameFilter;
+        }
+
+        private class AlphabeticalPlayerNameFilter extends Filter {
+
+            @Override
+            protected FilterResults performFiltering(CharSequence filterString) {
+                FilterResults results = new FilterResults();
+                if (filterString == null || filterString.length() == 0) {
+                    results.values = originalFriendList;
+                    results.count = originalFriendList.size();
+                } else {
+                    String name = filterString.toString().toLowerCase();
+                    List<HashMap<String, String>> friendsMatching = new ArrayList<HashMap<String, String>>();
+                    for (HashMap<String, String> friend : originalFriendList) {
+                        if (friend.get(UIConstants.PLAYER_NAME).toLowerCase().startsWith(name)) {
+                            friendsMatching.add(friend);
+                        }
+                    }
+                    results.values = friendsMatching;
+                    results.count = friendsMatching.size();
+                }
+
+                return results;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                if (results.count == 0) {
+                    notifyDataSetInvalidated();
+                } else {
+                    filteredFriendList = (List<HashMap<String, String>>) results.values;
+                    notifyDataSetChanged();
+                }
+            }
+        }
     }
 }

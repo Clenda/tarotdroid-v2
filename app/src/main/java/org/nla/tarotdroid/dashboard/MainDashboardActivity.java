@@ -26,6 +26,7 @@ import org.nla.tarotdroid.core.AppParams;
 import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.IAsyncCallback;
 import org.nla.tarotdroid.core.ThumbnailItem;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 import org.nla.tarotdroid.history.GameSetHistoryActivity;
@@ -61,6 +62,7 @@ public class MainDashboardActivity extends BaseActivity {
     };
     @BindView(R.id.listOptions) protected ListView listOptions;
     @Inject protected AppParams appParams;
+    @Inject IDalService dalService;
     private InsertMockGameSetsTask insertMockGameSetsTask;
 
     private void buildMenuForNewAndroidDevices(Menu menu) {
@@ -69,7 +71,8 @@ public class MainDashboardActivity extends BaseActivity {
         miExportDB.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ExportDatabaseTask exportDatabaseTask = new ExportDatabaseTask(MainDashboardActivity.this);
+                ExportDatabaseTask exportDatabaseTask = new ExportDatabaseTask(MainDashboardActivity.this,
+                                                                               dalService);
                 exportDatabaseTask.setCallback(exportDatabaseCallback);
                 exportDatabaseTask.execute();
                 return true;
@@ -110,7 +113,7 @@ public class MainDashboardActivity extends BaseActivity {
                     MainDashboardActivity.this.insertMockGameSetsTask = new InsertMockGameSetsTask(
                             MainDashboardActivity.this,
                             appParams.getDevGameSetCount(),
-                            appParams.getDevMaxGameCount());
+                            appParams.getDevMaxGameCount(), dalService);
                     MainDashboardActivity.this.insertMockGameSetsTask.execute();
                     return true;
                 }
@@ -128,7 +131,8 @@ public class MainDashboardActivity extends BaseActivity {
         miExportDB.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ExportDatabaseTask exportDatabaseTask = new ExportDatabaseTask(MainDashboardActivity.this);
+                ExportDatabaseTask exportDatabaseTask = new ExportDatabaseTask(MainDashboardActivity.this,
+                                                                               dalService);
                 exportDatabaseTask.setCallback(exportDatabaseCallback);
                 exportDatabaseTask.execute();
                 return true;
@@ -169,7 +173,7 @@ public class MainDashboardActivity extends BaseActivity {
                     MainDashboardActivity.this.insertMockGameSetsTask = new InsertMockGameSetsTask(
                             MainDashboardActivity.this,
                             appParams.getDevGameSetCount(),
-                            appParams.getDevMaxGameCount());
+                            appParams.getDevMaxGameCount(), dalService);
                     MainDashboardActivity.this.insertMockGameSetsTask.execute();
                     return true;
                 }
@@ -381,7 +385,7 @@ public class MainDashboardActivity extends BaseActivity {
 
     private void onImportFileSelected(String filePath) {
         ImportDatabaseTask importDatabaseTask = new ImportDatabaseTask(MainDashboardActivity.this,
-                                                                       filePath);
+                                                                       filePath, dalService);
         importDatabaseTask.setCallback(importDatabaseCallback);
         importDatabaseTask.execute();
     }

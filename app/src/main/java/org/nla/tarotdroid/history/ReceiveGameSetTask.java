@@ -10,9 +10,9 @@ import android.widget.Toast;
 
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.core.BaseAsyncTask;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 
 import java.io.IOException;
@@ -24,17 +24,20 @@ public class ReceiveGameSetTask extends BaseAsyncTask<Void, String, Integer, Obj
     private final Activity activity;
     private final BluetoothServerSocket serverSocket;
     private ProgressDialog dialog;
+    private IDalService dalService;
 
     public ReceiveGameSetTask(
             final Activity activity,
             final ProgressDialog dialog,
-            final BluetoothAdapter bluetoothAdapter
+            final BluetoothAdapter bluetoothAdapter,
+            final IDalService dalService
     ) throws IOException {
         // TODO check whether checkArgument still useful
 //        checkArgument(activity != null, "activity is null");
 //        checkArgument(bluetoothAdapter != null, "bluetoothAdapter is null");
         this.activity = activity;
         this.dialog = dialog;
+        this.dalService = dalService;
         // TODO Use context
         this.serverSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(BuildConfig.BLUETOOTH_SERVICE,
                                                                                 UUID.fromString(
@@ -73,7 +76,7 @@ public class ReceiveGameSetTask extends BaseAsyncTask<Void, String, Integer, Obj
             this.publishProgress(this.activity.getResources()
                                               .getString(R.string.msgStoringDownloadedGameSet));
             // TODO Use context
-            TarotDroidApp.get().getDalService().saveGameSet(gameSet);
+            dalService.saveGameSet(gameSet);
 
             // increment game set count
             nbGSDownloaded++;

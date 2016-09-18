@@ -3,10 +3,9 @@ package org.nla.tarotdroid.dashboard;
 import android.app.Activity;
 import android.os.Environment;
 
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.core.BaseAsyncTask;
 import org.nla.tarotdroid.core.IAsyncCallback;
-import org.nla.tarotdroid.core.helpers.DatabaseHelper;
+import org.nla.tarotdroid.core.dal.IDalService;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -38,17 +37,14 @@ public class ExportDatabaseTask extends BaseAsyncTask<Void, String, String[], St
 	 * The potential callback to post execute.
 	 */
 	private IAsyncCallback<String[]> callback;
+    private IDalService dalService;
 
-	/**
-	 * Constructor using a context and a dal service container.
-	 * 
-	 * @param context
-	 */
-	public ExportDatabaseTask(final Activity activity) {
-		checkArgument(activity != null, "activity is null");
+    public ExportDatabaseTask(final Activity activity, final IDalService dalService) {
+        checkArgument(activity != null, "activity is null");
 		this.activity = activity;
 		this.isCanceled = false;
-	}
+        this.dalService = dalService;
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -60,12 +56,8 @@ public class ExportDatabaseTask extends BaseAsyncTask<Void, String, String[], St
 
 		String[] contentToExport = new String[2];
 		try {
-			// TODO Use context
-			DatabaseHelper databaseHelper = new DatabaseHelper(this.activity,
-															   TarotDroidApp.get()
-																			.getSQLiteDatabase());
-			contentToExport[0] = databaseHelper.exportContent();
-		} catch (Exception e) {
+            contentToExport[0] = dalService.exportDatabaseContent();
+        } catch (Exception e) {
 			contentToExport[0] = null;
 			this.backroundErrorHappened = true;
 			this.backgroundException = e;

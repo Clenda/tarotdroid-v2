@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -36,6 +35,7 @@ import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.IAsyncCallback;
 import org.nla.tarotdroid.core.ThumbnailItem;
 import org.nla.tarotdroid.core.dal.DalException;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.core.helpers.AuditHelper.EventTypes;
@@ -58,21 +58,6 @@ import butterknife.OnItemClick;
 @TargetApi(Build.VERSION_CODES.CUPCAKE)
 public class GameSetHistoryActivity extends BaseActivity {
 
-    private static final Item[] allItems = {
-            new Item(TarotDroidApp.get().getResources().getString(R.string.lblEditGameSet),
-                     android.R.drawable.ic_menu_edit,
-                     Item.ItemTypes.edit),
-            new Item(TarotDroidApp.get().getResources().getString(R.string.lblDeleteGameSet),
-                     R.drawable.gd_action_bar_trashcan,
-                     Item.ItemTypes.remove),
-            new Item(TarotDroidApp.get().getResources().getString(R.string.lblBluetoothSend),
-                     R.drawable.stat_sys_data_bluetooth,
-                     Item.ItemTypes.transferOverBluetooth),
-            new Item(TarotDroidApp.get().getResources().getString(R.string.lblExcelExport),
-                     R.drawable.ic_excel,
-                     Item.ItemTypes.exportToExcel),
-    };
-
     private static final Comparator<GameSet> gameSetCreationDateDescendingComparator = new Comparator<GameSet>() {
 
         @Override
@@ -80,29 +65,43 @@ public class GameSetHistoryActivity extends BaseActivity {
             return (arg1.getCreationTs().compareTo(arg0.getCreationTs()));
         }
     };
-    private static final Item[] limitedItems = {
-            new Item(TarotDroidApp.get().getResources().getString(R.string.lblEditGameSet),
+    private static final String PENDING_REAUTH_KEY = "pendingReauthRequest";
+    private final Item[] allItems = {
+            new Item(getResources().getString(R.string.lblEditGameSet),
                      android.R.drawable.ic_menu_edit,
                      Item.ItemTypes.edit),
-            new Item(TarotDroidApp.get().getResources().getString(R.string.lblDeleteGameSet),
+            new Item(getResources().getString(R.string.lblDeleteGameSet),
                      R.drawable.gd_action_bar_trashcan,
                      Item.ItemTypes.remove),
-            new Item(TarotDroidApp.get().getResources().getString(R.string.lblBluetoothSend),
+            new Item(getResources().getString(R.string.lblBluetoothSend),
+                     R.drawable.stat_sys_data_bluetooth,
+                     Item.ItemTypes.transferOverBluetooth),
+            new Item(getResources().getString(R.string.lblExcelExport),
+                     R.drawable.ic_excel,
+                     Item.ItemTypes.exportToExcel),
+    };
+    private final Item[] limitedItems = {
+            new Item(getResources().getString(R.string.lblEditGameSet),
+                     android.R.drawable.ic_menu_edit,
+                     Item.ItemTypes.edit),
+            new Item(getResources().getString(R.string.lblDeleteGameSet),
+                     R.drawable.gd_action_bar_trashcan,
+                     Item.ItemTypes.remove),
+            new Item(getResources().getString(R.string.lblBluetoothSend),
                      R.drawable.stat_sys_data_bluetooth,
                      Item.ItemTypes.transferOverBluetooth)
     };
-    private static final String PENDING_REAUTH_KEY = "pendingReauthRequest";
     @BindView(R.id.listView) protected ListView listView;
-
+    @Inject BluetoothHelper bluetoothHelper;
+    @Inject IDalService dalService;
     private final IAsyncCallback<Object> refreshCallback = new IAsyncCallback<Object>() {
 
         @Override
         public void execute(Object isNull, Exception e) {
             // TODO Check if exception must not be handled
-            GameSetHistoryActivity.this.refresh();
+            refresh();
         }
     };
-    @Inject BluetoothHelper bluetoothHelper;
     private boolean pendingReauthRequest;
     private ProgressDialog progressDialog;
     private final DialogInterface.OnClickListener removeAllGameSetsDialogClickListener = new DialogInterface.OnClickListener() {
@@ -112,7 +111,7 @@ public class GameSetHistoryActivity extends BaseActivity {
                 case DialogInterface.BUTTON_POSITIVE:
                     RemoveAllGameSetsTask removeAllGameSetsTask = new RemoveAllGameSetsTask(
                             GameSetHistoryActivity.this,
-                            GameSetHistoryActivity.this.progressDialog);
+                            progressDialog, dalService);
                     removeAllGameSetsTask.setCallback(refreshCallback);
                     removeAllGameSetsTask.execute();
                     break;
@@ -202,16 +201,16 @@ public class GameSetHistoryActivity extends BaseActivity {
     public void onBackPressed() {
         // cancel send task if running
         try {
-            if (this.sendGameSetTask != null) {
-                this.sendGameSetTask.cancel(true);
+            if (sendGameSetTask != null) {
+                sendGameSetTask.cancel(true);
             }
         } catch (Exception e) {
         }
 
         // cancel receive task if running
         try {
-            if (this.receiveGameSetTask != null) {
-                this.receiveGameSetTask.cancel(true);
+            if (receiveGameSetTask != null) {
+                receiveGameSetTask.cancel(true);
             }
         } catch (Exception e) {
         }
@@ -241,34 +240,7 @@ public class GameSetHistoryActivity extends BaseActivity {
             // set internal properties
             tempExcelFilePath = null;
             tempGameSet = null;
-
-            // wait for the dal to be initiated to refresh the game sets
-            if (TarotDroidApp.get(this).getLoadDalTask().getStatus() == AsyncTask.Status.RUNNING) {
-                TarotDroidApp.get(this)
-                             .getLoadDalTask()
-                             .showDialogOnActivity(this,
-                                                   this.getResources()
-                                                       .getString(R.string.msgGameSetsRetrieval));
-                TarotDroidApp.get(this).getLoadDalTask().setCallback(new IAsyncCallback<String>() {
-
-                    @Override
-                    public void execute(String result, Exception e) {
-
-                        // TODO Check exception
-                        if (result != null && result.toString().length() > 0) {
-                            UIHelper.showSimpleRichTextDialog(GameSetHistoryActivity.this,
-                                                              result,
-                                                              "Erreur de chargement");
-                        }
-
-                        GameSetHistoryActivity.this.refresh();
-                    }
-                });
-            }
-            // refresh the game sets
-            else {
-                this.refresh();
-            }
+            refresh();
 
             Object currentRunningTask = getLastNonConfigurationInstance();
             if (currentRunningTask != null) {
@@ -289,7 +261,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        SubMenu subMenuBlueTooth = menu.addSubMenu(this.getString(R.string.lblBluetoothItem));
+        SubMenu subMenuBlueTooth = menu.addSubMenu(getString(R.string.lblBluetoothItem));
         MenuItem miBluetooth = subMenuBlueTooth.getItem();
         miBluetooth.setIcon(R.drawable.stat_sys_data_bluetooth);
         miBluetooth.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -332,9 +304,7 @@ public class GameSetHistoryActivity extends BaseActivity {
                     // retrieve game count
                     int gameSetCount;
                     try {
-                        gameSetCount = TarotDroidApp.get(GameSetHistoryActivity.this)
-                                                    .getDalService()
-                                                    .getGameSetCount();
+                        gameSetCount = dalService.getGameSetCount();
                     } catch (DalException de) {
                         gameSetCount = 0;
                     }
@@ -350,17 +320,17 @@ public class GameSetHistoryActivity extends BaseActivity {
                     // ok for download
                     else {
                         try {
-                            GameSetHistoryActivity.this.receiveGameSetTask = new ReceiveGameSetTask(
+                            receiveGameSetTask = new ReceiveGameSetTask(
                                     GameSetHistoryActivity.this,
-                                    GameSetHistoryActivity.this.progressDialog,
-                                    bluetoothHelper.getBluetoothAdapter());
-                            GameSetHistoryActivity.this.receiveGameSetTask.setCallback(
+                                    progressDialog,
+                                    bluetoothHelper.getBluetoothAdapter(), dalService);
+                            receiveGameSetTask.setCallback(
                                     refreshCallback);
-                            GameSetHistoryActivity.this.receiveGameSetTask.execute();
+                            receiveGameSetTask.execute();
                             auditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothReceiveGameSet);
                         } catch (IOException ioe) {
                             Log.v(BuildConfig.APP_LOG_TAG,
-                                  "TarotDroid Exception in " + this.getClass().toString(),
+                                  "TarotDroid Exception in " + getClass().toString(),
                                   ioe);
                             Toast.makeText(GameSetHistoryActivity.this,
                                            getResources().getString(R.string.msgBluetoothError,
@@ -405,7 +375,7 @@ public class GameSetHistoryActivity extends BaseActivity {
         // });
         // }
 
-        MenuItem miBin = menu.add(this.getString(R.string.lblInitDalItem));
+        MenuItem miBin = menu.add(getString(R.string.lblInitDalItem));
         miBin.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         miBin.setIcon(R.drawable.gd_action_bar_trashcan);
 
@@ -413,13 +383,13 @@ public class GameSetHistoryActivity extends BaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(GameSetHistoryActivity.this);
-                builder.setTitle(GameSetHistoryActivity.this.getString(R.string.titleReinitDalYesNo));
-                builder.setMessage(Html.fromHtml(GameSetHistoryActivity.this.getText(R.string.msgReinitDalYesNo)
-                                                                            .toString()));
-                builder.setPositiveButton(GameSetHistoryActivity.this.getString(R.string.btnOk),
-                                          GameSetHistoryActivity.this.removeAllGameSetsDialogClickListener);
-                builder.setNegativeButton(GameSetHistoryActivity.this.getString(R.string.btnCancel),
-                                          GameSetHistoryActivity.this.removeAllGameSetsDialogClickListener)
+                builder.setTitle(getString(R.string.titleReinitDalYesNo));
+                builder.setMessage(Html.fromHtml(getText(R.string.msgReinitDalYesNo)
+                                                         .toString()));
+                builder.setPositiveButton(getString(R.string.btnOk),
+                                          removeAllGameSetsDialogClickListener);
+                builder.setNegativeButton(getString(R.string.btnCancel),
+                                          removeAllGameSetsDialogClickListener)
                        .show();
                 builder.setIcon(android.R.drawable.ic_dialog_alert);
                 return true;
@@ -442,18 +412,18 @@ public class GameSetHistoryActivity extends BaseActivity {
         // should never happen
         if (filePath == null) {
             UIHelper.showSimpleRichTextDialog(this,
-                                              this.getString(R.string.msgDbExportFailed),
-                                              this.getString(R.string.titleDbExportFailed));
+                                              getString(R.string.msgDbExportFailed),
+                                              getString(R.string.titleDbExportFailed));
         } else {
             tempExcelFilePath = filePath;
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(this.getString(R.string.titleGameSetExportedToExcelFile));
+            builder.setTitle(getString(R.string.titleGameSetExportedToExcelFile));
             builder.setMessage(Html.fromHtml(this.getText(R.string.msgGameSetExportedToExcelFile)
                                                  .toString()));
-            builder.setPositiveButton(this.getString(R.string.btnOk),
-                                      this.exportExcelByEmailDialogClickListener);
-            builder.setNegativeButton(this.getString(R.string.btnCancel),
-                                      this.exportExcelByEmailDialogClickListener);
+            builder.setPositiveButton(getString(R.string.btnOk),
+                                      exportExcelByEmailDialogClickListener);
+            builder.setNegativeButton(getString(R.string.btnCancel),
+                                      exportExcelByEmailDialogClickListener);
             builder.setIcon(android.R.drawable.ic_dialog_alert);
             builder.show();
         }
@@ -488,7 +458,7 @@ public class GameSetHistoryActivity extends BaseActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(String.format(this.getString(R.string.lblGameSetHistoryActivityMenuTitle),
+        builder.setTitle(String.format(getString(R.string.lblGameSetHistoryActivityMenuTitle),
                                        new SimpleDateFormat("dd/MM/yy").format(gameSet.getCreationTs())));
 
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -500,18 +470,18 @@ public class GameSetHistoryActivity extends BaseActivity {
                     RemoveGameSetDialogClickListener removeGameSetDialogClickListener = new RemoveGameSetDialogClickListener(
                             gameSet);
                     AlertDialog.Builder builder = new AlertDialog.Builder(GameSetHistoryActivity.this);
-                    builder.setTitle(GameSetHistoryActivity.this.getString(R.string.titleRemoveGameSetYesNo));
-                    builder.setMessage(Html.fromHtml(GameSetHistoryActivity.this.getText(R.string.msgRemoveGameSetYesNo)
-                                                                                .toString()));
-                    builder.setPositiveButton(GameSetHistoryActivity.this.getString(R.string.btnOk),
+                    builder.setTitle(getString(R.string.titleRemoveGameSetYesNo));
+                    builder.setMessage(Html.fromHtml(getText(R.string.msgRemoveGameSetYesNo)
+                                                             .toString()));
+                    builder.setPositiveButton(getString(R.string.btnOk),
                                               removeGameSetDialogClickListener);
-                    builder.setNegativeButton(GameSetHistoryActivity.this.getString(R.string.btnCancel),
+                    builder.setNegativeButton(getString(R.string.btnCancel),
                                               removeGameSetDialogClickListener).show();
                     builder.setIcon(android.R.drawable.ic_dialog_alert);
                 } else if (item.itemType == Item.ItemTypes.transferOverBluetooth) {
                     if (!bluetoothHelper.isBluetoothEnabled()) {
                         Toast.makeText(GameSetHistoryActivity.this,
-                                       GameSetHistoryActivity.this.getString(R.string.msgActivateBluetooth),
+                                       getString(R.string.msgActivateBluetooth),
                                        Toast.LENGTH_LONG).show();
                     }
 
@@ -519,7 +489,7 @@ public class GameSetHistoryActivity extends BaseActivity {
                         // make sure at least one device was discovered
                         if (bluetoothHelper.getBluetoothDeviceCount() == 0) {
                             Toast.makeText(GameSetHistoryActivity.this,
-                                           GameSetHistoryActivity.this.getString(R.string.msgRunDiscoverDevicesFirst),
+                                           getString(R.string.msgRunDiscoverDevicesFirst),
                                            Toast.LENGTH_LONG).show();
                         }
 
@@ -527,7 +497,7 @@ public class GameSetHistoryActivity extends BaseActivity {
                         final String[] items = bluetoothHelper.getBluetoothDeviceNames();
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(GameSetHistoryActivity.this);
-                        builder.setTitle(GameSetHistoryActivity.this.getString(R.string.lblSelectBluetoothDevice));
+                        builder.setTitle(getString(R.string.lblSelectBluetoothDevice));
                         builder.setItems(items, new BluetoothDeviceClickListener(gameSet, items));
                         AlertDialog alert = builder.create();
                         alert.show();
@@ -542,7 +512,8 @@ public class GameSetHistoryActivity extends BaseActivity {
 
                             ExportToExcelTask task = new ExportToExcelTask(GameSetHistoryActivity.this,
                                                                            progressDialog,
-                                                                           localizationHelper);
+                                                                           localizationHelper,
+                                                                           dalService);
                             task.setCallback(excelExportCallback);
                             task.execute(gameSet);
                         }
@@ -558,8 +529,8 @@ public class GameSetHistoryActivity extends BaseActivity {
                     Intent intent = new Intent(GameSetHistoryActivity.this,
                                                TabGameSetActivity.class);
                     intent.putExtra(ActivityParams.PARAM_GAMESET_ID, gameSet.getId());
-                    GameSetHistoryActivity.this.startActivityForResult(intent,
-                                                                       RequestCodes.DISPLAY_WITH_FACEBOOK);
+                    startActivityForResult(intent,
+                                           RequestCodes.DISPLAY_WITH_FACEBOOK);
                 }
             }
         });
@@ -570,28 +541,26 @@ public class GameSetHistoryActivity extends BaseActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        this.pendingReauthRequest = savedInstanceState.getBoolean(PENDING_REAUTH_KEY, false);
+        pendingReauthRequest = savedInstanceState.getBoolean(PENDING_REAUTH_KEY, false);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (TarotDroidApp.get(this).getLoadDalTask().getStatus() == AsyncTask.Status.FINISHED) {
-            this.refresh();
-        }
+        refresh();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(PENDING_REAUTH_KEY, this.pendingReauthRequest);
+        outState.putBoolean(PENDING_REAUTH_KEY, pendingReauthRequest);
     }
 
     public void refresh() {
-        List<GameSet> gameSets = TarotDroidApp.get(this).getDalService().getAllGameSets();
+        List<GameSet> gameSets = dalService.getAllGameSets();
         Collections.sort(gameSets, gameSetCreationDateDescendingComparator);
-        this.listView.setAdapter(new GameSetAdapter(this, gameSets));
-        this.setTitle();
+        listView.setAdapter(new GameSetAdapter(this, gameSets));
+        setTitle();
     }
 
     private void sendGameSetOverBluetooth(
@@ -600,41 +569,35 @@ public class GameSetHistoryActivity extends BaseActivity {
     ) {
         try {
             auditHelper.auditEvent(EventTypes.actionBluetoothSendGameSet);
-            this.sendGameSetTask = new SendGameSetTask(this,
-                                                       this.progressDialog,
-                                                       gameSet,
-                                                       bluetoothDevice,
-                                                       this.bluetoothHelper.getBluetoothAdapter());
-            this.sendGameSetTask.setCallback(refreshCallback);
-            this.sendGameSetTask.execute();
+            sendGameSetTask = new SendGameSetTask(this,
+                                                  progressDialog,
+                                                  gameSet,
+                                                  bluetoothDevice,
+                                                  bluetoothHelper.getBluetoothAdapter());
+            sendGameSetTask.setCallback(refreshCallback);
+            sendGameSetTask.execute();
         } catch (IOException ioe) {
             Log.v(BuildConfig.APP_LOG_TAG,
-                  "TarotDroid Exception in " + this.getClass().toString(),
+                  "TarotDroid Exception in " + getClass().toString(),
                   ioe);
             Toast.makeText(GameSetHistoryActivity.this,
-                           this.getResources().getString(R.string.msgBluetoothError, ioe),
+                           getResources().getString(R.string.msgBluetoothError, ioe),
                            Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     protected void setTitle() {
-        if (TarotDroidApp.get(this).getDalService() == null || TarotDroidApp.get(this)
-                                                                            .getDalService()
-                                                                            .getAllGameSets()
-                                                                            .size() == 0) {
-            this.setTitle(this.getResources()
-                              .getString(R.string.lblGameSetHistoryActivityTitleNone));
-        } else if (TarotDroidApp.get(this).getDalService().getAllGameSets().size() == 1) {
-            this.setTitle(this.getResources()
-                              .getString(R.string.lblGameSetHistoryActivityTitleSingle));
+        if (dalService == null || dalService.getAllGameSets().size() == 0) {
+            setTitle(getResources()
+                             .getString(R.string.lblGameSetHistoryActivityTitleNone));
+        } else if (dalService.getAllGameSets().size() == 1) {
+            setTitle(getResources()
+                             .getString(R.string.lblGameSetHistoryActivityTitleSingle));
         } else {
-            this.setTitle(this.getResources()
-                              .getString(R.string.lblGameSetHistoryActivityTitlePlural,
-                                         TarotDroidApp.get(this)
-                                                      .getDalService()
-                                                      .getAllGameSets()
-                                                      .size()));
+            setTitle(getResources()
+                             .getString(R.string.lblGameSetHistoryActivityTitlePlural,
+                                        dalService.getAllGameSets().size()));
         }
 
     }
@@ -677,9 +640,9 @@ public class GameSetHistoryActivity extends BaseActivity {
         @Override
         public void onClick(final DialogInterface dialog, final int which) {
             auditHelper.auditEvent(AuditHelper.EventTypes.actionBluetoothSendGameSet);
-            GameSetHistoryActivity.this.sendGameSetOverBluetooth(this.gameSet,
-                                                                 bluetoothHelper
-                                                                         .getBluetoothDevice(this.bluetoothDeviceNames[which]));
+            sendGameSetOverBluetooth(gameSet,
+                                     bluetoothHelper
+                                             .getBluetoothDevice(bluetoothDeviceNames[which]));
         }
     }
 
@@ -691,7 +654,7 @@ public class GameSetHistoryActivity extends BaseActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            GameSet gameSet = this.getItem(position);
+            GameSet gameSet = getItem(position);
 
             int drawableId;
             switch (gameSet.getGameStyleType()) {
@@ -709,7 +672,7 @@ public class GameSetHistoryActivity extends BaseActivity {
                     throw new IllegalStateException("unknown gameSet type: " + gameSet.getGameStyleType());
             }
 
-            ThumbnailItem thumbnailItem = new ThumbnailItem(this.getContext(),
+            ThumbnailItem thumbnailItem = new ThumbnailItem(getContext(),
                                                             drawableId,
                                                             localizationHelper.buildGameSetHistoryTitle(
                                                                     gameSet),
@@ -734,8 +697,8 @@ public class GameSetHistoryActivity extends BaseActivity {
                 case DialogInterface.BUTTON_POSITIVE:
                     RemoveGameSetTask removeGameSetTask = new RemoveGameSetTask(
                             GameSetHistoryActivity.this,
-                            GameSetHistoryActivity.this.progressDialog,
-                            this.gameSet);
+                            progressDialog,
+                            gameSet, dalService);
                     removeGameSetTask.setCallback(refreshCallback);
                     removeGameSetTask.execute();
                     break;

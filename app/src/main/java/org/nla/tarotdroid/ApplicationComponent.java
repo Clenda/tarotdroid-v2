@@ -28,11 +28,13 @@ import org.nla.tarotdroid.gameset.charts.KingsStatsChartFragment;
 import org.nla.tarotdroid.gameset.charts.SuccessesStatsChartFragment;
 import org.nla.tarotdroid.gameset.controls.BelgianTarotGameRow;
 import org.nla.tarotdroid.gameset.controls.PenaltyGameRow;
+import org.nla.tarotdroid.gameset.controls.PlayerSelectorRow;
 import org.nla.tarotdroid.gameset.controls.StandardTarot5GameRow;
 import org.nla.tarotdroid.gameset.controls.StandardTarotGameRow;
 import org.nla.tarotdroid.history.GameSetHistoryActivity;
 import org.nla.tarotdroid.players.PlayerListActivity;
 import org.nla.tarotdroid.players.PlayerStatisticsActivity;
+import org.nla.tarotdroid.splash.SplashActivity;
 
 import javax.inject.Singleton;
 
@@ -70,6 +72,8 @@ public interface ApplicationComponent {
 
     void inject(BelgianTarotGameRow belgianTarotGameRow);
 
+    void inject(PlayerSelectorRow playerSelectorRow);
+
     void inject(PenaltyGameRow penaltyGameRow);
 
     void inject(StandardGameActivity standardGameActivity);
@@ -91,6 +95,8 @@ public interface ApplicationComponent {
     void inject(KingsStatsChartFragment kingsStatsChartFragment);
 
     void inject(BetsStatsChartFragment betsStatsChartFragment);
+
+    void inject(SplashActivity splashActivity);
 
     Application application();
 

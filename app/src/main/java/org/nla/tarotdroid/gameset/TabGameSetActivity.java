@@ -25,6 +25,7 @@ import org.nla.tarotdroid.constants.ActivityParams;
 import org.nla.tarotdroid.constants.RequestCodes;
 import org.nla.tarotdroid.constants.ResultCodes;
 import org.nla.tarotdroid.core.BaseActivity;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.core.helpers.AuditHelper.ParameterTypes;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 
@@ -60,6 +63,7 @@ public class TabGameSetActivity extends BaseActivity {
     protected ProgressDialog progressDialog;
     @BindView(R.id.tabs) protected TabLayout tabLayout;
     @BindView(R.id.pager) protected ViewPager viewPager;
+    @Inject IDalService dalService;
 
     private GameSetGamesFragment gameSetGamesFragment;
     private GameSetSynthesisFragment gameSetSynthesisFragment;
@@ -250,9 +254,8 @@ public class TabGameSetActivity extends BaseActivity {
     private void identifyGameSet() {
         Bundle args = this.getIntent().getExtras();
         if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-            gameSet = TarotDroidApp.get(this)
-                                   .getDalService()
-                                   .getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
+            gameSet = dalService
+                    .getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
         } else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
             gameSet = (GameSet) args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
         } else {
@@ -347,8 +350,8 @@ public class TabGameSetActivity extends BaseActivity {
 
 //                // running android version >= ICS, show new ui
 //                if (android.os.Build.VERSION.SDK_INT >= 14) {
-                    intent = new Intent(TabGameSetActivity.this,
-                                        GameSetChartViewPagerActivity.class);
+                intent = new Intent(TabGameSetActivity.this,
+                                    GameSetChartViewPagerActivity.class);
 //                }
 //                // prevent problem of incorrect pie charts for versions < ICS =>
 //                // use former activity
@@ -418,10 +421,10 @@ public class TabGameSetActivity extends BaseActivity {
             switch (position) {
                 case 0:
                     return getResources()
-                                     .getString(R.string.lblGamesTitle);
+                            .getString(R.string.lblGamesTitle);
                 case 1:
                     return getResources()
-                                     .getString(R.string.lblSynthesisTitle);
+                            .getString(R.string.lblSynthesisTitle);
                 default:
                     return "Unknown[" + position + "]";
             }

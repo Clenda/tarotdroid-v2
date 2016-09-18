@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
+import org.nla.tarotdroid.cloud.PlayerConverter;
 import org.nla.tarotdroid.constants.PreferenceConstants;
 import org.nla.tarotdroid.core.AppParams;
 import org.nla.tarotdroid.core.dal.IDalService;
@@ -152,7 +153,13 @@ public class ApplicationModule {
     @Provides
     @Singleton
     IDalService providesDalService(final Context context) {
-        return new SqliteDalService(context);
+        IDalService dalService = new SqliteDalService(context);
+
+        // TODO Very ugly code. TO BE REFACTORED !!!
+        PlayerConverter.DAL_SERVICE = dalService;
+        // TODO
+
+        return dalService;
     }
 
 }

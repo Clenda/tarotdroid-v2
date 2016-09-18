@@ -38,6 +38,9 @@ import org.nla.tarotdroid.core.dal.sql.adapters.GameSetDatabaseAdapter;
 import org.nla.tarotdroid.core.dal.sql.adapters.GameSetParametersDatabaseAdapter;
 import org.nla.tarotdroid.core.dal.sql.adapters.PlayerDatabaseAdapter;
 import org.nla.tarotdroid.core.dal.sql.adapters.TarotDatabaseHelper;
+import org.nla.tarotdroid.core.helpers.DatabaseHelper;
+import org.nla.tarotdroid.core.helpers.ExportException;
+import org.nla.tarotdroid.core.helpers.ImportException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,8 +137,22 @@ public class SqliteDalService implements IDalService {
 	public static SQLiteDatabase getSqliteDatabase(Context context) {
 		return new TarotDatabaseHelper(context).getReadableDatabase();
 	}
-	
-	@Override
+
+    // TODO Improve if possible
+    @Override
+    public String exportDatabaseContent() throws ExportException {
+        DatabaseHelper databaseHelper = new DatabaseHelper(context, dbHelper.getReadableDatabase());
+        return databaseHelper.exportContent();
+    }
+
+    // TODO Implement
+    @Override
+    public void importDatabaseContent(String xmlContent) throws ImportException {
+        DatabaseHelper databaseHelper = new DatabaseHelper(context, dbHelper.getReadableDatabase());
+        databaseHelper.importContent(xmlContent);
+    }
+
+    @Override
 	public void initialize() /*throws DalException*/ {
 		try {
 			// initialize db objects

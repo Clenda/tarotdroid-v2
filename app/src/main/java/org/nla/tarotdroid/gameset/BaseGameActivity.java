@@ -28,12 +28,15 @@ import org.nla.tarotdroid.constants.ActivityParams;
 import org.nla.tarotdroid.constants.ResultCodes;
 import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.dal.DalException;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 import org.nla.tarotdroid.gameset.controls.Selector;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 
@@ -50,7 +53,6 @@ public abstract class BaseGameActivity extends BaseActivity {
     protected LinearLayout panelDeadAndDealerSection;
     protected Selector<Player> selectorDead;
     protected Selector<Player> selectorDealer;
-
     protected OnClickListener onNoDeadPlayerSelectedClickListener = new OnClickListener() {
         @Override
         public void onClick(final View layoutView) {
@@ -61,12 +63,12 @@ public abstract class BaseGameActivity extends BaseActivity {
             ).show();
         }
     };
-
     //    protected GameType gameType;
     protected List<Player> allPlayers;
     protected List<Player> inGamePlayers;
     protected BaseGame game;
     protected boolean isInEditMode;
+    @Inject IDalService dalService;
 
     protected GameSet getGameSet() {
         return TabGameSetActivity.getInstance().gameSet;
@@ -461,15 +463,11 @@ public abstract class BaseGameActivity extends BaseActivity {
 
                     // update the game
                     if (isInEditMode) {
-                        TarotDroidApp.get(BaseGameActivity.this)
-                                     .getDalService()
-                                     .updateGame(game, BaseGameActivity.this.getGameSet());
+                        dalService.updateGame(game, BaseGameActivity.this.getGameSet());
                     }
                     // create the game
                     else {
-                        TarotDroidApp.get(BaseGameActivity.this)
-                                     .getDalService()
-                                     .saveGame(game, BaseGameActivity.this.getGameSet());
+                        dalService.saveGame(game, BaseGameActivity.this.getGameSet());
                     }
                 }
             } catch (DalException e) {

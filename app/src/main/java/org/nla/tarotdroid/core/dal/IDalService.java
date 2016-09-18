@@ -21,6 +21,8 @@ import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.enums.ActionTypes;
 import org.nla.tarotdroid.biz.enums.ObjectTypes;
+import org.nla.tarotdroid.core.helpers.ExportException;
+import org.nla.tarotdroid.core.helpers.ImportException;
 
 import java.util.List;
 import java.util.Map;
@@ -175,4 +177,8 @@ public interface IDalService {
 	 * @return
 	 */
 	String getLog();
+
+    String exportDatabaseContent() throws ExportException;
+
+    void importDatabaseContent(String content) throws ImportException;
 }

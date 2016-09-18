@@ -23,11 +23,9 @@ import android.widget.Toast;
 
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.core.BaseAsyncTask;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import org.nla.tarotdroid.core.dal.IDalService;
 
 /**
  * An AsyncTask aimed to remove the last game.
@@ -46,6 +44,7 @@ public class RemoveGameSetTask extends BaseAsyncTask<Void, Void, Void, Object> {
 	 * A progress dialog shown during the game creation and storage.
 	 */
 	private ProgressDialog dialog;
+	private IDalService dalService;
 
 	/**
 	 * Constructor.
@@ -54,13 +53,20 @@ public class RemoveGameSetTask extends BaseAsyncTask<Void, Void, Void, Object> {
 	 * @param dialog
 	 * @param gameSet
 	 */
-	public RemoveGameSetTask(final Activity activity, final ProgressDialog dialog, final GameSet gameSet) {
-		checkArgument(activity != null, "activity is null");
-		checkArgument(gameSet != null, "gameSet is null");
+	public RemoveGameSetTask(
+			final Activity activity,
+			final ProgressDialog dialog,
+			final GameSet gameSet,
+			final IDalService dalService
+	) {
+		// TODO check whether checkArgument still useful
+//		checkArgument(activity != null, "activity is null");
+//		checkArgument(gameSet != null, "gameSet is null");
 
 		this.activity = activity;
 		this.dialog = dialog;
 		this.gameSet = gameSet;
+		this.dalService = dalService;
 
 		if (this.dialog == null) {
 			this.dialog = new ProgressDialog(this.activity);
@@ -76,7 +82,7 @@ public class RemoveGameSetTask extends BaseAsyncTask<Void, Void, Void, Object> {
 	protected final Void doInBackground(final Void... voids) {
 		try {
 			// TODO Use context
-			TarotDroidApp.get().getDalService().deleteGameSet(this.gameSet);
+			dalService.deleteGameSet(this.gameSet);
 		} catch (Exception e) {
 			this.backgroundException = e;
 			Log.v(BuildConfig.APP_LOG_TAG,

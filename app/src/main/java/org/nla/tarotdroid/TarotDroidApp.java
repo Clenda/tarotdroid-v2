@@ -2,7 +2,6 @@ package org.nla.tarotdroid;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDexApplication;
 
@@ -17,12 +16,6 @@ import org.nla.tarotdroid.biz.King;
 import org.nla.tarotdroid.biz.Result;
 import org.nla.tarotdroid.biz.Team;
 import org.nla.tarotdroid.constants.PreferenceConstants;
-import org.nla.tarotdroid.core.LoadDalTask;
-import org.nla.tarotdroid.core.dal.IDalService;
-import org.nla.tarotdroid.core.dal.sql.SqliteDalService;
-import org.nla.tarotdroid.core.helpers.BluetoothHelper;
-
-import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -48,31 +41,16 @@ import io.fabric.sdk.android.Fabric;
 )
 public class TarotDroidApp extends MultiDexApplication {
 
-    private static TarotDroidApp app;
-
-    private IDalService dalService;
-    private BluetoothHelper bluetoothHelper;
-    private String packageName;
-    private long lastLaunchTimestamp;
-    private LoadDalTask loadDalTask;
-    private Map<String, Integer> notificationIds;
     private ApplicationComponent component;
 
     public static TarotDroidApp get(final Context context) {
         return (TarotDroidApp) context.getApplicationContext();
     }
 
-    // TODO See if we can remove this method
-    public static TarotDroidApp get() {
-        return app;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
-        app = this;
         Fabric.with(this, new Crashlytics());
-        initializeDalService();
         initializeBiznessStrings();
         setLastLaunchTimestamp();
         component = ApplicationComponent.Initializer.init(this);
@@ -85,8 +63,6 @@ public class TarotDroidApp extends MultiDexApplication {
 
     private void setLastLaunchTimestamp() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        lastLaunchTimestamp = preferences.getLong(PreferenceConstants.PrefDateLastLaunch, 0);
-
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong(PreferenceConstants.PrefDateLastLaunch, System.currentTimeMillis());
         editor.commit();
@@ -114,26 +90,5 @@ public class TarotDroidApp extends MultiDexApplication {
 
         Result.SUCCESS.setLabel(getString(R.string.lblSuccesses));
         Result.FAILURE.setLabel(getString(R.string.lblFailures));
-    }
-
-    public IDalService getDalService() {
-        return dalService;
-    }
-
-    public void setDalService(final IDalService dalService) {
-        this.dalService = dalService;
-    }
-
-    public LoadDalTask getLoadDalTask() {
-        return loadDalTask;
-    }
-
-    private void initializeDalService() {
-        loadDalTask = new LoadDalTask(this);
-        loadDalTask.execute();
-    }
-
-    public SQLiteDatabase getSQLiteDatabase() {
-        return SqliteDalService.getSqliteDatabase(this);
     }
 }

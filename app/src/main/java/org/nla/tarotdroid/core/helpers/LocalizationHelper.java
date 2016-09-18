@@ -3,7 +3,6 @@ package org.nla.tarotdroid.core.helpers;
 import android.content.Context;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.enums.BetType;
@@ -83,13 +82,12 @@ public final class LocalizationHelper {
     public String getShortBetTranslation(final BetType bet) {
         switch (bet) {
             case Petite:
-                return TarotDroidApp.get()
-                                    .getResources()
-                                    .getString(R.string.shortPetiteDescription);
+                return context.getResources()
+                              .getString(R.string.shortPetiteDescription);
             case Prise:
-                return TarotDroidApp.get().getResources().getString(R.string.shortPriseDescription);
+                return context.getResources().getString(R.string.shortPriseDescription);
             case Garde:
-                return TarotDroidApp.get().getResources().getString(R.string.shortGardeDescription);
+                return context.getResources().getString(R.string.shortGardeDescription);
             case GardeSans:
                 return context.getResources().getString(R.string.shortGardeSansDescription);
             case GardeContre:

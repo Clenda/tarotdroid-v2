@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import com.google.gson.reflect.TypeToken;
 
 import org.nla.tarotdroid.BuildConfig;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.clientmodel.RestAccount;
@@ -15,6 +14,7 @@ import org.nla.tarotdroid.clientmodel.RestPlayer;
 import org.nla.tarotdroid.cloud.GameSetConverter;
 import org.nla.tarotdroid.cloud.PlayerConverter;
 import org.nla.tarotdroid.core.BaseAsyncTask;
+import org.nla.tarotdroid.core.dal.IDalService;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -30,20 +30,25 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Object> {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private final boolean isCanceled;
     private Activity activity;
     private ProgressDialog progressDialog;
+    private IDalService dalService;
 
-    public UpSyncGameSetTask(final Activity activity, final ProgressDialog progressDialog) {
-        checkArgument(activity != null, "activity is null");
+    public UpSyncGameSetTask(
+            final Activity activity,
+            final ProgressDialog progressDialog,
+            final IDalService dalService
+    ) {
+        // TODO check whether checkArgument still useful
+//        checkArgument(activity != null, "activity is null");
         this.activity = activity;
         this.progressDialog = progressDialog;
         this.isCanceled = false;
+        this.dalService = dalService;
 
         if (this.httpClient == null) {
             this.httpClient = new OkHttpClient();
@@ -168,9 +173,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
                     }
 
                     // update payer in db
-                    TarotDroidApp.get()
-                                 .getDalService()
-                                 .updatePlayerAfterSync(playerToStore, newPlayerUuid);
+                    dalService.updatePlayerAfterSync(playerToStore, newPlayerUuid);
 
                     // update actual player
                     if (newPlayerUuid != null) {
@@ -215,7 +218,7 @@ public class UpSyncGameSetTask extends BaseAsyncTask<GameSet, String, Void, Obje
             // update the game set with its cloud info
             gameSetToUpload.setSyncTimestamp(new Date());
             gameSetToUpload.setSyncAccount(facebookEmail);
-            TarotDroidApp.get().getDalService().updateGameSetAfterSync(gameSetToUpload);
+            dalService.updateGameSetAfterSync(gameSetToUpload);
         } else {
             String content = response.body().string();
             throw new Exception(MessageFormat.format(
