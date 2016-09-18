@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.core.AppParams;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.BluetoothHelper;
 import org.nla.tarotdroid.core.helpers.LocalizationHelper;
@@ -106,6 +107,8 @@ public interface ApplicationComponent {
     LocalizationHelper localizationHelper();
 
     BluetoothHelper bluetoothHelper();
+
+    IDalService dalService();
 
     final class Initializer {
 

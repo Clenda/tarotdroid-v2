@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.constants.PreferenceConstants;
 import org.nla.tarotdroid.core.AppParams;
+import org.nla.tarotdroid.core.dal.IDalService;
+import org.nla.tarotdroid.core.dal.sql.SqliteDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.BluetoothHelper;
 import org.nla.tarotdroid.core.helpers.LocalizationHelper;
@@ -146,4 +148,11 @@ public class ApplicationModule {
     BluetoothHelper providesBluetoothHelper(final Context context) {
         return new BluetoothHelper(context);
     }
+
+    @Provides
+    @Singleton
+    IDalService providesDalService(final Context context) {
+        return new SqliteDalService(context);
+    }
+
 }

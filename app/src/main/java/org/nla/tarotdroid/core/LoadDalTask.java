@@ -56,7 +56,8 @@ public class LoadDalTask extends BaseAsyncTask<Void, Void, String, String> {
 	protected String doInBackground(Void... params) {
 		// try {
 		this.dalService = new SqliteDalService(this.context);
-		return null;
+        dalService.initialize();
+        return null;
 	}
 
 	/*

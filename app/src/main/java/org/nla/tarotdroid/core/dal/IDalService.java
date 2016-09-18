@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public interface IDalService {
 
-	void initialize() throws DalException;
+	void initialize();
 	
 	/**
 	 * Indicates whether this implementation actually stores GameSets and Games.

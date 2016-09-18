@@ -122,8 +122,8 @@ public class SqliteDalService implements IDalService {
 		checkArgument(context != null, "context is null");
 		this.context = context;
 		this.logBuffer = new StringBuilder();
-		this.initialize();
-	}
+//		this.initialize();
+    }
 
 	/**
 	 * Helper method
