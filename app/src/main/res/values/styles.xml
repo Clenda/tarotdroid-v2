@@ -2,14 +2,14 @@
 <resources>
 
     <style name="Theme.TarotDroid" parent="@style/Theme.AppCompat.Light">
-		<!--  item name="gdActionBarBackground">@drawable/action_bar_background</item-->
-		<!--  item name="gdActionBarApplicationDrawable">@drawable/greendroid_application_logo</item-->
+        <!--  item name="gdActionBarBackground">@drawable/action_bar_background</item-->
+        <!--  item name="gdActionBarApplicationDrawable">@drawable/greendroid_application_logo</item-->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-	</style>
+    </style>
 
     <style name="Theme.TarotDroid.Dialog" parent="@style/Theme.AppCompat.Light.Dialog">
-	    <item name="android:windowNoTitle">true</item>	
-	</style>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
     <style name="Toolbar">
         <item name="android:layout_width">match_parent</item>
@@ -19,7 +19,7 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="titleTextAppearance">@style/Toolbar.Title</item>
     </style>
-	
+
     <style name="MainButtonStyle">
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_width">fill_parent</item>
@@ -31,7 +31,7 @@
         <item name="android:textColor">#ffffff</item>
         <item name="android:background">@null</item>
     </style>
-    
+
     <style name="SecondaryButtonStyle">
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_width">fill_parent</item>
@@ -42,7 +42,7 @@
         <item name="android:textColor">#ffffff</item>
         <item name="android:background">@null</item>
     </style>
-    
+
     <style name="LabelTextStyle">
         <item name="android:gravity">left</item>
         <item name="android:layout_width">fill_parent</item>
@@ -67,7 +67,7 @@
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
     </style>
-    
+
     <style name="GameSectionTitleStyle">
         <item name="android:gravity">left</item>
         <item name="android:layout_width">fill_parent</item>
@@ -79,7 +79,7 @@
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
     </style>
-    
+
     <style name="GameSubsectionTitleStyle">
         <item name="android:gravity">left</item>
         <item name="android:layout_width">fill_parent</item>
@@ -100,5 +100,9 @@
     <style name="Toolbar.Theme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <!--<item name="fontPath">@string/open_sans_regular</item>-->
     </style>
-    
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
 </resources>
