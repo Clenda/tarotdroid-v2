@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
+import com.flurry.android.FlurryAgent;
 
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
@@ -51,6 +52,9 @@ public class TarotDroidApp extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
+        new FlurryAgent.Builder()
+                .withLogEnabled(false)
+                .build(this, BuildConfig.FLURRY_APP_ID);
         initializeBiznessStrings();
         setLastLaunchTimestamp();
         component = ApplicationComponent.Initializer.init(this);
