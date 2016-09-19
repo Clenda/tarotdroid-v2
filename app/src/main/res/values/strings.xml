@@ -2,6 +2,8 @@
 <resources>
     <!-- General info -->
     <string name="google_map_api_key_debug">0IgVgWFseCoAyOOEFSXlrEhfjQE99UGBY_sh2CA</string>
+    <string name="fabric_api_key">dd38dd735f1aa5146e772a3cb865d52c335cf248</string>
+
     <!--string name="app_name">TarotDroid Lite</string-->
     <string name="app_id">507047192642711</string>
 

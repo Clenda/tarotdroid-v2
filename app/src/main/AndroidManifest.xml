@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="org.nla.tarotdroid"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:installLocation="auto"
-          android:versionCode="34"
-          android:versionName="4.0.3">
+          android:installLocation="auto">
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
@@ -78,7 +76,7 @@
             android:value="@string/app_id"/>
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="@string/fabric_api_key"/>
+            android:value="dd38dd735f1aa5146e772a3cb865d52c335cf248"/>
         <activity
             android:name=".splash.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

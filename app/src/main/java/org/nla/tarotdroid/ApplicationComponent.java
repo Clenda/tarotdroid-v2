@@ -12,6 +12,7 @@ import org.nla.tarotdroid.core.helpers.BluetoothHelper;
 import org.nla.tarotdroid.core.helpers.LocalizationHelper;
 import org.nla.tarotdroid.dashboard.MainDashboardActivity;
 import org.nla.tarotdroid.dashboard.MainPreferencesActivity;
+import org.nla.tarotdroid.dashboard.MainPreferencesFragment;
 import org.nla.tarotdroid.dashboard.NewGameSetDashboardActivity;
 import org.nla.tarotdroid.dashboard.PlayerSelectorActivity;
 import org.nla.tarotdroid.gameset.BaseGameActivity;
@@ -95,6 +96,8 @@ public interface ApplicationComponent {
     void inject(KingsStatsChartFragment kingsStatsChartFragment);
 
     void inject(BetsStatsChartFragment betsStatsChartFragment);
+
+    void inject(MainPreferencesFragment mainPreferencesFragment);
 
     void inject(SplashActivity splashActivity);
 

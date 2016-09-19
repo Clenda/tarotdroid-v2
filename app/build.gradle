@@ -23,7 +23,6 @@ android {
         multiDexEnabled true
 
         resValue "string", "app_name", "TarotDroid"
-        resValue "string", "fabric_api_key", "dd38dd735f1aa5146e772a3cb865d52c335cf248"
         buildConfigField "String", "APP_LOG_TAG", "\"${applicationId}\""
         def playStoreAppUrl = playStoreBaseUrl + applicationId
         buildConfigField "boolean", "IS_FULL", "false"
