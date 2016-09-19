@@ -26,15 +26,11 @@ import org.nla.tarotdroid.constants.RequestCodes;
 import org.nla.tarotdroid.constants.ResultCodes;
 import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.dal.IDalService;
-import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.AuditHelper.ErrorTypes;
-import org.nla.tarotdroid.core.helpers.AuditHelper.ParameterTypes;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -77,22 +73,23 @@ public class TabGameSetActivity extends BaseActivity {
 
     @Override
     protected void auditEvent() {
-        if (this.gameSet == null) {
-            auditHelper.auditEvent(AuditHelper.EventTypes.tabGameSetActivity_auditEvent_GameSetIsNull);
-            UIHelper.showSimpleRichTextDialog(this,
-                                              this.getString(R.string.msgUnmanagedErrorGameSetLost),
-                                              this.getString(R.string.titleUnmanagedErrorGameSetLost));
-            finish();
-
-        } else if (this.gameSet.getGameCount() == 0) {
-            Map<ParameterTypes, Object> parameters = new HashMap<>();
-            parameters.put(ParameterTypes.gameStyleType, this.gameSet.getGameStyleType());
-            parameters.put(ParameterTypes.playerCount, this.gameSet.getPlayers().size());
-            auditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithNewGameSetAction,
-                                   parameters);
-        } else {
-            auditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithExistingGameSetAction);
-        }
+        // TODO refactor by passing parameters in the intent...
+//        if (this.gameSet == null) {
+//            auditHelper.auditEvent(AuditHelper.EventTypes.tabGameSetActivity_auditEvent_GameSetIsNull);
+//            UIHelper.showSimpleRichTextDialog(this,
+//                                              this.getString(R.string.msgUnmanagedErrorGameSetLost),
+//                                              this.getString(R.string.titleUnmanagedErrorGameSetLost));
+//            finish();
+//
+//        } else if (this.gameSet.getGameCount() == 0) {
+//            Map<ParameterTypes, Object> parameters = new HashMap<>();
+//            parameters.put(ParameterTypes.gameStyleType, this.gameSet.getGameStyleType());
+//            parameters.put(ParameterTypes.playerCount, this.gameSet.getPlayers().size());
+//            auditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithNewGameSetAction,
+//                                   parameters);
+//        } else {
+//            auditHelper.auditEvent(AuditHelper.EventTypes.displayTabGameSetPageWithExistingGameSetAction);
+//        }
     }
 
     /**
@@ -235,9 +232,9 @@ public class TabGameSetActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        identifyGameSet();
-        super.onCreate(savedInstanceState);
         try {
+            super.onCreate(savedInstanceState);
+            identifyGameSet();
             instance = this;
             initialisePaging();
             ActionBar mActionBar = getSupportActionBar();

@@ -65,32 +65,6 @@ public class GameSetHistoryActivity extends BaseActivity {
             return (arg1.getCreationTs().compareTo(arg0.getCreationTs()));
         }
     };
-    private static final String PENDING_REAUTH_KEY = "pendingReauthRequest";
-    private final Item[] allItems = {
-            new Item(getResources().getString(R.string.lblEditGameSet),
-                     android.R.drawable.ic_menu_edit,
-                     Item.ItemTypes.edit),
-            new Item(getResources().getString(R.string.lblDeleteGameSet),
-                     R.drawable.gd_action_bar_trashcan,
-                     Item.ItemTypes.remove),
-            new Item(getResources().getString(R.string.lblBluetoothSend),
-                     R.drawable.stat_sys_data_bluetooth,
-                     Item.ItemTypes.transferOverBluetooth),
-            new Item(getResources().getString(R.string.lblExcelExport),
-                     R.drawable.ic_excel,
-                     Item.ItemTypes.exportToExcel),
-    };
-    private final Item[] limitedItems = {
-            new Item(getResources().getString(R.string.lblEditGameSet),
-                     android.R.drawable.ic_menu_edit,
-                     Item.ItemTypes.edit),
-            new Item(getResources().getString(R.string.lblDeleteGameSet),
-                     R.drawable.gd_action_bar_trashcan,
-                     Item.ItemTypes.remove),
-            new Item(getResources().getString(R.string.lblBluetoothSend),
-                     R.drawable.stat_sys_data_bluetooth,
-                     Item.ItemTypes.transferOverBluetooth)
-    };
     @BindView(R.id.listView) protected ListView listView;
     @Inject BluetoothHelper bluetoothHelper;
     @Inject IDalService dalService;
@@ -102,7 +76,8 @@ public class GameSetHistoryActivity extends BaseActivity {
             refresh();
         }
     };
-    private boolean pendingReauthRequest;
+    private Item[] allItems;
+    private Item[] limitedItems;
     private ProgressDialog progressDialog;
     private final DialogInterface.OnClickListener removeAllGameSetsDialogClickListener = new DialogInterface.OnClickListener() {
         @Override
@@ -122,11 +97,9 @@ public class GameSetHistoryActivity extends BaseActivity {
             }
         }
     };
-
     private ReceiveGameSetTask receiveGameSetTask;
     private SendGameSetTask sendGameSetTask;
     private String tempExcelFilePath;
-
     private final DialogInterface.OnClickListener exportExcelByEmailDialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(final DialogInterface dialog, final int which) {
@@ -168,12 +141,40 @@ public class GameSetHistoryActivity extends BaseActivity {
             onGameSetExportedToExcelFile(filePath);
         }
     };
-
     /**
      * Temporary GameSet. Use with care, this is pretty much a global variable
      * (it's used between differents inner classes).
      */
     private GameSet tempGameSet;
+
+    private void initializeActionItems() {
+        allItems = new Item[]{
+                new Item(getResources().getString(R.string.lblEditGameSet),
+                         android.R.drawable.ic_menu_edit,
+                         Item.ItemTypes.edit),
+                new Item(getResources().getString(R.string.lblDeleteGameSet),
+                         R.drawable.gd_action_bar_trashcan,
+                         Item.ItemTypes.remove),
+                new Item(getResources().getString(R.string.lblBluetoothSend),
+                         R.drawable.stat_sys_data_bluetooth,
+                         Item.ItemTypes.transferOverBluetooth),
+                new Item(getResources().getString(R.string.lblExcelExport),
+                         R.drawable.ic_excel,
+                         Item.ItemTypes.exportToExcel),
+        };
+
+        limitedItems = new Item[]{
+                new Item(getResources().getString(R.string.lblEditGameSet),
+                         android.R.drawable.ic_menu_edit,
+                         Item.ItemTypes.edit),
+                new Item(getResources().getString(R.string.lblDeleteGameSet),
+                         R.drawable.gd_action_bar_trashcan,
+                         Item.ItemTypes.remove),
+                new Item(getResources().getString(R.string.lblBluetoothSend),
+                         R.drawable.stat_sys_data_bluetooth,
+                         Item.ItemTypes.transferOverBluetooth)
+        };
+    }
 
     @Override
     protected void auditEvent() {
@@ -236,6 +237,9 @@ public class GameSetHistoryActivity extends BaseActivity {
 
             // set action bar properties
             registerForContextMenu(listView);
+
+            // set available actions on items
+            initializeActionItems();
 
             // set internal properties
             tempExcelFilePath = null;
@@ -539,21 +543,9 @@ public class GameSetHistoryActivity extends BaseActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        pendingReauthRequest = savedInstanceState.getBoolean(PENDING_REAUTH_KEY, false);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         refresh();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(PENDING_REAUTH_KEY, pendingReauthRequest);
     }
 
     public void refresh() {
