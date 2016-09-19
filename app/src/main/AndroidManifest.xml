@@ -78,8 +78,7 @@
             android:value="@string/app_id"/>
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="dd38dd735f1aa5146e772a3cb865d52c335cf248"/>
-
+            android:value="@string/fabric_api_key"/>
         <activity
             android:name=".splash.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -89,6 +88,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
