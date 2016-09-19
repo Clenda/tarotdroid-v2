@@ -1,12 +1,13 @@
 package org.nla.tarotdroid.core;
 
 import android.content.Context;
-import android.support.v7.preference.EditTextPreferenceFix;
 import android.util.AttributeSet;
+
+import com.takisoft.fix.support.v7.preference.EditTextPreference;
 
 // http://code.google.com/p/android-eco-tools/source/browse/trunk/ecoLamp/src/com/android/custom/EditIntegerPreference.java?spec=svn83&r=83
 // TODO Fix this broken appcompat stuff, check https://github.com/Gericop/Android-Support-Preference-V7-Fix
-public class EditIntegerPreference extends EditTextPreferenceFix {
+public class EditIntegerPreference extends EditTextPreference {
 
 	public EditIntegerPreference(final Context context) {
 		super(context);

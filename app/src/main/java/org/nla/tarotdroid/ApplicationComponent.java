@@ -24,6 +24,7 @@ import org.nla.tarotdroid.gameset.GameSetSynthesisFragment;
 import org.nla.tarotdroid.gameset.StandardGameActivity;
 import org.nla.tarotdroid.gameset.TabGameSetActivity;
 import org.nla.tarotdroid.gameset.TabGameSetPreferencesActivity;
+import org.nla.tarotdroid.gameset.TabGameSetPreferencesFragment;
 import org.nla.tarotdroid.gameset.charts.BetsStatsChartFragment;
 import org.nla.tarotdroid.gameset.charts.KingsStatsChartFragment;
 import org.nla.tarotdroid.gameset.charts.SuccessesStatsChartFragment;
@@ -97,9 +98,11 @@ public interface ApplicationComponent {
 
     void inject(BetsStatsChartFragment betsStatsChartFragment);
 
-    void inject(MainPreferencesFragment mainPreferencesFragment);
-
     void inject(SplashActivity splashActivity);
+
+    void inject(TabGameSetPreferencesFragment tabGameSetPreferencesFragment);
+
+    void inject(MainPreferencesFragment mainPreferencesFragment);
 
     Application application();
 
