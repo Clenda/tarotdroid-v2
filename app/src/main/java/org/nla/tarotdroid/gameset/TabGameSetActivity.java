@@ -19,26 +19,17 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
-import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.constants.ActivityParams;
 import org.nla.tarotdroid.constants.RequestCodes;
 import org.nla.tarotdroid.constants.ResultCodes;
-import org.nla.tarotdroid.core.BaseActivity;
-import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 
-public class TabGameSetActivity extends BaseActivity {
-
-    private static TabGameSetActivity instance;
+public class TabGameSetActivity extends BaseGameSetActivity {
 
     private final DialogInterface.OnClickListener leavingDialogClickListener = new DialogInterface.OnClickListener() {
         @Override
@@ -55,21 +46,15 @@ public class TabGameSetActivity extends BaseActivity {
         }
     };
 
-    protected GameSet gameSet;
     protected ProgressDialog progressDialog;
     @BindView(R.id.tabs) protected TabLayout tabLayout;
     @BindView(R.id.pager) protected ViewPager viewPager;
-    @Inject IDalService dalService;
 
     private GameSetGamesFragment gameSetGamesFragment;
     private GameSetSynthesisFragment gameSetSynthesisFragment;
     private PagerAdapter pagerAdapter;
     private String shortenedUrl;
     private int startPage;
-
-    public static TabGameSetActivity getInstance() {
-        return instance;
-    }
 
     @Override
     protected void auditEvent() {
@@ -161,10 +146,6 @@ public class TabGameSetActivity extends BaseActivity {
         });
     }
 
-    public GameSet getGameSet() {
-        return this.gameSet;
-    }
-
     private void initialisePaging() {
         setupViewPager();
         tabLayout.setupWithViewPager(viewPager);
@@ -215,10 +196,10 @@ public class TabGameSetActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String dialogTitle = this.gameSet.isPersisted()
+        String dialogTitle = getGameSet().isPersisted()
                 ? this.getString(R.string.titleExitGameSetYesNoWithDAL)
                 : this.getString(R.string.titleExitGameSetYesNo);
-        String dialogMessage = this.gameSet.isPersisted()
+        String dialogMessage = getGameSet().isPersisted()
                 ? this.getText(R.string.msgExitGameSetYesNoWithDAL).toString()
                 : this.getText(R.string.msgExitGameSetYesNo).toString();
 
@@ -234,8 +215,6 @@ public class TabGameSetActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
-            identifyGameSet();
-            instance = this;
             initialisePaging();
             ActionBar mActionBar = getSupportActionBar();
             mActionBar.setHomeButtonEnabled(true);
@@ -245,24 +224,6 @@ public class TabGameSetActivity extends BaseActivity {
         } catch (Exception e) {
             auditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this);
         }
-    }
-
-    // TODO Improve design. Should for instance be retrieved in upper class
-    private void identifyGameSet() {
-        Bundle args = this.getIntent().getExtras();
-        if (args.containsKey(ActivityParams.PARAM_GAMESET_ID)) {
-            gameSet = dalService
-                    .getGameSetById(args.getLong(ActivityParams.PARAM_GAMESET_ID));
-        } else if (args.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-            gameSet = (GameSet) args.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
-        } else {
-            throw new IllegalArgumentException("Game set id or serialized game set must be provided");
-        }
-    }
-
-    @Override
-    protected void inject() {
-        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     @Override
@@ -344,18 +305,8 @@ public class TabGameSetActivity extends BaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = null;
-
-//                // running android version >= ICS, show new ui
-//                if (android.os.Build.VERSION.SDK_INT >= 14) {
-                intent = new Intent(TabGameSetActivity.this,
-                                    GameSetChartViewPagerActivity.class);
-//                }
-//                // prevent problem of incorrect pie charts for versions < ICS =>
-//                // use former activity
-//                else {
-//                    intent = new Intent(TabGameSetActivity.this, GameSetChartListActivity.class);
-//                }
-                TabGameSetActivity.this.startActivity(intent);
+                intent = new Intent(TabGameSetActivity.this, GameSetChartViewPagerActivity.class);
+                startActivity(intent);
 
                 return true;
             }
@@ -370,14 +321,6 @@ public class TabGameSetActivity extends BaseActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey(ActivityParams.PARAM_GAMESET_SERIALIZED)) {
-            gameSet = (GameSet) savedInstanceState.getSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED);
-        }
-    }
-
-    @Override
     protected void onResume() {
         try {
             super.onResume();
@@ -386,12 +329,6 @@ public class TabGameSetActivity extends BaseActivity {
             auditHelper.auditError(ErrorTypes.tabGameSetActivityOnResumeError, e);
             this.finish();
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(ActivityParams.PARAM_GAMESET_SERIALIZED, this.gameSet);
     }
 
     protected class TabGameSetPagerAdapter extends FragmentPagerAdapter {

@@ -29,7 +29,6 @@ import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.constants.ActivityParams;
 import org.nla.tarotdroid.constants.RequestCodes;
 import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.IAsyncCallback;
@@ -532,7 +531,7 @@ public class GameSetHistoryActivity extends BaseActivity {
                 } else if (item.itemType == Item.ItemTypes.edit) {
                     Intent intent = new Intent(GameSetHistoryActivity.this,
                                                TabGameSetActivity.class);
-                    intent.putExtra(ActivityParams.PARAM_GAMESET_ID, gameSet.getId());
+                    gameSetWrapper.setGameSet(gameSet);
                     startActivityForResult(intent,
                                            RequestCodes.DISPLAY_WITH_FACEBOOK);
                 }

@@ -1,4 +1,4 @@
-package org.nla.tarotdroid.dashboard;
+package org.nla.tarotdroid.gameset;
 
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
@@ -24,6 +24,7 @@ import org.nla.tarotdroid.core.dal.DalException;
 import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.UIHelper;
+import org.nla.tarotdroid.dashboard.StartNewGameSetTask;
 import org.nla.tarotdroid.gameset.controls.PlayerSelectorRow;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 
-public class PlayerSelectorActivity extends BaseActivity {
+public class CreateGameSetActivity extends BaseActivity {
 
     private static final String PLAYER_ROW_COUNT = "player_row_count";
     private static final String PLAYER_NAME = "player_name";
@@ -49,14 +50,17 @@ public class PlayerSelectorActivity extends BaseActivity {
     private List<PlayerSelectorRow> playerSelectorRows;
     private GameSet gameSet;
 
+    private void initializeNewGameSet() {
+        gameSet = new GameSet();
+        gameSet.setGameSetParameters(gameSetParameters);
+        gameSetWrapper.setGameSet(gameSet);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            // create game set stub
-            gameSet = new GameSet();
-            gameSet.setGameSetParameters(gameSetParameters);
-
+            initializeNewGameSet();
             identifyGameSetType();
 
             // display warning message if more than 5 games are already stored and and app is not limited
@@ -132,7 +136,7 @@ public class PlayerSelectorActivity extends BaseActivity {
                 // form isnt valid
                 if (!isFormValid()) {
                     Toast.makeText(
-                            PlayerSelectorActivity.this,
+                            CreateGameSetActivity.this,
                             getResources().getString(R.string.msgValidationKo),
                             Toast.LENGTH_SHORT
                     ).show();
@@ -144,9 +148,9 @@ public class PlayerSelectorActivity extends BaseActivity {
 
                     // create game set and navigate towards tab view
                     new StartNewGameSetTask(
-                            PlayerSelectorActivity.this,
-                            PlayerSelectorActivity.this.progressDialog,
-                            PlayerSelectorActivity.this.gameSet,
+                            CreateGameSetActivity.this,
+                            CreateGameSetActivity.this.progressDialog,
+                            CreateGameSetActivity.this.gameSet,
                             dalService
                     ).execute();
                 }

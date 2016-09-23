@@ -26,7 +26,6 @@ import android.widget.Toast;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.biz.GameSet;
-import org.nla.tarotdroid.constants.ActivityParams;
 import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.gameset.TabGameSetActivity;
 
@@ -112,12 +111,12 @@ public class StartNewGameSetTask extends AsyncTask<Void, Void, Void> {
         else {
             // navigate towards activity
             Intent intent = new Intent(this.activity, TabGameSetActivity.class);
-            if (!this.gameSet.isPersisted()) {
-                //intent.putExtra(ActivityParams.PARAM_GAMESET_SERIALIZED, UIHelper.serializeGameSet(this.gameSet));
-                intent.putExtra(ActivityParams.PARAM_GAMESET_SERIALIZED, this.gameSet);
-            } else {
-                intent.putExtra(ActivityParams.PARAM_GAMESET_ID, this.gameSet.getId());
-            }
+//            if (!this.gameSet.isPersisted()) {
+//                //intent.putExtra(ActivityParams.PARAM_GAMESET_SERIALIZED, UIHelper.serializeGameSet(this.gameSet));
+//                intent.putExtra(ActivityParams.PARAM_GAMESET_SERIALIZED, this.gameSet);
+//            } else {
+//                intent.putExtra(ActivityParams.PARAM_GAMESET_ID, this.gameSet.getId());
+//            }
 
             this.activity.startActivity(intent);
             this.activity.finish();

@@ -15,8 +15,6 @@ import org.nla.tarotdroid.core.dal.IDalService;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public class RemoveGameTask extends AsyncTask<BaseGame, Void, Void> {
 
     private final ProgressDialog dialog;
@@ -29,35 +27,16 @@ public class RemoveGameTask extends AsyncTask<BaseGame, Void, Void> {
 
     public RemoveGameTask(
             final Activity activity,
-            final ProgressDialog dialog,
+            final Activity activityToFinish,
             final GameSet gameSet,
             final IDalService dalService
     ) {
-        checkArgument(activity != null, "activity is null");
-        checkArgument(dialog != null, "dialog is null");
-        checkArgument(gameSet != null, "gameSet is null");
-
-        this.activity = activity;
-        this.gameSet = gameSet;
-        this.dialog = dialog;
-        this.backroundErrorHappened = false;
-        this.activityToFinish = null;
-        this.dalService = dalService;
-    }
-
-    public RemoveGameTask(
-            final Activity activity,
-            final Activity activityToFinish,
-            final GameSet gameSet
-    ) {
-        checkArgument(activity != null, "activity is null");
-        checkArgument(gameSet != null, "gameSet is null");
-
         this.activity = activity;
         this.gameSet = gameSet;
         this.dialog = new ProgressDialog(this.activity);
         this.backroundErrorHappened = false;
         this.activityToFinish = activityToFinish;
+        this.dalService = dalService;
     }
 
     @Override

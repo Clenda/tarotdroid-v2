@@ -57,7 +57,7 @@
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/Theme.TarotDroid.Dialog"/>
         <activity
-            android:name=".dashboard.PlayerSelectorActivity"
+            android:name=".gameset.CreateGameSetActivity"
             android:configChanges="keyboardHidden|orientation"/>
         <activity
             android:name=".dashboard.MainDashboardActivity"

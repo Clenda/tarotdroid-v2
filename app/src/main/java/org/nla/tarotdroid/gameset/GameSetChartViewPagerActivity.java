@@ -11,12 +11,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
-import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
 import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
-import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.gameset.charts.BetsStatsChartFragment;
 import org.nla.tarotdroid.gameset.charts.CalledPlayersStatsChartFragment;
@@ -32,7 +29,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class GameSetChartViewPagerActivity extends BaseActivity {
+public class GameSetChartViewPagerActivity extends BaseGameSetActivity {
 
     private static IGameSetStatisticsComputer gameSetStatisticsComputer;
 
@@ -59,11 +56,6 @@ public class GameSetChartViewPagerActivity extends BaseActivity {
         }
 	}
 
-	@Override
-    protected void inject() {
-        TarotDroidApp.get(this).getComponent().inject(this);
-    }
-
     @Override
     protected void auditEvent() {
         auditHelper.auditEvent(AuditHelper.EventTypes.displayCharts);
@@ -78,11 +70,6 @@ public class GameSetChartViewPagerActivity extends BaseActivity {
     protected int getTitleResId() {
         return R.string.lblMainStatActivityTitle;
     }
-
-
-	private GameSet getGameSet() {
-		return TabGameSetActivity.getInstance().gameSet;
-	}
 
 	private void initialisePaging() {
         setupViewPager();

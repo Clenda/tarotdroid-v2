@@ -1,47 +1,32 @@
 package org.nla.tarotdroid.gameset.controls;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import org.nla.tarotdroid.TarotDroidApp;
-import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.StandardBaseGame;
 import org.nla.tarotdroid.biz.StandardTarot5Game;
-import org.nla.tarotdroid.core.AppParams;
-import org.nla.tarotdroid.core.helpers.LocalizationHelper;
-
-import javax.inject.Inject;
 
 public class StandardTarot5GameRow extends BaseGameRow {
 
-    @Inject AppParams appParams;
-    @Inject LocalizationHelper localizationHelper;
-
     protected StandardTarot5GameRow(
             final Context context,
-            final ProgressDialog dialog,
             final AttributeSet attrs,
             final StandardBaseGame game,
-            final float weight,
-            final GameSet gameSet
+            final float weight
     ) {
-        super(context, dialog, attrs, weight, gameSet);
+        super(context, attrs, weight);
         this.game = game;
-        TarotDroidApp.get(context).getComponent().inject(this);
         initializeViews();
         setOnLongClickListener(this);
     }
 
     protected StandardTarot5GameRow(
             final Context context,
-            final ProgressDialog dialog,
             final StandardBaseGame game,
-            final float weight,
-            final GameSet gameSet
+            final float weight
     ) {
-        this(context, dialog, null, game, weight, gameSet);
+        this(context, null, game, weight);
     }
 
     public StandardTarot5Game getGame() {

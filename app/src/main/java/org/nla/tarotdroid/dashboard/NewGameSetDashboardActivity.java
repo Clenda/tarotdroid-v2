@@ -16,6 +16,7 @@ import org.nla.tarotdroid.constants.ActivityParams;
 import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.ThumbnailItem;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
+import org.nla.tarotdroid.gameset.CreateGameSetActivity;
 
 import java.util.List;
 
@@ -104,7 +105,7 @@ public class NewGameSetDashboardActivity extends BaseActivity {
             gameStyleType = GameStyleType.Tarot5;
         }
 
-        Intent intent = new Intent(this, PlayerSelectorActivity.class);
+        Intent intent = new Intent(this, CreateGameSetActivity.class);
         intent.putExtra(ActivityParams.PARAM_TYPE_OF_GAMESET, gameStyleType.toString());
         startActivity(intent);
         finish();

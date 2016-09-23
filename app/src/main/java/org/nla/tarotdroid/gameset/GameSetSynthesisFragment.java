@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,8 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
-import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.MapPlayersScores;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.computers.GameSetStatisticsComputerFactory;
@@ -27,7 +24,6 @@ import org.nla.tarotdroid.biz.computers.IGameSetStatisticsComputer;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.constants.RequestCodes;
 import org.nla.tarotdroid.constants.UIConstants;
-import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.AuditHelper.ErrorTypes;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 import org.nla.tarotdroid.players.PlayerStatisticsActivity;
@@ -38,11 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
+public class GameSetSynthesisFragment extends BaseGameSetFragment {
 
-public class GameSetSynthesisFragment extends Fragment {
-
-    @Inject AuditHelper auditHelper;
     private Map<Integer, LinearLayout> statsRows;
     private LinearLayout playerStatsLayout;
 
@@ -51,20 +44,16 @@ public class GameSetSynthesisFragment extends Fragment {
         return fragment;
     }
 
-    private GameSet getGameSet() {
-        return TabGameSetActivity.getInstance().gameSet;
-    }
-
     @Override
     public View onCreateView(
             LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState
     ) {
-        TarotDroidApp.get(getContext()).getComponent().inject(this);
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = null;
         try {
-            GameStyleType gameStyleType = this.getGameSet().getGameStyleType();
+            GameStyleType gameStyleType = getGameSet().getGameStyleType();
 
             if (gameStyleType == GameStyleType.Tarot5) {
                 view = inflater.inflate(R.layout.tablegameset_synthesis5, null);
@@ -72,38 +61,38 @@ public class GameSetSynthesisFragment extends Fragment {
                 view = inflater.inflate(R.layout.tablegameset_synthesis, null);
             }
 
-            if (this.playerStatsLayout == null) {
-                this.playerStatsLayout = (LinearLayout) view.findViewById(R.id.statsLayout);
+            if (playerStatsLayout == null) {
+                playerStatsLayout = (LinearLayout) view.findViewById(R.id.statsLayout);
             }
 
-            this.statsRows = new HashMap<Integer, LinearLayout>();
-            this.statsRows.put(1,
-                               (LinearLayout) this.playerStatsLayout.findViewById(R.id.rowStatsPlayer1));
-            this.statsRows.put(2,
-                               (LinearLayout) this.playerStatsLayout.findViewById(R.id.rowStatsPlayer2));
-            this.statsRows.put(3,
-                               (LinearLayout) this.playerStatsLayout.findViewById(R.id.rowStatsPlayer3));
-            this.statsRows.put(4,
-                               (LinearLayout) this.playerStatsLayout.findViewById(R.id.rowStatsPlayer4));
-            this.statsRows.put(5,
-                               (LinearLayout) this.playerStatsLayout.findViewById(R.id.rowStatsPlayer5));
+            statsRows = new HashMap<Integer, LinearLayout>();
+            statsRows.put(1,
+                          (LinearLayout) playerStatsLayout.findViewById(R.id.rowStatsPlayer1));
+            statsRows.put(2,
+                          (LinearLayout) playerStatsLayout.findViewById(R.id.rowStatsPlayer2));
+            statsRows.put(3,
+                          (LinearLayout) playerStatsLayout.findViewById(R.id.rowStatsPlayer3));
+            statsRows.put(4,
+                          (LinearLayout) playerStatsLayout.findViewById(R.id.rowStatsPlayer4));
+            statsRows.put(5,
+                          (LinearLayout) playerStatsLayout.findViewById(R.id.rowStatsPlayer5));
             if (gameStyleType == GameStyleType.Tarot5) {
-                this.statsRows.put(6,
-                                   (LinearLayout) this.playerStatsLayout.findViewById(R.id.rowStatsPlayer6));
+                statsRows.put(6,
+                              (LinearLayout) playerStatsLayout.findViewById(R.id.rowStatsPlayer6));
             }
 
 
             // remove useless lines
-            int nbPlayers = this.getGameSet().getPlayers().size();
+            int nbPlayers = getGameSet().getPlayers().size();
 
             // tarot à 5
             if (gameStyleType == GameStyleType.Tarot5) {
 
                 // 5 players
                 if (nbPlayers == 5) {
-                    this.playerStatsLayout.removeView(this.playerStatsLayout.findViewById(R.id.imgSeparator6));
-                    this.playerStatsLayout.removeView(this.playerStatsLayout.findViewById(R.id.rowStatsPlayer6));
-                    this.playerStatsLayout.setWeightSum(5);
+                    playerStatsLayout.removeView(playerStatsLayout.findViewById(R.id.imgSeparator6));
+                    playerStatsLayout.removeView(playerStatsLayout.findViewById(R.id.rowStatsPlayer6));
+                    playerStatsLayout.setWeightSum(5);
                 }
 
                 // 5 players + 1 additionnal player
@@ -116,18 +105,18 @@ public class GameSetSynthesisFragment extends Fragment {
 
                 // 3 players
                 if (nbPlayers == 3) {
-                    this.playerStatsLayout.removeView(this.playerStatsLayout.findViewById(R.id.imgSeparator5));
-                    this.playerStatsLayout.removeView(this.playerStatsLayout.findViewById(R.id.rowStatsPlayer5));
-                    this.playerStatsLayout.removeView(this.playerStatsLayout.findViewById(R.id.imgSeparator4));
-                    this.playerStatsLayout.removeView(this.playerStatsLayout.findViewById(R.id.rowStatsPlayer4));
-                    this.playerStatsLayout.setWeightSum(3);
+                    playerStatsLayout.removeView(playerStatsLayout.findViewById(R.id.imgSeparator5));
+                    playerStatsLayout.removeView(playerStatsLayout.findViewById(R.id.rowStatsPlayer5));
+                    playerStatsLayout.removeView(playerStatsLayout.findViewById(R.id.imgSeparator4));
+                    playerStatsLayout.removeView(playerStatsLayout.findViewById(R.id.rowStatsPlayer4));
+                    playerStatsLayout.setWeightSum(3);
                 }
 
                 // 4 players
                 else if (nbPlayers == 4) {
-                    this.playerStatsLayout.removeView(this.playerStatsLayout.findViewById(R.id.imgSeparator5));
-                    this.playerStatsLayout.removeView(this.playerStatsLayout.findViewById(R.id.rowStatsPlayer5));
-                    this.playerStatsLayout.setWeightSum(4);
+                    playerStatsLayout.removeView(playerStatsLayout.findViewById(R.id.imgSeparator5));
+                    playerStatsLayout.removeView(playerStatsLayout.findViewById(R.id.rowStatsPlayer5));
+                    playerStatsLayout.setWeightSum(4);
                 }
 
                 // 4 players + 1 additionnal player
@@ -136,7 +125,7 @@ public class GameSetSynthesisFragment extends Fragment {
                 }
             }
         } catch (Exception e) {
-            auditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this.getActivity());
+            auditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, getActivity());
         }
 
         return view;
@@ -145,7 +134,7 @@ public class GameSetSynthesisFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        this.refreshPlayerStatsRows();
+        refreshPlayerStatsRows();
     }
 
     @Override
@@ -157,14 +146,14 @@ public class GameSetSynthesisFragment extends Fragment {
 
     protected void refreshPlayerStatsRows() {
         // sort players
-        List<Player> sortedPlayers = this.getGameSet().getPlayers().getPlayers();
+        List<Player> sortedPlayers = getGameSet().getPlayers().getPlayers();
         Collections.sort(sortedPlayers, new PlayerScoreComparator());
 
         // get general data sources
         IGameSetStatisticsComputer gameSetStatisticsComputer = GameSetStatisticsComputerFactory.GetGameSetStatisticsComputer(
-                this.getGameSet(),
+                getGameSet(),
                 "guava");
-        MapPlayersScores lastScores = this.getGameSet().getGameSetScores().getResultsAtLastGame();
+        MapPlayersScores lastScores = getGameSet().getGameSetScores().getResultsAtLastGame();
         Map<Player, Integer> leadingCount = gameSetStatisticsComputer.getLeadingCount();
         Map<Player, Integer> leadingSuccesses = gameSetStatisticsComputer.getLeadingSuccessCount();
         Map<Player, Integer> calledCount = gameSetStatisticsComputer.getCalledCount();
@@ -185,7 +174,7 @@ public class GameSetSynthesisFragment extends Fragment {
             int maxScoreForPlayer = gameSetStatisticsComputer.getMaxScoreEverForPlayer(player);
 
             // get line widgets
-            LinearLayout statRow = this.statsRows.get(rank + 1);
+            LinearLayout statRow = statsRows.get(rank + 1);
             //TextView statPlayerName = (TextView)statRow.findViewById(R.id.statPlayerName);
             TextView statScore = (TextView) statRow.findViewById(R.id.statScore);
             TextView statLeadingGamesCount = (TextView) statRow.findViewById(R.id.statLeadingGamesCount);
@@ -200,22 +189,22 @@ public class GameSetSynthesisFragment extends Fragment {
                                                         .toString()
                                                         .contains(
                                                                 "content://com.android.contacts/contacts")) {
-                Bitmap playerImage = UIHelper.getContactPicture(this.getActivity(),
+                Bitmap playerImage = UIHelper.getContactPicture(getActivity(),
                                                                 Uri.parse(player.getPictureUri())
                                                                    .getLastPathSegment());
-                ImageView imgPlayer = new ImageView(this.getActivity());
+                ImageView imgPlayer = new ImageView(getActivity());
                 imgPlayer.setImageBitmap(playerImage);
                 imgPlayer.setLayoutParams(UIConstants.PLAYERS_LAYOUT_PARAMS);
 
                 imgPlayer.setOnClickListener(playerClickListener);
-                //this.addView(imgPlayer);
+                //addView(imgPlayer);
                 statRow.removeViewAt(0);
                 statRow.addView(imgPlayer, 0);
             }
 
             // no picture, only name
             else {
-                TextView txtPlayer = new TextView(this.getActivity());
+                TextView txtPlayer = new TextView(getActivity());
                 txtPlayer.setText(player.getName());
                 txtPlayer.setGravity(Gravity.CENTER);
                 txtPlayer.setLayoutParams(UIConstants.PLAYERS_LAYOUT_PARAMS);
@@ -228,7 +217,7 @@ public class GameSetSynthesisFragment extends Fragment {
                 txtPlayer.setEllipsize(TruncateAt.END);
 
                 txtPlayer.setOnClickListener(playerClickListener);
-                //this.addView(txtPlayer);
+                //addView(txtPlayer);
                 statRow.removeViewAt(0);
                 statRow.addView(txtPlayer, 0);
             }
@@ -240,7 +229,7 @@ public class GameSetSynthesisFragment extends Fragment {
                     .toString(successRate) + "%)");
 
             // display called game count if necessary 
-            if (this.getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
+            if (getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
                 TextView statCalledGamesCount = (TextView) statRow.findViewById(R.id.statCalledGamesCount);
                 statCalledGamesCount.setText(Integer.toString(calledCount.get(player) == null
                                                                       ? 0
@@ -287,11 +276,10 @@ public class GameSetSynthesisFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(TabGameSetActivity.getInstance(),
-                                       PlayerStatisticsActivity.class);
-            intent.putExtra("player", this.player.getName());
-            TabGameSetActivity.getInstance()
-                              .startActivityForResult(intent, RequestCodes.DISPLAY_PLAYER);
+            // TODO create key for player string
+            Intent intent = new Intent(getActivity(), PlayerStatisticsActivity.class);
+            intent.putExtra("player", player.getName());
+            getActivity().startActivityForResult(intent, RequestCodes.DISPLAY_PLAYER);
         }
     }
 }

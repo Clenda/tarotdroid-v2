@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 
 import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.core.AppParams;
+import org.nla.tarotdroid.core.BaseActivity;
+import org.nla.tarotdroid.core.BaseFragment;
+import org.nla.tarotdroid.core.GameSetWrapper;
 import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.BluetoothHelper;
@@ -14,8 +17,8 @@ import org.nla.tarotdroid.dashboard.MainDashboardActivity;
 import org.nla.tarotdroid.dashboard.MainPreferencesActivity;
 import org.nla.tarotdroid.dashboard.MainPreferencesFragment;
 import org.nla.tarotdroid.dashboard.NewGameSetDashboardActivity;
-import org.nla.tarotdroid.dashboard.PlayerSelectorActivity;
 import org.nla.tarotdroid.gameset.BaseGameActivity;
+import org.nla.tarotdroid.gameset.CreateGameSetActivity;
 import org.nla.tarotdroid.gameset.DisplayAndRemoveGameDialogActivity;
 import org.nla.tarotdroid.gameset.GameReadViewPagerActivity;
 import org.nla.tarotdroid.gameset.GameSetChartViewPagerActivity;
@@ -28,6 +31,7 @@ import org.nla.tarotdroid.gameset.TabGameSetPreferencesFragment;
 import org.nla.tarotdroid.gameset.charts.BetsStatsChartFragment;
 import org.nla.tarotdroid.gameset.charts.KingsStatsChartFragment;
 import org.nla.tarotdroid.gameset.charts.SuccessesStatsChartFragment;
+import org.nla.tarotdroid.gameset.controls.BaseRow;
 import org.nla.tarotdroid.gameset.controls.BelgianTarotGameRow;
 import org.nla.tarotdroid.gameset.controls.PenaltyGameRow;
 import org.nla.tarotdroid.gameset.controls.PlayerSelectorRow;
@@ -56,7 +60,7 @@ public interface ApplicationComponent {
 
     void inject(TabGameSetActivity tabGameSetActivity);
 
-    void inject(PlayerSelectorActivity playerSelectorActivity);
+    void inject(CreateGameSetActivity createGameSetActivity);
 
     void inject(DisplayAndRemoveGameDialogActivity displayAndRemoveGameDialogActivity);
 
@@ -104,6 +108,12 @@ public interface ApplicationComponent {
 
     void inject(MainPreferencesFragment mainPreferencesFragment);
 
+    void inject(BaseActivity baseActivity);
+
+    void inject(BaseFragment baseFragment);
+
+    void inject(BaseRow baseRow);
+
     Application application();
 
     Context context();
@@ -111,6 +121,8 @@ public interface ApplicationComponent {
     SharedPreferences sharedPreferences();
 
     GameSetParameters gameSetParameters();
+
+    GameSetWrapper gameSetWrapper();
 
     AppParams appParams();
 

@@ -16,6 +16,7 @@ import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.constants.PreferenceConstants;
 import org.nla.tarotdroid.core.AppParams;
+import org.nla.tarotdroid.core.GameSetWrapper;
 import org.nla.tarotdroid.core.dal.IDalService;
 
 import javax.inject.Inject;
@@ -25,34 +26,40 @@ public class TabGameSetPreferencesFragment extends PreferenceFragmentCompat
 
     public static final String FRAGMENT_TAG = "tab_gameset_preference_fragment";
 
-    @Inject protected AppParams appParams;
-    @Inject protected IDalService dalService;
-    @Inject protected GameSetParameters gameSetParameters;
+    protected @Inject AppParams appParams;
+    protected @Inject IDalService dalService;
+    protected @Inject GameSetParameters gameSetParameters;
+    protected @Inject GameSetWrapper gameSetWrapper;
 
     public TabGameSetPreferencesFragment() {
+    }
+
+    protected void inject() {
+        TarotDroidApp.get(getContext()).getComponent().inject(this);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TarotDroidApp.get(getContext()).getComponent().inject(this);
-
-        // Set the default white background in the view so as to avoid transparency
         view.setBackgroundColor(ContextCompat.getColor(getContext(),
                                                        R.color.background_material_light));
     }
 
     @Override
     public void onCreatePreferences(Bundle bundle, String rootKey) {
+        inject();
         setPreferencesFromResource(R.xml.tab_gameset_preferences, rootKey);
         // remove "misery allowed" pref if game is 5 player style
-        GameSet gameSet = TabGameSetActivity.getInstance().gameSet;
-        if (gameSet.getGameStyleType() == GameStyleType.Tarot5) {
+        if (getGameSet().getGameStyleType() == GameStyleType.Tarot5) {
             CheckBoxPreference prefMiseryAllowedAt3Or5 = (CheckBoxPreference) this.findPreference(
                     PreferenceConstants.PrefIsMiseryAuthorized);
             prefMiseryAllowedAt3Or5.setChecked(false);
             prefMiseryAllowedAt3Or5.setEnabled(false);
         }
+    }
+
+    public GameSet getGameSet() {
+        return gameSetWrapper.getGameSet();
     }
 
     @Override

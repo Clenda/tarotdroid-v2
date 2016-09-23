@@ -9,6 +9,7 @@ import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.cloud.PlayerConverter;
 import org.nla.tarotdroid.constants.PreferenceConstants;
 import org.nla.tarotdroid.core.AppParams;
+import org.nla.tarotdroid.core.GameSetWrapper;
 import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.dal.sql.SqliteDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
@@ -162,4 +163,9 @@ public class ApplicationModule {
         return dalService;
     }
 
+    @Provides
+    @Singleton
+    GameSetWrapper providesGameSetWrapper() {
+        return new GameSetWrapper();
+    }
 }

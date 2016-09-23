@@ -12,11 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
-import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.constants.ActivityParams;
-import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 
 import java.util.List;
@@ -25,7 +22,7 @@ import butterknife.BindView;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class GameReadViewPagerActivity extends BaseActivity {
+public class GameReadViewPagerActivity extends BaseGameSetActivity {
 
     @BindView(R.id.pager) protected ViewPager viewPager;
     @BindView(R.id.tabs) protected TabLayout tabLayout;
@@ -39,7 +36,8 @@ public class GameReadViewPagerActivity extends BaseActivity {
                 case DialogInterface.BUTTON_POSITIVE:
                     new RemoveGameTask(GameReadViewPagerActivity.this,
                                        GameReadViewPagerActivity.this,
-                                       getGameSet()).execute();
+                                       getGameSet(),
+                                       dalService).execute();
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     break;
@@ -62,11 +60,6 @@ public class GameReadViewPagerActivity extends BaseActivity {
         } catch (Exception e) {
             auditHelper.auditError(AuditHelper.ErrorTypes.gameReadViewPagerActivityError, e, this);
         }
-    }
-
-    @Override
-    protected void inject() {
-        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     // TODO Implement
@@ -93,7 +86,7 @@ public class GameReadViewPagerActivity extends BaseActivity {
                     AlertDialog.Builder builder = new AlertDialog.Builder(GameReadViewPagerActivity.this);
                     String dialogTitle = String.format(
                             getString(R.string.titleRemoveGameYesNo),
-                            currentGameIndex
+                            currentGameIndex + ""
                     );
                     String dialogMessage = getString(R.string.msgRemoveGameYesNo);
                     builder.setTitle(dialogTitle);
@@ -109,10 +102,6 @@ public class GameReadViewPagerActivity extends BaseActivity {
             });
         }
         return true;
-    }
-
-    private GameSet getGameSet() {
-        return TabGameSetActivity.getInstance().gameSet;
     }
 
     private void initialisePaging() {

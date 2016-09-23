@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import org.nla.tarotdroid.R;
+import org.nla.tarotdroid.TarotDroidApp;
+import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.LocalizationHelper;
 import org.nla.tarotdroid.core.helpers.UIHelper;
@@ -19,11 +21,19 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    @Inject public AppParams appParams;
-    @Inject public AuditHelper auditHelper;
-    @Inject public LocalizationHelper localizationHelper;
-    @Nullable @BindView(R.id.toolbar) protected Toolbar toolbar;
+    public @Inject AppParams appParams;
+    public @Inject AuditHelper auditHelper;
+    public @Inject LocalizationHelper localizationHelper;
+    public @Inject IDalService dalService;
+    protected @Inject GameSetWrapper gameSetWrapper;
+
+    protected @Nullable @BindView(R.id.toolbar) Toolbar toolbar;
+
     private boolean restarting;
+
+    protected void inject() {
+        TarotDroidApp.get(this).getComponent().inject(this);
+    }
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -68,8 +78,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void setKeepScreenOn() {
         UIHelper.setKeepScreenOn(this, appParams.isKeepScreenOn());
     }
-
-    protected abstract void inject();
 
     protected abstract void auditEvent();
 

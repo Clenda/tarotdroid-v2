@@ -12,18 +12,15 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.biz.BelgianBaseGame;
-import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PassedGame;
 import org.nla.tarotdroid.biz.PenaltyGame;
 import org.nla.tarotdroid.biz.StandardBaseGame;
 import org.nla.tarotdroid.constants.ActivityParams;
-import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.helpers.AuditHelper.ErrorTypes;
 
-public class DisplayAndRemoveGameDialogActivity extends BaseActivity
+public class DisplayAndRemoveGameDialogActivity extends BaseGameSetActivity
 {
 	private BaseGame game;
 	
@@ -33,9 +30,10 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
 	        switch (which) {
     	        case DialogInterface.BUTTON_POSITIVE:
     	        	new RemoveGameTask(
-                            TabGameSetActivity.getInstance(),
                             DisplayAndRemoveGameDialogActivity.this,
-                            getGameSet()
+                            DisplayAndRemoveGameDialogActivity.this,
+                            getGameSet(),
+                            dalService
                     ).execute(game);
     	            break;
     	        case DialogInterface.BUTTON_NEGATIVE:
@@ -46,10 +44,6 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
 	        }
 	    }
 	};
-	
-	private GameSet getGameSet() {
-		return TabGameSetActivity.getInstance().gameSet;
-	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -127,11 +121,6 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
 		}
 	}
 
-    @Override
-    protected void inject() {
-        TarotDroidApp.get(this).getComponent().inject(this);
-    }
-
     // TODO Implement
     @Override
     protected void auditEvent() {
@@ -149,9 +138,9 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
     }
 
     private void viewGame() {
-        Intent intent = new Intent(TabGameSetActivity.getInstance(), GameReadViewPagerActivity.class);
+        Intent intent = new Intent(this, GameReadViewPagerActivity.class);
         intent.putExtra(ActivityParams.PARAM_GAME_INDEX, game.getIndex());
-        TabGameSetActivity.getInstance().startActivity(intent);
+        startActivity(intent);
         finish();
     }
 	
@@ -168,9 +157,9 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
             typeOfGame = PassActivity.class;
 		}
 
-		Intent intent = new Intent(TabGameSetActivity.getInstance(), typeOfGame);
+        Intent intent = new Intent(this, typeOfGame);
         intent.putExtra(ActivityParams.PARAM_GAME_INDEX, game.getIndex());
-        TabGameSetActivity.getInstance().startActivity(intent);
+        startActivity(intent);
         finish();
     }
 	
@@ -178,7 +167,7 @@ public class DisplayAndRemoveGameDialogActivity extends BaseActivity
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		String dialogTitle = String.format(
                 getString(R.string.titleRemoveGameYesNo),
-                game.getIndex()
+                game.getIndex() + ""
         );
         String dialogMessage = game.getIndex() == game.getHighestGameIndex()
                 ? getString(R.string.msgRemoveGameYesNo)

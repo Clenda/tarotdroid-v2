@@ -1,6 +1,5 @@
 package org.nla.tarotdroid.gameset.controls;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -9,9 +8,7 @@ import android.view.Gravity;
 import android.widget.TextView;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
-import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PenaltyGame;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.constants.UIConstants;
@@ -20,31 +17,25 @@ public class PenaltyGameRow extends BaseGameRow {
 
     protected PenaltyGameRow(
             final Context context,
-            final ProgressDialog dialog,
             final AttributeSet attrs,
             final BaseGame game,
-            final float weight,
-            final GameSet gameSet
+            final float weight
     ) {
-        super(context, dialog, attrs, weight, gameSet);
+        super(context, attrs, weight);
         if (!(game instanceof PenaltyGame)) {
             throw new IllegalArgumentException("Incorrect game type: " + game.getClass());
         }
-        setOrientation(HORIZONTAL);
         this.game = game;
-        TarotDroidApp.get(context).getComponent().inject(this);
         initializeViews();
         setOnLongClickListener(this);
     }
 
     protected PenaltyGameRow(
             final Context context,
-            final ProgressDialog dialog,
             final BaseGame game,
-            final float weight,
-            final GameSet gameSet
+            final float weight
     ) {
-        this(context, dialog, null, game, weight, gameSet);
+        this(context, null, game, weight);
     }
 
     protected PenaltyGame getGame() {

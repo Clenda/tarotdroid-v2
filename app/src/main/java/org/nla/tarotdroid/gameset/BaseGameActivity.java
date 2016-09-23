@@ -18,17 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.nla.tarotdroid.R;
-import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.biz.BaseGame;
-import org.nla.tarotdroid.biz.GameSet;
 import org.nla.tarotdroid.biz.PersistableBusinessObject;
 import org.nla.tarotdroid.biz.Player;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 import org.nla.tarotdroid.constants.ActivityParams;
 import org.nla.tarotdroid.constants.ResultCodes;
-import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.dal.DalException;
-import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 import org.nla.tarotdroid.gameset.controls.Selector;
@@ -36,13 +32,11 @@ import org.nla.tarotdroid.gameset.controls.Selector;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public abstract class BaseGameActivity extends BaseActivity {
+public abstract class BaseGameActivity extends BaseGameSetActivity {
 
     @Nullable @BindView(R.id.panelMainParameters) protected LinearLayout panelMainParameters;
     @Nullable @BindView(R.id.txtTitleMainParameters) protected TextView txtTitleMainParameters;
@@ -68,11 +62,6 @@ public abstract class BaseGameActivity extends BaseActivity {
     protected List<Player> inGamePlayers;
     protected BaseGame game;
     protected boolean isInEditMode;
-    @Inject IDalService dalService;
-
-    protected GameSet getGameSet() {
-        return TabGameSetActivity.getInstance().gameSet;
-    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -116,11 +105,6 @@ public abstract class BaseGameActivity extends BaseActivity {
         } else {
             txtTitleDeadAndDealer.setText(R.string.lblDealerSection);
         }
-    }
-
-    @Override
-    protected void inject() {
-        TarotDroidApp.get(this).getComponent().inject(this);
     }
 
     @Override
