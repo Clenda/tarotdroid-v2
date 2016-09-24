@@ -35,9 +35,26 @@ android {
         buildConfigField "String", "BACKEND_BASE_URL", "\"${backendBaseUrlDEV}\""
     }
 
-    buildTypes {
+    signingConfigs {
+        debug {
+            storeFile file('../keystore/debug.keystore')
+        }
         release {
+            keyAlias 'fakeAlias'
+            keyPassword "fakeKey"
+            storeFile file('../keystore/tarotdroid.keystore')
+            storePassword "fakePassword"
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
             minifyEnabled false
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
