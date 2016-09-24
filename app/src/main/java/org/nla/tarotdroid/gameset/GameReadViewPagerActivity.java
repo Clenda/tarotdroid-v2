@@ -16,11 +16,10 @@ import org.nla.tarotdroid.biz.BaseGame;
 import org.nla.tarotdroid.constants.ActivityParams;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class GameReadViewPagerActivity extends BaseGameSetActivity {
 
@@ -129,7 +128,7 @@ public class GameReadViewPagerActivity extends BaseGameSetActivity {
     }
 
     private void setupViewPager() {
-        List<Fragment> fragments = newArrayList();
+        List<Fragment> fragments = new ArrayList<>();
         for (BaseGame game : getGameSet().getGames()) {
             fragments.add(GameReadFragment.newInstance(game.getIndex(), getGameSet()));
         }

@@ -33,8 +33,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 public class PlayerSelectorRow extends LinearLayout {
 
     @Inject IDalService dalService;
@@ -174,7 +172,7 @@ public class PlayerSelectorRow extends LinearLayout {
 
         protected PlayerAdapter(Context context, List<HashMap<String, String>> friendList) {
             this.context = context;
-            this.originalFriendList = newArrayList(friendList);
+            this.originalFriendList = new ArrayList<>(friendList);
             this.filteredFriendList = friendList;
             this.alphabeticalPlayerNameFilter = new AlphabeticalPlayerNameFilter();
         }

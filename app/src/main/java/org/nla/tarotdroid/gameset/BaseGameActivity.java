@@ -34,8 +34,6 @@ import java.util.List;
 
 import butterknife.BindView;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public abstract class BaseGameActivity extends BaseGameSetActivity {
 
     @Nullable @BindView(R.id.panelMainParameters) protected LinearLayout panelMainParameters;
@@ -393,13 +391,6 @@ public abstract class BaseGameActivity extends BaseGameSetActivity {
         }
     }
 
-//    public enum GameType {
-//        Standard,
-//        Belgian,
-//        Penalty,
-//        Pass
-//    }
-
     private class PersistGameTask extends AsyncTask<BaseGame, Void, Void> {
         private final ProgressDialog dialog;
         private Context context;
@@ -407,7 +398,6 @@ public abstract class BaseGameActivity extends BaseGameSetActivity {
         private Exception backgroundException;
 
         protected PersistGameTask(final Context context) {
-            checkArgument(context != null, "context is null");
             this.context = context;
             dialog = new ProgressDialog(context);
             backgroundErrorHappened = false;

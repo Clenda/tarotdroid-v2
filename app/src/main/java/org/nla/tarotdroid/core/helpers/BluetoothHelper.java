@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 /**
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
  *
@@ -140,7 +138,6 @@ public final class BluetoothHelper {
 	 * Starts discovering devices.
 	 */
 	public void startDiscovery() {
-		checkArgument(this.activity != null, "you must first set an activity...");
 		this.discoveredDevices.clear();
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(BluetoothDevice.ACTION_FOUND);
@@ -154,7 +151,6 @@ public final class BluetoothHelper {
 	 * Cancels the devices discovery.
 	 */
 	public void cancelDiscovery() {
-		checkArgument(this.activity != null, "you must first set an activity...");
 		this.bluetoothAdapter.cancelDiscovery();
 		this.activity.unregisterReceiver(this.broadcastReceiver);
 	}
@@ -163,7 +159,6 @@ public final class BluetoothHelper {
 	 * Sets the device discoverable.
 	 */
 	public void setBluetoothDeviceDiscoverable() {
-		checkArgument(this.activity != null, "you must first set an activity...");
 		Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
 		discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 60);
 		this.activity.startActivityForResult(discoverableIntent, BluetoothHelper.REQUEST_SET_DISCOVERABLE);

@@ -16,8 +16,6 @@
 */
 package org.nla.tarotdroid.clientmodel;
 
-import com.google.common.base.Objects;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -151,19 +149,17 @@ public class RestGameSet {
 //		this.id = id;
 //	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                      .add("uuid", this.uuid)
-                      .add("creationTs", this.creationTs)
-                      .add("gameSetParameters", this.gameSetParameters)
-                      .add("gameStyleType", this.gameStyleType)
-                      .add("players", this.players)
-                      .add("games", this.games)
-                      .add("isValid", this.isValid)
-                      .toString();
+        return "RestGameSet{" +
+                "creationTs=" + creationTs +
+                ", isValid=" + isValid +
+                ", uuid='" + uuid + '\'' +
+                ", gameSetParameters=" + gameSetParameters +
+                ", gameStyleType=" + gameStyleType +
+                ", players=" + players +
+                ", games=" + games +
+                '}';
     }
 }

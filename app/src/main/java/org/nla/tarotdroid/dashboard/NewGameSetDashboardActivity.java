@@ -18,12 +18,11 @@ import org.nla.tarotdroid.core.ThumbnailItem;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.gameset.CreateGameSetActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnItemClick;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class NewGameSetDashboardActivity extends BaseActivity {
 
@@ -84,9 +83,9 @@ public class NewGameSetDashboardActivity extends BaseActivity {
 				R.string.lblNewTarot5Description, 
 				R.id.new_tarot5_gameset_item
 		);
-		
-		List<DashboardOption> options = newArrayList();
-		options.add(newTarot3Option);
+
+        List<DashboardOption> options = new ArrayList<>();
+        options.add(newTarot3Option);
 		options.add(newTarot4Option);
 		options.add(newTarot5Option);
 		listView.setAdapter(new DashboardOptionAdapter(this, options));

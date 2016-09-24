@@ -1,7 +1,5 @@
 package org.nla.tarotdroid.clientmodel;
 
-import com.google.common.base.Objects;
-
 public class RestAccount {
 
     private String email;
@@ -37,10 +35,10 @@ public class RestAccount {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                      .add("name", this.name)
-                      .add("email", this.email)
-                      .add("password", this.password)
-                      .toString();
+        return "RestAccount{" +
+                "email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

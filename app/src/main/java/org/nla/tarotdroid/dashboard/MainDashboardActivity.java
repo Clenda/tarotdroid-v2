@@ -34,14 +34,13 @@ import org.nla.tarotdroid.players.PlayerListActivity;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class MainDashboardActivity extends BaseActivity {
 
@@ -214,7 +213,7 @@ public class MainDashboardActivity extends BaseActivity {
                                                            R.string.lblFullVersionDetails,
                                                            R.id.full_version_item);
 
-        List<DashboardOption> options = newArrayList();
+        List<DashboardOption> options = new ArrayList<>();
         options.add(newGameOption);
         options.add(historyOption);
         options.add(playerStatisticsOption);

@@ -16,8 +16,6 @@
 */
 package org.nla.tarotdroid.clientmodel;
 
-import com.google.common.base.Objects;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -534,37 +532,36 @@ public class RestGame implements Serializable {
         this.penaltyType = penaltyType;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                      .add("uuid", this.index)
-                      .add("index", this.index)
-                      .add("dealer", this.dealer)
-                      .add("players", this.players)
-                      .add("deadPlayers", this.deadPlayers)
-                      .add("leadingPlayer", this.leadingPlayer)
-                      .add("bet", this.bet)
-                      .add("calledPlayer", this.calledPlayer)
-                      .add("calledKing", this.calledKing)
-                      .add("numberOfOudlers", this.numberOfOudlers)
-                      .add("points", this.points)
-                      .add("teamWithPoignee", this.teamWithPoignee)
-                      .add("teamWithDoublePoignee", this.teamWithDoublePoignee)
-                      .add("teamWithTriplePoignee", this.teamWithTriplePoignee)
-                      .add("teamWithKidAtTheEnd", this.teamWithKidAtTheEnd)
-                      .add("playersWithMisery", this.playersWithMisery)
-                      .add("chelem", this.chelem)
-                      .add("first", this.first)
-                      .add("second", this.second)
-                      .add("third", this.third)
-                      .add("fourth", this.fourth)
-                      .add("fifth", this.fifth)
-                      .add("penalted", this.penalted)
-                      .add("penaltyPoints", this.penaltyPoints)
-                      .add("penaltyType", this.penaltyType)
-                      .toString();
+        return "RestGame{" +
+                "creationTs=" + creationTs +
+                ", gameType=" + gameType +
+                ", players=" + players +
+                ", deadPlayers=" + deadPlayers +
+                ", dealer=" + dealer +
+                ", index=" + index +
+                ", leadingPlayer=" + leadingPlayer +
+                ", calledPlayer=" + calledPlayer +
+                ", calledKing=" + calledKing +
+                ", bet=" + bet +
+                ", numberOfOudlers=" + numberOfOudlers +
+                ", points=" + points +
+                ", teamWithPoignee=" + teamWithPoignee +
+                ", teamWithDoublePoignee=" + teamWithDoublePoignee +
+                ", teamWithTriplePoignee=" + teamWithTriplePoignee +
+                ", teamWithKidAtTheEnd=" + teamWithKidAtTheEnd +
+                ", playersWithMisery=" + playersWithMisery +
+                ", chelem=" + chelem +
+                ", first=" + first +
+                ", second=" + second +
+                ", third=" + third +
+                ", fourth=" + fourth +
+                ", fifth=" + fifth +
+                ", penalted=" + penalted +
+                ", penaltyPoints=" + penaltyPoints +
+                ", penaltyType='" + penaltyType + '\'' +
+                ", uuid='" + uuid + '\'' +
+                '}';
     }
 }

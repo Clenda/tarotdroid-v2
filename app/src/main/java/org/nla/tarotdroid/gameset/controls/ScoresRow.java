@@ -17,8 +17,6 @@ import org.nla.tarotdroid.constants.UIConstants;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public class ScoresRow extends BaseRow {
 
     private Map<Player, TextView> mapPlayersScoresTextViews;
@@ -70,8 +68,6 @@ public class ScoresRow extends BaseRow {
     }
 
     public void updatePlayerScore(final MapPlayersScores mapPlayersScores) {
-        checkArgument(mapPlayersScores != null, "mapPlayersScores is null");
-
         // player names and scores
         for (PersistableBusinessObject player : getGameSet().getPlayers()) {
             // map the player score to his score text view

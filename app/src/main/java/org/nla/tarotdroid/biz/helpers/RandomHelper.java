@@ -30,10 +30,9 @@ import org.nla.tarotdroid.biz.StandardTarot4Game;
 import org.nla.tarotdroid.biz.StandardTarot5Game;
 import org.nla.tarotdroid.biz.enums.GameStyleType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * @author Nicolas LAURENT daffycricket<a>yahoo.fr
@@ -94,7 +93,7 @@ public final class RandomHelper {
 	 * @return
 	 */
 	public static List<GameSet> createRandomGameSets(int gameSetCount) {
-		List<GameSet> gameSets = newArrayList();
+		List<GameSet> gameSets = new ArrayList<>();
 		for (int i = 0; i < gameSetCount; ++i) {
 			switch(RandomHelper.RANDOM.nextInt(3)) {
 				case 0:
