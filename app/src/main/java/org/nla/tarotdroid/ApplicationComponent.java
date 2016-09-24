@@ -8,7 +8,9 @@ import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.core.AppParams;
 import org.nla.tarotdroid.core.BaseActivity;
 import org.nla.tarotdroid.core.BaseFragment;
+import org.nla.tarotdroid.core.ExportDatabaseHelper;
 import org.nla.tarotdroid.core.GameSetWrapper;
+import org.nla.tarotdroid.core.ImportDatabaseHelper;
 import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.BluetoothHelper;
@@ -133,6 +135,10 @@ public interface ApplicationComponent {
     BluetoothHelper bluetoothHelper();
 
     IDalService dalService();
+
+    ImportDatabaseHelper importDatabaseHelper();
+
+    ExportDatabaseHelper exportDatabaseHelper();
 
     final class Initializer {
 

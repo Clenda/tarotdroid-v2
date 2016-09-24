@@ -9,7 +9,9 @@ import org.nla.tarotdroid.biz.GameSetParameters;
 import org.nla.tarotdroid.cloud.PlayerConverter;
 import org.nla.tarotdroid.constants.PreferenceConstants;
 import org.nla.tarotdroid.core.AppParams;
+import org.nla.tarotdroid.core.ExportDatabaseHelper;
 import org.nla.tarotdroid.core.GameSetWrapper;
+import org.nla.tarotdroid.core.ImportDatabaseHelper;
 import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.dal.sql.SqliteDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
@@ -167,5 +169,17 @@ public class ApplicationModule {
     @Singleton
     GameSetWrapper providesGameSetWrapper() {
         return new GameSetWrapper();
+    }
+
+    @Provides
+    @Singleton
+    ImportDatabaseHelper providesImportDatabaseHelper(final IDalService dalService) {
+        return new ImportDatabaseHelper(dalService);
+    }
+
+    @Provides
+    @Singleton
+    ExportDatabaseHelper providesExportDatabaseHelper(final IDalService dalService) {
+        return new ExportDatabaseHelper(dalService);
     }
 }

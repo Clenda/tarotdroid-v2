@@ -414,5 +414,10 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="msgImportDatabase">Import de la base de donnée</string>
+    <string name="msgGenericError">Une erreur est survenue</string>
+    <string name="titleGenericError">Erreur</string>
+    <string name="lblDbHelperExportDone">Export terminé</string>
+    <string name="msgExportDatabase">Export de la base de donnée</string>
 
 </resources>

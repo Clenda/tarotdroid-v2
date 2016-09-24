@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -22,11 +23,10 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
-import org.nla.tarotdroid.core.AppParams;
 import org.nla.tarotdroid.core.BaseActivity;
-import org.nla.tarotdroid.core.IAsyncCallback;
+import org.nla.tarotdroid.core.ExportDatabaseHelper;
+import org.nla.tarotdroid.core.ImportDatabaseHelper;
 import org.nla.tarotdroid.core.ThumbnailItem;
-import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.UIHelper;
 import org.nla.tarotdroid.history.GameSetHistoryActivity;
@@ -45,23 +45,10 @@ import butterknife.OnClick;
 public class MainDashboardActivity extends BaseActivity {
 
     private static final int FILE_SELECT_CODE = 0;
-    private final IAsyncCallback<String[]> exportDatabaseCallback = new IAsyncCallback<String[]>() {
+    protected @BindView(R.id.listOptions) ListView listOptions;
+    protected @Inject ImportDatabaseHelper importDatabaseHelper;
+    protected @Inject ExportDatabaseHelper exportDatabaseHelper;
 
-        @Override
-        public void execute(String[] databaseContent, Exception e) {
-            onDatabaseExported(databaseContent);
-        }
-    };
-    private final IAsyncCallback<String> importDatabaseCallback = new IAsyncCallback<String>() {
-
-        @Override
-        public void execute(String object, Exception e) {
-            onDatabaseImported();
-        }
-    };
-    @BindView(R.id.listOptions) protected ListView listOptions;
-    @Inject protected AppParams appParams;
-    @Inject IDalService dalService;
     private InsertMockGameSetsTask insertMockGameSetsTask;
 
     private void buildMenuForNewAndroidDevices(Menu menu) {
@@ -70,10 +57,7 @@ public class MainDashboardActivity extends BaseActivity {
         miExportDB.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ExportDatabaseTask exportDatabaseTask = new ExportDatabaseTask(MainDashboardActivity.this,
-                                                                               dalService);
-                exportDatabaseTask.setCallback(exportDatabaseCallback);
-                exportDatabaseTask.execute();
+                exportDatabase();
                 return true;
             }
         });
@@ -130,10 +114,7 @@ public class MainDashboardActivity extends BaseActivity {
         miExportDB.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ExportDatabaseTask exportDatabaseTask = new ExportDatabaseTask(MainDashboardActivity.this,
-                                                                               dalService);
-                exportDatabaseTask.setCallback(exportDatabaseCallback);
-                exportDatabaseTask.execute();
+                exportDatabase();
                 return true;
             }
         });
@@ -340,53 +321,69 @@ public class MainDashboardActivity extends BaseActivity {
         return true;
     }
 
-    private void onDatabaseExported(String[] databaseContent) {
-
-        // should never happen
-        if (databaseContent == null || databaseContent[0] == null) {
-            UIHelper.showSimpleRichTextDialog(this,
-                                              this.getString(R.string.msgDbExportFailed),
-                                              this.getString(R.string.titleDbExportFailed));
-        } else {
-            try {
-                StringBuilder contentText = buildMessageBody();
-                // if (AppContext.getApplication().isAppInDebugMode()) {
-                // contentText.append("Facebook hash key: [" +
-                // UIHelper.getFacebookHashKey(this) + "]");
-                // contentText.append("\n");
-                // }
-                contentText.append("Export (" + databaseContent[0].length() + " characters) \n" + databaseContent[0]);
-                contentText.append("\n");
-
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("message/rfc822");
-                intent.putExtra(Intent.EXTRA_EMAIL,
-                                new String[]{this.getString(R.string.urlEmail)});
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Export log");
-                intent.putExtra(Intent.EXTRA_TEXT, contentText.toString());
-
-                if (databaseContent[1] != null) {
-                    Uri uri = Uri.fromFile(new File(databaseContent[1]));
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                }
-
-                this.startActivity(Intent.createChooser(intent, "Envoyer l'export..."));
-            } catch (Exception e) {
-                auditHelper.auditError(AuditHelper.ErrorTypes.exportDatabaseError, e, this);
-            }
-        }
+    private void onImportFileSelected(final String filePath) {
+        importDatabase(filePath);
     }
 
-    private void onDatabaseImported() {
+    private void importDatabase(final String filePath) {
+        showProgressDialogWithText(R.string.msgImportDatabase);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    importDatabaseHelper.importFile(filePath);
+                    onDatabaseImportOK();
+                } catch (Exception e) {
+                    onGenericCallbackError(e);
+                }
+            }
+        });
+    }
+
+    private void onDatabaseImportOK() {
+        dismissProgressDialog();
         Toast.makeText(this, this.getString(R.string.lblDbHelperImportDone), Toast.LENGTH_SHORT)
              .show();
     }
 
-    private void onImportFileSelected(String filePath) {
-        ImportDatabaseTask importDatabaseTask = new ImportDatabaseTask(MainDashboardActivity.this,
-                                                                       filePath, dalService);
-        importDatabaseTask.setCallback(importDatabaseCallback);
-        importDatabaseTask.execute();
+    private void exportDatabase() {
+        showProgressDialogWithText(R.string.msgExportDatabase);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String databaseContent = exportDatabaseHelper.exportDatabase();
+                    String fileName = exportDatabaseHelper.getFileName();
+                    onDatabaseExportOK(fileName, databaseContent);
+                } catch (Exception e) {
+                    onGenericCallbackError(e);
+                }
+            }
+        });
+    }
+
+    private void onDatabaseExportOK(final String fileName, final String databaseContent) {
+        dismissProgressDialog();
+        StringBuilder contentText = buildMessageBody();
+        contentText.append("Export (" + databaseContent.length() + " characters) \n" + databaseContent);
+        contentText.append("\n");
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc822");
+        intent.putExtra(Intent.EXTRA_EMAIL,
+                        new String[]{this.getString(R.string.urlEmail)});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Export log");
+        intent.putExtra(Intent.EXTRA_TEXT, contentText.toString());
+
+        if (fileName != null) {
+            Uri uri = Uri.fromFile(new File(fileName));
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        }
+
+        startActivity(Intent.createChooser(intent, "Envoyer l'export..."));
+
+        Toast.makeText(this, getString(R.string.lblDbHelperExportDone), Toast.LENGTH_SHORT)
+             .show();
     }
 
     protected void onListItemClick(int position) {

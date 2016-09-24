@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -443,7 +442,7 @@ public class CreateGameSetActivity extends BaseActivity {
                     }
                     onGameSetStoredOK();
                 } catch (Exception e) {
-                    onGameSetStoredKO(e);
+                    onGenericCallbackError(e);
                 }
             }
         });
@@ -453,16 +452,5 @@ public class CreateGameSetActivity extends BaseActivity {
         Intent intent = new Intent(this, TabGameSetActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    private void onGameSetStoredKO(Exception e) {
-        dismissProgressDialog();
-        Log.v(BuildConfig.APP_LOG_TAG, this.getClass().toString(), e);
-
-        Toast.makeText(
-                this,
-                "Error: " + e,
-                Toast.LENGTH_LONG
-        ).show();
     }
 }

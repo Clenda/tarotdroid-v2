@@ -25,18 +25,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.constants.PreferenceConstants;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 public final class UIHelper {
 
     private final static int DAYS_UNTIL_PROMPT = 3;
     private final static int LAUNCHES_UNTIL_PROMPT = 7;
-    private static final Gson gson = new Gson();
 
 	private static DialogInterface.OnClickListener richTextDialogClickListener = new DialogInterface.OnClickListener() {
 	    @Override
@@ -74,18 +69,7 @@ public final class UIHelper {
 		builder.show();
 	}
 	
-	public static void closeSmoothlyIfExceptionHappen(final Activity activity) {
-		checkArgument(activity != null, "activity is null");
-		UIHelper.showSimpleRichTextDialog(
-				activity,  
-				activity.getString(R.string.msgUnmanagedErrorGameSetLost),
-				activity.getString(R.string.titleUnmanagedErrorGameSetLost)
-		);
-		activity.finish();
-	}
-	
 	public static void showModifyOrDeleteGameMessage(final Context context) {
-		checkArgument(context != null, "context is null");
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         
 		// display message if first time
@@ -105,7 +89,6 @@ public final class UIHelper {
 	/**
 	 * Decides whether to show the "please rate my app dialog" 
 	 * Code found here http://www.androidsnippets.com/prompt-engaged-users-to-rate-your-app-in-the-android-market-appirater
-	 * @param context
 	 */
     public static void trackAppLaunched(final Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PreferenceConstants.PrefAppRater, 0);
@@ -135,11 +118,6 @@ public final class UIHelper {
         editor.commit();
     }
     
-    /**
-     * Show rate dialog.
-     * @param context
-     * @param editor
-     */
     private static void showRateDialog(final Context context, final SharedPreferences.Editor editor) {
         final Dialog dialog = new Dialog(context);
         dialog.setTitle(context.getString(R.string.lblRateAppTitle));
@@ -189,134 +167,6 @@ public final class UIHelper {
         dialog.show();        
     }
 	
-//	/**
-//	 * 
-//	 * @param gameSetParameters
-//	 * @param preferences
-//	 */
-//	public static void fillNonComputationPreferences(final GameSetParameters gameSetParameters, final SharedPreferences preferences) {
-//		// game prefs
-//		gameSetParameters.setBelgianGamesAllowed(preferences.getBoolean(PreferenceConstants.PrefAreBelgianGamesAllowed, false));
-//		gameSetParameters.setPenaltyGamesAllowed(preferences.getBoolean(PreferenceConstants.PrefArePenaltyGamesAllowed, false));
-//		gameSetParameters.setPassedGamesAllowed(preferences.getBoolean(PreferenceConstants.PrefArePassedGamesAllowed, true));
-//		gameSetParameters.setDisplayNextDealer(preferences.getBoolean(PreferenceConstants.PrefDisplayNextDealer, true));
-//		gameSetParameters.setPriseAuthorized(preferences.getBoolean(PreferenceConstants.PrefIsPriseAuthorized, true));
-//		gameSetParameters.setPetiteAuthorized(preferences.getBoolean(PreferenceConstants.PrefIsPetiteAuthorized, false));
-//		gameSetParameters.setDeadPlayerAuthorized(preferences.getBoolean(PreferenceConstants.PrefIsOneDeadPlayerAuthorized, false));
-//		gameSetParameters.setDeadPlayerAutomaticallySelected(preferences.getBoolean(PreferenceConstants.PrefIsDeadPlayerAutomaticallySelected, true));
-//		gameSetParameters.setMiseryAuthorized(preferences.getBoolean(PreferenceConstants.PrefIsMiseryAuthorized, false));
-//		// display preferences
-//		gameSetParameters.setDisplayGamesInReverseOrder(preferences.getBoolean(PreferenceConstants.PrefDisplayGamesInReverseOrder, true));
-//		gameSetParameters.setDisplayGlobalScoresForEachGame(preferences.getBoolean(PreferenceConstants.PrefDisplayGlobalScoresForEachGame, false));
-//		gameSetParameters.setKeepScreenOn(preferences.getBoolean(PreferenceConstants.PrefKeepScreenOn, true));
-//		// dev preferences
-//		gameSetParameters.setDevSimulationMode(preferences.getBoolean(PreferenceConstants.PrefIsSimulationMode, false));
-//		gameSetParameters.setDevGameSetCount(preferences.getInt(PreferenceConstants.PrefDevGameSetCount, 5));
-//		gameSetParameters.setDevMaxGameCount(preferences.getInt(PreferenceConstants.PrefDevMaxGameCount, 15));
-//	}
-	
-//	/**
-//	 * Returns a serialized version of the GameSet.
-//	 * @param gameSet
-//	 * @return a serialized version of the GameSet.
-//	 */
-//	public static String serializeGameSet(GameSet gameSet) {
-//		checkArgument(gameSet != null, "gameSet is null");
-//		return gson.toJson(gameSet);
-//	}
-//	
-//	/**
-//	 * Deserializes a game set from a string
-//	 * @param gameSetSerialized
-//	 * @return a game set
-//	 */
-//	public static GameSet deserializeGameSet(String gameSetSerialized) {
-//		checkArgument(gameSetSerialized != null, "gameSetSerialized is null");
-//		return gson.fromJson(gameSetSerialized, GameSet.class);
-//	}
-	
-//	/**
-//	 * Serializes the current game set in default preferences.
-//	 * @param activity
-//	 */
-//	public static void serializeGameSetInPreferences(Activity activity, GameSet gameSet) {
-//		checkArgument(activity != null, "activity is null");
-//		checkArgument(gameSet != null, "gameSet is null");
-//		serializeGameSetInPreferences(PreferenceManager.getDefaultSharedPreferences(activity), gameSet);
-//	}
-//	
-//	/**
-//	 * Serializes the current game set in specified preferences.
-//	 * @param preferences
-//	 */
-//	public static void serializeGameSetInPreferences(SharedPreferences preferences, GameSet gameSet) {
-//		checkArgument(preferences != null, "preferences is null");
-//		checkArgument(gameSet != null, "gameSet is null");
-//		try {
-//			Editor editor = preferences.edit();
-//			editor.putString(
-//					PreferenceConstants.PrefCurrentSerializedGameSet, 
-//					serializeGameSet(gameSet)
-//			);
-//			editor.commit();
-//		}
-//		catch (Exception e) {
-//			// do nothing
-//		}
-//	}
-//	
-//	/**
-//	 * Retrives 
-//	 * @param activity
-//	 */
-//	public static GameSet deserializeGameSetFromPreferences(SharedPreferences preferences) {
-//		checkArgument(preferences != null, "preferences is null");
-//		GameSet toReturn = null;
-//		try {
-//			String serializedGameSet = preferences.getString(PreferenceConstants.PrefCurrentSerializedGameSet, null);
-//			if (serializedGameSet != null && serializedGameSet.length() != 0) {
-//				toReturn = deserializeGameSet(serializedGameSet);
-//			}
-//		}
-//		catch (Exception e) {
-//			// do nothing
-//		}
-//		
-//		return toReturn;
-//	}
-//	
-//	/**
-//	 * Clear the serialized game set currently in preferences.
-//	 * @param activity
-//	 */
-//	public static void clearSerializedGameSetInPreferences(Activity activity) {
-//		checkArgument(activity != null, "activity is null");
-//		clearSerializedGameSetInPreferences(PreferenceManager.getDefaultSharedPreferences(activity));
-//	}
-//	
-//	/**
-//	 * Clear the serialized game set currently in preferences.
-//	 * @param activity
-//	 */
-//	public static void clearSerializedGameSetInPreferences(SharedPreferences preferences) {
-//		checkArgument(preferences != null, "preferences is null");
-//		try {
-//			Editor editor = preferences.edit();
-//			editor.remove(PreferenceConstants.PrefCurrentSerializedGameSet);
-//			editor.commit();
-//		}
-//		catch (Exception e) {
-//			// do nothing
-//		}
-//	}
-
-	/**
-	 * Returns the photo associated to a contact, if it has one.
-	 *
-	 * @param context   The context.
-	 * @param contactId The contact id.
-	 * @return The photo associated to a contact, if it has one.
-	 */
 	public static Bitmap getContactPicture(final Context context, final String contactId) {
 		// the photo to return
 		Bitmap photoBitmap = null;

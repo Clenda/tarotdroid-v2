@@ -7,7 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
+import org.nla.tarotdroid.BuildConfig;
 import org.nla.tarotdroid.R;
 import org.nla.tarotdroid.TarotDroidApp;
 import org.nla.tarotdroid.core.dal.IDalService;
@@ -118,5 +120,22 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+    }
+
+    protected void onGenericCallbackError(Exception e) {
+        dismissProgressDialog();
+        Log.v(BuildConfig.APP_LOG_TAG, this.getClass().toString(), e);
+
+//        Toast.makeText(
+//                this,
+//                "Error: " + e,
+//                Toast.LENGTH_LONG
+//        ).show();
+
+        UIHelper.showSimpleRichTextDialog(
+                this,
+                getString(R.string.msgGenericError),
+                getString(R.string.titleGenericError));
+
     }
 }
