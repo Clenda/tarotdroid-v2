@@ -1,7 +1,6 @@
 package org.nla.tarotdroid.gameset;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,7 +45,6 @@ public class TabGameSetActivity extends BaseGameSetActivity {
         }
     };
 
-    protected ProgressDialog progressDialog;
     @BindView(R.id.tabs) protected TabLayout tabLayout;
     @BindView(R.id.pager) protected ViewPager viewPager;
 
@@ -219,8 +217,6 @@ public class TabGameSetActivity extends BaseGameSetActivity {
             ActionBar mActionBar = getSupportActionBar();
             mActionBar.setHomeButtonEnabled(true);
             mActionBar.setDisplayShowHomeEnabled(true);
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(false);
         } catch (Exception e) {
             auditHelper.auditError(ErrorTypes.tabGameSetActivityError, e, this);
         }

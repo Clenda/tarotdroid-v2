@@ -2,7 +2,6 @@ package org.nla.tarotdroid.history;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -75,9 +74,6 @@ public class GameSetHistoryActivity extends BaseActivity {
             refresh();
         }
     };
-    private Item[] allItems;
-    private Item[] limitedItems;
-    private ProgressDialog progressDialog;
     private final DialogInterface.OnClickListener removeAllGameSetsDialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(final DialogInterface dialog, final int which) {
@@ -96,6 +92,8 @@ public class GameSetHistoryActivity extends BaseActivity {
             }
         }
     };
+    private Item[] allItems;
+    private Item[] limitedItems;
     private ReceiveGameSetTask receiveGameSetTask;
     private SendGameSetTask sendGameSetTask;
     private String tempExcelFilePath;
@@ -222,11 +220,6 @@ public class GameSetHistoryActivity extends BaseActivity {
     public void onCreate(final Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
-
-            // initialize progress dialog
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCanceledOnTouchOutside(false);
-
             // initialize bluetooth
             bluetoothHelper.setActivity(this);
 

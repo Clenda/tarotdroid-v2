@@ -1,5 +1,6 @@
 package org.nla.tarotdroid.core;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -21,13 +22,13 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    public @Inject AppParams appParams;
-    public @Inject AuditHelper auditHelper;
-    public @Inject LocalizationHelper localizationHelper;
-    public @Inject IDalService dalService;
+    protected @Inject AppParams appParams;
+    protected @Inject AuditHelper auditHelper;
+    protected @Inject LocalizationHelper localizationHelper;
+    protected @Inject IDalService dalService;
     protected @Inject GameSetWrapper gameSetWrapper;
-
     protected @Nullable @BindView(R.id.toolbar) Toolbar toolbar;
+    protected ProgressDialog progressDialog;
 
     private boolean restarting;
 
@@ -44,9 +45,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         inject();
         setupToolbar();
+        setupProgressDialog();
         setKeepScreenOn();
         setTitle();
         auditEvent();
+    }
+
+    private void setupProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
     }
 
     private void setupToolbar() {
@@ -99,5 +107,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         auditHelper.stopSession(this);
+    }
+
+    protected void showProgressDialogWithText(@StringRes int stringResource) {
+        progressDialog.setMessage(getResources().getString(stringResource));
+        progressDialog.show();
+    }
+
+    protected void dismissProgressDialog() {
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }

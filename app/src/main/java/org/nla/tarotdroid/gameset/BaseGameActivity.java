@@ -1,6 +1,5 @@
 package org.nla.tarotdroid.gameset;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -392,14 +391,12 @@ public abstract class BaseGameActivity extends BaseGameSetActivity {
     }
 
     private class PersistGameTask extends AsyncTask<BaseGame, Void, Void> {
-        private final ProgressDialog dialog;
         private Context context;
         private boolean backgroundErrorHappened;
         private Exception backgroundException;
 
         protected PersistGameTask(final Context context) {
             this.context = context;
-            dialog = new ProgressDialog(context);
             backgroundErrorHappened = false;
         }
 
@@ -408,8 +405,8 @@ public abstract class BaseGameActivity extends BaseGameSetActivity {
             String message = isInEditMode
                     ? context.getResources().getString(R.string.msgGameUpdate)
                     : context.getResources().getString(R.string.msgGameCreation);
-            dialog.setMessage(message);
-            dialog.show();
+            progressDialog.setMessage(message);
+            progressDialog.show();
         }
 
         @Override
@@ -454,8 +451,8 @@ public abstract class BaseGameActivity extends BaseGameSetActivity {
         @Override
         protected void onPostExecute(final Void unused) {
             // hide busy idicator
-            if (dialog.isShowing()) {
-                dialog.dismiss();
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
             }
 
             // display toast if error happened

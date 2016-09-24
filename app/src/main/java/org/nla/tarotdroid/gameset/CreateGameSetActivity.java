@@ -1,9 +1,11 @@
 package org.nla.tarotdroid.gameset;
 
-import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -24,7 +26,6 @@ import org.nla.tarotdroid.core.dal.DalException;
 import org.nla.tarotdroid.core.dal.IDalService;
 import org.nla.tarotdroid.core.helpers.AuditHelper;
 import org.nla.tarotdroid.core.helpers.UIHelper;
-import org.nla.tarotdroid.dashboard.StartNewGameSetTask;
 import org.nla.tarotdroid.gameset.controls.PlayerSelectorRow;
 
 import java.util.ArrayList;
@@ -44,7 +45,6 @@ public class CreateGameSetActivity extends BaseActivity {
     @BindView(R.id.optionalPlayerSelectorRow) protected PlayerSelectorRow optionalPlayerSelectorRow;
     @Inject GameSetParameters gameSetParameters;
     @Inject IDalService dalService;
-    private ProgressDialog progressDialog;
     private GameStyleType gameStyleType;
     private int rowCount;
     private List<PlayerSelectorRow> playerSelectorRows;
@@ -77,7 +77,6 @@ public class CreateGameSetActivity extends BaseActivity {
 
             rowCount = 0;
             playerSelectorRows = new ArrayList<>();
-            progressDialog = new ProgressDialog(this);
             layoutCompulsoryPlayers = (LinearLayout) findViewById(R.id.layoutCompulsoryPlayers);
             optionalPlayerSelectorRow = (PlayerSelectorRow) findViewById(R.id.optionalPlayerSelectorRow);
             optionalPlayerSelectorRow.setPlayerIndex(10);
@@ -147,12 +146,7 @@ public class CreateGameSetActivity extends BaseActivity {
                     setPlayersAndGameStyleType();
 
                     // create game set and navigate towards tab view
-                    new StartNewGameSetTask(
-                            CreateGameSetActivity.this,
-                            CreateGameSetActivity.this.progressDialog,
-                            CreateGameSetActivity.this.gameSet,
-                            dalService
-                    ).execute();
+                    storeAndStartNewGameSet();
                 }
                 return true;
             }
@@ -434,5 +428,41 @@ public class CreateGameSetActivity extends BaseActivity {
                         && !player3Name.equalsIgnoreCase(player4Name)
                         && !player3Name.equalsIgnoreCase(player5Name)
                         && !player4Name.equalsIgnoreCase(player5Name);
+    }
+
+    private void storeAndStartNewGameSet() {
+        showProgressDialogWithText(R.string.msgGameSetCreation);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    boolean gameSetToBeStored = BuildConfig.IS_FULL || (!BuildConfig.IS_FULL && dalService
+                            .getGameSetCount() < 5);
+                    if (gameSetToBeStored) {
+                        dalService.saveGameSet(gameSet);
+                    }
+                    onGameSetStoredOK();
+                } catch (Exception e) {
+                    onGameSetStoredKO(e);
+                }
+            }
+        });
+    }
+
+    private void onGameSetStoredOK() {
+        Intent intent = new Intent(this, TabGameSetActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void onGameSetStoredKO(Exception e) {
+        dismissProgressDialog();
+        Log.v(BuildConfig.APP_LOG_TAG, this.getClass().toString(), e);
+
+        Toast.makeText(
+                this,
+                "Error: " + e,
+                Toast.LENGTH_LONG
+        ).show();
     }
 }

@@ -71,7 +71,8 @@ public final class BluetoothHelper {
 	/**
 	 * The progress dialog.
 	 */
-	private ProgressDialog dialog;
+    // TODO Remove this dialog
+    private ProgressDialog dialog;
 	
 	/**
 	 * Constructor.
